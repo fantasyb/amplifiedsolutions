@@ -11,8 +11,30 @@ const manrope = Manrope({
 
 export const metadata: Metadata = {
   title: "Amplified Solutions - Lead Management & Conversion Experts",
-  description: "We work the leads your agents won't. Complete Follow Up Boss optimization, ISA calling, and lead conversion services for real estate teams.",
-  keywords: "lead management, ISA services, follow up boss, real estate leads, lead conversion, agent accountability, lead routing",
+  description: "We turn cold leads into warm conversations. Complete Follow Up Boss optimization, ISA calling, and lead conversion services for real estate teams.",
+  keywords: "lead management, ISA services, follow up boss, real estate leads, lead conversion, systematic follow-up, lead warming",
+  openGraph: {
+    title: "Amplified Solutions - Lead Management & Conversion Experts",
+    description: "We turn cold leads into warm conversations. Complete Follow Up Boss optimization, ISA calling, and lead conversion services for real estate teams.",
+    url: "https://amplifiedsolutions.com",
+    siteName: "Amplified Solutions",
+    images: [
+      {
+        url: "/AmplifiedSolutions_Logo-V2_Main.png",
+        width: 1200,
+        height: 630,
+        alt: "Amplified Solutions - Lead Management & Conversion Experts",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Amplified Solutions - Lead Management & Conversion Experts",
+    description: "We turn cold leads into warm conversations. Complete Follow Up Boss optimization, ISA calling, and lead conversion services for real estate teams.",
+    images: ["/AmplifiedSolutions_Logo-V2_Main.png"],
+  },
 };
 
 export default function RootLayout({
