@@ -1,0 +1,135 @@
+{
+  "devin-resendez": {
+    "id": "devin-resendez",
+    "client": {
+      "name": "Devin Resendez",
+      "email": "devin@example.com",
+      "company": "Resendez Real Estate"
+    },
+    "services": [
+      {
+        "id": "account-management",
+        "title": "Account Management Overview",
+        "description": "Comprehensive account oversight and strategic guidance for your real estate business growth and optimization.",
+        "features": [
+          "Dedicated account manager as your single point of contact",
+          "Regular performance reviews and optimization recommendations",
+          "Strategic planning sessions to align with your business goals",
+          "Priority support and escalation management"
+        ]
+      },
+      {
+        "id": "account-engineers",
+        "title": "Account Engineers",
+        "description": "Technical implementation and ongoing optimization of your lead generation and management systems.",
+        "features": [
+          "CRM integration and custom workflow development",
+          "Lead routing optimization for maximum conversion",
+          "Advanced reporting and analytics setup",
+          "Marketing automation and drip campaign development",
+          "A/B testing implementation for continuous improvement",
+          "Technical troubleshooting and system maintenance"
+        ],
+        "highlighted": true
+      },
+      {
+        "id": "leads-manager",
+        "title": "Leads Manager",
+        "description": "Dedicated lead management and nurturing to maximize your conversion potential.",
+        "features": [
+          "Lead qualification and scoring implementation",
+          "Database segmentation for targeted campaigns",
+          "Lead nurturing sequences and follow-up automation",
+          "Conversion tracking and performance analytics",
+          "Lead source optimization and ROI analysis"
+        ]
+      },
+      {
+        "id": "account-manager",
+        "title": "Account Manager",
+        "description": "Strategic oversight and relationship management for sustainable business growth.",
+        "features": [
+          "Monthly strategy sessions and performance reviews",
+          "Goal setting and KPI tracking",
+          "Market analysis and competitive positioning",
+          "Growth opportunity identification",
+          "Cross-team coordination and project management",
+          "Quarterly business reviews and planning sessions"
+        ]
+      }
+    ],
+    "cost": 1500,
+    "notes": "Thank you. This does not include features or functionality services. I cannot wait this long to see you hit your business goals.",
+    "stripeCheckoutUrl": "https://checkout.stripe.com/c/pay/test_session_123",
+    "createdAt": "2025-01-15T00:00:00.000Z",
+    "expiresAt": "2025-02-15T00:00:00.000Z",
+    "status": "pending"
+  },
+  "please-work-q2sju7": {
+    "client": {
+      "name": "please work",
+      "email": "work@fake.com",
+      "company": "testing last time"
+    },
+    "services": [
+      {
+        "id": "account-management",
+        "title": "Account Management Overview",
+        "description": "Comprehensive account oversight and strategic guidance for your real estate business growth and optimization.",
+        "features": [
+          "Dedicated account manager as your single point of contact",
+          "Regular performance reviews and optimization recommendations",
+          "Strategic planning sessions to align with your business goals",
+          "Priority support and escalation management"
+        ]
+      }
+    ],
+    "cost": 1500,
+    "stripeCheckoutUrl": "https://checkout.stripe.com/c/pay/cs_test_a1JXrGyEhJkeUL51ivWq29jTknKNPUnZinhdO6dpqjQo7G8UWOmBDOtBOe#fidkdWxOYHwnPyd1blpxYHZxWn9HSk1MR2dIcDF9dFdqbmZPNUZpMkFBYCcpJ2N3amhWYHdzYHcnP3F3cGApJ2lkfGpwcVF8dWAnPyd2bGtiaWBabHFgaCcpJ2BrZGdpYFVpZGZgbWppYWB3dic%2FcXdwYHgl",
+    "expiresAt": "2025-08-24T15:31:18.536Z",
+    "id": "please-work-q2sju7",
+    "createdAt": "2025-07-25T15:31:19.257Z",
+    "status": "accepted"
+  },
+  "trying-this-0xshbf": {
+    "client": {
+      "name": "Trying this",
+      "email": "testing@example.com",
+      "company": "Test this"
+    },
+    "services": [
+      {
+        "id": "account-engineers",
+        "title": "Account Engineers",
+        "description": "Technical implementation and ongoing optimization of your lead generation and management systems.",
+        "features": [
+          "CRM integration and custom workflow development",
+          "Lead routing optimization for maximum conversion",
+          "Advanced reporting and analytics setup",
+          "Marketing automation and drip campaign development",
+          "A/B testing implementation for continuous improvement",
+          "Technical troubleshooting and system maintenance"
+        ],
+        "highlighted": true
+      },
+      {
+        "id": "leads-manager",
+        "title": "Leads Manager",
+        "description": "Dedicated lead management and nurturing to maximize your conversion potential.",
+        "features": [
+          "Lead qualification and scoring implementation",
+          "Database segmentation for targeted campaigns",
+          "Lead nurturing sequences and follow-up automation",
+          "Conversion tracking and performance analytics",
+          "Lead source optimization and ROI analysis"
+        ]
+      }
+    ],
+    "cost": 749,
+    "stripeCheckoutUrl": "https://checkout.stripe.com/c/pay/cs_test_a1vuo18EMQruUqO9nER9exruC0pkLMAN6gZNbDLPKgjG3GQy3KRvVvpPDG#fidkdWxOYHwnPyd1blpxYHZxWn9HSk1MR2dIcDF9dFdqbmZPNUZpMkFBYCcpJ2N3amhWYHdzYHcnP3F3cGApJ2lkfGpwcVF8dWAnPyd2bGtiaWBabHFgaCcpJ2BrZGdpYFVpZGZgbWppYWB3dic%2FcXdwYHgl",
+    "expiresAt": "2025-08-24T15:40:38.532Z",
+    "id": "trying-this-0xshbf",
+    "createdAt": "2025-07-25T15:40:39.270Z",
+    "status": "accepted"
+  }
+}
