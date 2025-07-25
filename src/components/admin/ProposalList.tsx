@@ -4,11 +4,14 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Proposal } from '@/types/proposal';
-import { ExternalLink, Calendar, DollarSign, User, Eye, Plus, Trash2, Archive } from 'lucide-react';
+import { ExternalLink, Calendar, DollarSign, User, Eye, Plus, Trash2, Archive, Filter, SortAsc, SortDesc } from 'lucide-react';
 
 export default function ProposalList() {
   const [proposals, setProposals] = useState<Proposal[]>([]);
   const [loading, setLoading] = useState(true);
+  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [sortBy, setSortBy] = useState<'date' | 'status' | 'amount'>('date');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
 
   useEffect(() => {
     fetchProposals();
@@ -48,19 +51,53 @@ export default function ProposalList() {
     }
   };
 
+  // Filter and sort proposals
+  const filteredAndSortedProposals = proposals
+    .filter(proposal => {
+      if (statusFilter === 'all') return true;
+      return proposal.status === statusFilter;
+    })
+    .sort((a, b) => {
+      let comparison = 0;
+      
+      switch (sortBy) {
+        case 'date':
+          comparison = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+          break;
+        case 'status':
+          comparison = a.status.localeCompare(b.status);
+          break;
+        case 'amount':
+          comparison = a.cost - b.cost;
+          break;
+      }
+      
+      return sortOrder === 'asc' ? comparison : -comparison;
+    });
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'pending':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
       case 'accepted':
-        return 'bg-green-100 text-green-800';
+        return 'bg-green-100 text-green-800 border-green-200';
       case 'rejected':
-        return 'bg-red-100 text-red-800';
+        return 'bg-red-100 text-red-800 border-red-200';
       case 'expired':
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-100 text-gray-800 border-gray-200';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-100 text-gray-800 border-gray-200';
     }
+  };
+
+  const getStatusCounts = () => {
+    return {
+      all: proposals.length,
+      pending: proposals.filter(p => p.status === 'pending').length,
+      accepted: proposals.filter(p => p.status === 'accepted').length,
+      rejected: proposals.filter(p => p.status === 'rejected').length,
+      expired: proposals.filter(p => p.status === 'expired').length,
+    };
   };
 
   const formatCurrency = (amount: number) => {
@@ -87,30 +124,99 @@ export default function ProposalList() {
     );
   }
 
+  const statusCounts = getStatusCounts();
+
   return (
     <div className="space-y-6">
-      {proposals.length === 0 ? (
+      {/* Status Filter Tabs */}
+      <div className="bg-white rounded-xl border border-slate-200 p-6">
+        <div className="flex flex-wrap gap-2 mb-4">
+          {[
+            { key: 'all', label: 'All', count: statusCounts.all },
+            { key: 'pending', label: 'Pending', count: statusCounts.pending },
+            { key: 'accepted', label: 'Accepted', count: statusCounts.accepted },
+            { key: 'rejected', label: 'Rejected', count: statusCounts.rejected },
+            { key: 'expired', label: 'Expired', count: statusCounts.expired },
+          ].map(({ key, label, count }) => (
+            <button
+              key={key}
+              onClick={() => setStatusFilter(key)}
+              className={`px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 ${
+                statusFilter === key
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+              }`}
+            >
+              {label}
+              <span className={`px-2 py-0.5 rounded-full text-xs ${
+                statusFilter === key
+                  ? 'bg-blue-500 text-white'
+                  : 'bg-slate-200 text-slate-600'
+              }`}>
+                {count}
+              </span>
+            </button>
+          ))}
+        </div>
+
+        {/* Sort Controls */}
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <Filter className="w-4 h-4 text-slate-500" />
+            <span className="text-sm font-medium text-slate-700">Sort by:</span>
+          </div>
+          
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value as 'date' | 'status' | 'amount')}
+            className="px-3 py-1 border border-slate-300 rounded-lg text-sm"
+          >
+            <option value="date">Date Created</option>
+            <option value="status">Status</option>
+            <option value="amount">Amount</option>
+          </select>
+
+          <button
+            onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+            className="flex items-center gap-1 px-3 py-1 border border-slate-300 rounded-lg text-sm hover:bg-slate-50"
+          >
+            {sortOrder === 'asc' ? (
+              <SortAsc className="w-4 h-4" />
+            ) : (
+              <SortDesc className="w-4 h-4" />
+            )}
+            {sortOrder === 'asc' ? 'Ascending' : 'Descending'}
+          </button>
+        </div>
+      </div>
+
+      {filteredAndSortedProposals.length === 0 ? (
         <div className="text-center py-12 bg-white rounded-xl border border-slate-200">
           <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <User className="w-8 h-8 text-slate-400" />
           </div>
           <h3 className="text-xl font-semibold text-slate-900 mb-2">
-            No proposals yet
+            {statusFilter === 'all' ? 'No proposals yet' : `No ${statusFilter} proposals`}
           </h3>
           <p className="text-slate-600 mb-6">
-            Create your first proposal to get started
+            {statusFilter === 'all' 
+              ? 'Create your first proposal to get started'
+              : `No proposals with status "${statusFilter}" found`
+            }
           </p>
-          <Link
-            href="/admin/proposals/new"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            <Plus className="w-4 h-4" />
-            Create First Proposal
-          </Link>
+          {statusFilter === 'all' && (
+            <Link
+              href="/admin/proposals/new"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              <Plus className="w-4 h-4" />
+              Create First Proposal
+            </Link>
+          )}
         </div>
       ) : (
         <div className="grid gap-6">
-          {proposals.map((proposal) => (
+          {filteredAndSortedProposals.map((proposal) => (
             <div
               key={proposal.id}
               className="bg-white rounded-xl border border-slate-200 p-6 hover:shadow-md transition-shadow"
@@ -122,7 +228,7 @@ export default function ProposalList() {
                       {proposal.client.name}
                     </h3>
                     <span
-                      className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(
+                      className={`px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(
                         proposal.status
                       )}`}
                     >
