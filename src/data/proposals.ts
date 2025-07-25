@@ -48,12 +48,23 @@ export async function getProposals(): Promise<Record<string, Proposal>> {
     // Production: use Upstash Redis
     try {
       const stored = await redis.get('proposals');
-      const parsedProposals = stored ? JSON.parse(stored) : {};
+      let parsedProposals = {};
+      
+      // Handle different data formats
+      if (stored) {
+        if (typeof stored === 'string') {
+          parsedProposals = JSON.parse(stored);
+        } else if (typeof stored === 'object') {
+          parsedProposals = stored;
+        }
+      }
       
       // Convert date strings back to Date objects
       Object.values(parsedProposals).forEach((proposal: any) => {
-        if (proposal.createdAt) proposal.createdAt = new Date(proposal.createdAt);
-        if (proposal.expiresAt) proposal.expiresAt = new Date(proposal.expiresAt);
+        if (proposal && typeof proposal === 'object') {
+          if (proposal.createdAt) proposal.createdAt = new Date(proposal.createdAt);
+          if (proposal.expiresAt) proposal.expiresAt = new Date(proposal.expiresAt);
+        }
       });
       
       return { ...initialProposals, ...parsedProposals };
@@ -98,7 +109,10 @@ export async function createProposal(proposalData: Omit<Proposal, 'id' | 'create
     try {
       const currentProposals = await getProposals();
       currentProposals[id] = proposal;
-      await redis.set('proposals', JSON.stringify(currentProposals));
+      
+      // Ensure we're storing as JSON string
+      const dataToStore = JSON.stringify(currentProposals);
+      await redis.set('proposals', dataToStore);
       console.log('✅ Proposals saved to Redis');
     } catch (error) {
       console.error('❌ Error saving to Redis:', error);
@@ -121,7 +135,8 @@ export async function updateProposalStatus(id: string, status: 'pending' | 'acce
       const allProposals = await getProposals();
       if (allProposals[id]) {
         allProposals[id].status = status;
-        await redis.set('proposals', JSON.stringify(allProposals));
+        const dataToStore = JSON.stringify(allProposals);
+        await redis.set('proposals', dataToStore);
         console.log(`✅ Updated proposal ${id} status to ${status}`);
         return true;
       }
@@ -150,7 +165,8 @@ export async function deleteProposal(id: string): Promise<boolean> {
       const allProposals = await getProposals();
       if (allProposals[id]) {
         delete allProposals[id];
-        await redis.set('proposals', JSON.stringify(allProposals));
+        const dataToStore = JSON.stringify(allProposals);
+        await redis.set('proposals', dataToStore);
         console.log(`✅ Deleted proposal ${id}`);
         return true;
       }
