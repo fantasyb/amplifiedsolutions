@@ -18,7 +18,7 @@ export default async function ProposalPage({ params, searchParams }: ProposalPag
   
   console.log(`🔍 ProposalPage: Looking for proposal ${id}`);
   
-  const proposal = getProposal(id);
+  const proposal = await getProposal(id);
 
   if (!proposal) {
     console.log(`❌ ProposalPage: Proposal ${id} not found`);
@@ -79,7 +79,7 @@ export default async function ProposalPage({ params, searchParams }: ProposalPag
 
 export async function generateMetadata({ params }: ProposalPageProps) {
   const { id } = await params;
-  const proposal = getProposal(id);
+  const proposal = await getProposal(id);
 
   if (!proposal) {
     return {

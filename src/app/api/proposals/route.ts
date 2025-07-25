@@ -1,7 +1,7 @@
 // src/app/api/proposals/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { availableServices } from '@/data/services';
-import { getProposals, createProposal } from '@/data/proposals';
+import { getProposals, createProposal, deleteProposal } from '@/data/proposals';
 import { Proposal } from '@/types/proposal';
 import { stripe, getBaseUrl } from '@/lib/stripe';
 
@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
     console.log('💾 API: About to save proposal with ID:', proposalId);
     
     // Create and save proposal
-    const proposal = createProposal(proposalData, proposalId); // Pass the proposalId we generated
+    const proposal = await createProposal(proposalData, proposalId); // Add await here
     
     console.log('🎉 API: Proposal created successfully with ID:', proposal.id);
     
@@ -187,7 +187,7 @@ async function createStripeCheckoutSession(params: {
 
 export async function GET() {
   // Return all proposals for admin view
-  const allProposals = Object.values(getProposals()).map(proposal => ({
+  const allProposals = Object.values(await getProposals()).map(proposal => ({
     ...proposal,
     // Don't expose sensitive data in list view
     stripeCheckoutUrl: undefined,
@@ -207,21 +207,11 @@ export async function DELETE(request: NextRequest) {
     
     console.log(`🗑️ API: Deleting proposal ${proposalId}`);
     
-    // Load current proposals
-    const currentProposals = getProposals();
+    const deleted = await deleteProposal(proposalId);
     
-    if (!currentProposals[proposalId]) {
+    if (!deleted) {
       return NextResponse.json({ error: 'Proposal not found' }, { status: 404 });
     }
-    
-    // Remove the proposal
-    delete currentProposals[proposalId];
-    
-    // Save updated proposals back to file
-    const fs = require('fs');
-    const path = require('path');
-    const proposalsFilePath = path.join(process.cwd(), 'proposals.json');
-    fs.writeFileSync(proposalsFilePath, JSON.stringify(currentProposals, null, 2));
     
     console.log(`✅ API: Deleted proposal ${proposalId}`);
     

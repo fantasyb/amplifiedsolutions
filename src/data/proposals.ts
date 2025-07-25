@@ -1,8 +1,20 @@
 // src/data/proposals.ts
 import { Proposal } from '@/types/proposal';
 import { availableServices } from './services';
-import fs from 'fs';
-import path from 'path';
+
+// Try to import Upstash Redis, fallback to local storage for development
+let redis: any = null;
+try {
+  if (typeof window === 'undefined') {
+    const { Redis } = require('@upstash/redis');
+    redis = new Redis({
+      url: process.env.UPSTASH_REDIS_REST_URL,
+      token: process.env.UPSTASH_REDIS_REST_TOKEN,
+    });
+  }
+} catch (error) {
+  console.log('Upstash Redis not available, using local storage for development');
+}
 
 // Initial/hardcoded proposals
 const initialProposals: Record<string, Proposal> = {
@@ -28,54 +40,36 @@ const initialProposals: Record<string, Proposal> = {
   }
 };
 
-// File path for storing proposals
-const proposalsFilePath = path.join(process.cwd(), 'proposals.json');
+// Local fallback for development
+let localProposals: Record<string, Proposal> = { ...initialProposals };
 
-// Load proposals from file or use initial data
-function loadProposals(): Record<string, Proposal> {
-  try {
-    if (fs.existsSync(proposalsFilePath)) {
-      const fileData = fs.readFileSync(proposalsFilePath, 'utf8');
-      const savedProposals = JSON.parse(fileData);
+export async function getProposals(): Promise<Record<string, Proposal>> {
+  if (redis) {
+    // Production: use Upstash Redis
+    try {
+      const stored = await redis.get('proposals');
+      const parsedProposals = stored ? JSON.parse(stored) : {};
       
       // Convert date strings back to Date objects
-      Object.values(savedProposals).forEach((proposal: any) => {
-        proposal.createdAt = new Date(proposal.createdAt);
-        if (proposal.expiresAt) {
-          proposal.expiresAt = new Date(proposal.expiresAt);
-        }
+      Object.values(parsedProposals).forEach((proposal: any) => {
+        if (proposal.createdAt) proposal.createdAt = new Date(proposal.createdAt);
+        if (proposal.expiresAt) proposal.expiresAt = new Date(proposal.expiresAt);
       });
       
-      return { ...initialProposals, ...savedProposals };
+      return { ...initialProposals, ...parsedProposals };
+    } catch (error) {
+      console.error('Error loading from Redis:', error);
+      return initialProposals;
     }
-  } catch (error) {
-    console.error('Error loading proposals:', error);
-  }
-  
-  return initialProposals;
-}
-
-// Save proposals to file
-function saveProposals(proposalsData: Record<string, Proposal>) {
-  try {
-    fs.writeFileSync(proposalsFilePath, JSON.stringify(proposalsData, null, 2));
-    console.log('✅ Proposals saved to file');
-  } catch (error) {
-    console.error('❌ Error saving proposals:', error);
+  } else {
+    // Development: use local storage
+    return localProposals;
   }
 }
 
-// Export the proposals object - but reload each time for fresh data
-let proposalsCache: Record<string, Proposal> | null = null;
-
-export function getProposals(): Record<string, Proposal> {
-  // Always reload from file to get latest data
-  return loadProposals();
-}
-
-export function getProposal(id: string): Proposal | null {
+export async function getProposal(id: string): Promise<Proposal | null> {
   console.log(`🔍 Looking for proposal: ${id}`);
-  const allProposals = getProposals();
+  const allProposals = await getProposals();
   const proposal = allProposals[id];
   
   if (proposal) {
@@ -88,9 +82,7 @@ export function getProposal(id: string): Proposal | null {
   return proposal || null;
 }
 
-// Updated function to save proposals
-export function createProposal(proposalData: Omit<Proposal, 'id' | 'createdAt' | 'status'>, providedId?: string): Proposal {
-  // Use provided ID or generate new one
+export async function createProposal(proposalData: Omit<Proposal, 'id' | 'createdAt' | 'status'>, providedId?: string): Promise<Proposal> {
   const id = providedId || generateProposalId(proposalData.client.name);
   const proposal: Proposal = {
     ...proposalData,
@@ -101,26 +93,79 @@ export function createProposal(proposalData: Omit<Proposal, 'id' | 'createdAt' |
   
   console.log(`📝 Creating proposal: ${id}`);
   
-  // Load current proposals, add new one, save back
-  const currentProposals = getProposals();
-  currentProposals[id] = proposal;
-  saveProposals(currentProposals);
+  if (redis) {
+    // Production: save to Upstash Redis
+    try {
+      const currentProposals = await getProposals();
+      currentProposals[id] = proposal;
+      await redis.set('proposals', JSON.stringify(currentProposals));
+      console.log('✅ Proposals saved to Redis');
+    } catch (error) {
+      console.error('❌ Error saving to Redis:', error);
+    }
+  } else {
+    // Development: save to local storage
+    localProposals[id] = proposal;
+    console.log('✅ Proposals saved locally');
+  }
   
   return proposal;
 }
 
-export function updateProposalStatus(id: string, status: 'pending' | 'accepted' | 'rejected' | 'expired'): boolean {
+export async function updateProposalStatus(id: string, status: 'pending' | 'accepted' | 'rejected' | 'expired'): Promise<boolean> {
   console.log(`🔄 Updating proposal ${id} to ${status}`);
   
-  const allProposals = getProposals();
-  if (allProposals[id]) {
-    allProposals[id].status = status;
-    saveProposals(allProposals);
-    console.log(`✅ Updated proposal ${id} status to ${status}`);
-    return true;
+  if (redis) {
+    // Production: update in Upstash Redis
+    try {
+      const allProposals = await getProposals();
+      if (allProposals[id]) {
+        allProposals[id].status = status;
+        await redis.set('proposals', JSON.stringify(allProposals));
+        console.log(`✅ Updated proposal ${id} status to ${status}`);
+        return true;
+      }
+    } catch (error) {
+      console.error('❌ Error updating in Redis:', error);
+    }
+  } else {
+    // Development: update locally
+    if (localProposals[id]) {
+      localProposals[id].status = status;
+      console.log(`✅ Updated proposal ${id} status to ${status}`);
+      return true;
+    }
   }
   
   console.log(`❌ Could not find proposal ${id} to update`);
+  return false;
+}
+
+export async function deleteProposal(id: string): Promise<boolean> {
+  console.log(`🗑️ Deleting proposal: ${id}`);
+  
+  if (redis) {
+    // Production: delete from Upstash Redis
+    try {
+      const allProposals = await getProposals();
+      if (allProposals[id]) {
+        delete allProposals[id];
+        await redis.set('proposals', JSON.stringify(allProposals));
+        console.log(`✅ Deleted proposal ${id}`);
+        return true;
+      }
+    } catch (error) {
+      console.error('❌ Error deleting from Redis:', error);
+    }
+  } else {
+    // Development: delete locally
+    if (localProposals[id]) {
+      delete localProposals[id];
+      console.log(`✅ Deleted proposal ${id}`);
+      return true;
+    }
+  }
+  
   return false;
 }
 
@@ -134,6 +179,3 @@ function generateProposalId(clientName: string): string {
   const randomSuffix = Math.random().toString(36).substring(2, 8);
   return `${nameSlug}-${randomSuffix}`;
 }
-
-// Legacy export for compatibility
-export const proposals = getProposals();

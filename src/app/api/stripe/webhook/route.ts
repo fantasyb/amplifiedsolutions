@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
         console.log(`Session metadata:`, session.metadata);
         
         if (proposalId) {
-          const updated = updateProposalStatus(proposalId, 'accepted');
+          const updated = await updateProposalStatus(proposalId, 'accepted'); // Add await
           if (updated) {
             console.log(`✅ Proposal ${proposalId} marked as accepted`);
           }
@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
         console.log(`🔄 Subscription created for proposal: ${subscriptionProposalId}`);
         
         if (subscriptionProposalId) {
-          const updated = updateProposalStatus(subscriptionProposalId, 'accepted');
+          const updated = await updateProposalStatus(subscriptionProposalId, 'accepted'); // Add await
           if (updated) {
             console.log(`✅ Proposal ${subscriptionProposalId} marked as accepted`);
           }
