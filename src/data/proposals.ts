@@ -16,29 +16,8 @@ try {
   console.log('Upstash Redis not available, using local storage for development');
 }
 
-// Initial/hardcoded proposals
-const initialProposals: Record<string, Proposal> = {
-  'devin-resendez': {
-    id: 'devin-resendez',
-    client: {
-      name: 'Devin Resendez',
-      email: 'devin@example.com',
-      company: 'Resendez Real Estate'
-    },
-    services: [
-      availableServices['account-management'],
-      availableServices['account-engineers'],
-      availableServices['leads-manager'],
-      availableServices['account-manager']
-    ],
-    cost: 1500,
-    notes: 'Thank you. This does not include features or functionality services. I cannot wait this long to see you hit your business goals.',
-    stripeCheckoutUrl: 'https://checkout.stripe.com/c/pay/test_session_123',
-    createdAt: new Date('2025-01-15'),
-    expiresAt: new Date('2025-02-15'),
-    status: 'pending'
-  }
-};
+// Initial/hardcoded proposals - empty for production
+const initialProposals: Record<string, Proposal> = {};
 
 // Local fallback for development
 let localProposals: Record<string, Proposal> = { ...initialProposals };
