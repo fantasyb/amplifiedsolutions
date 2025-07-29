@@ -5,20 +5,21 @@ import { redis } from '@/lib/redis';
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
-  console.log(`🚀 API: Submitting questionnaire ${params.id}`);
-  
   try {
+    const { id } = await context.params;
+    console.log(`🚀 API: Submitting questionnaire ${id}`);
+    
     const body = await request.json();
     const { responses }: { responses: QuestionnaireResponse[] } = body;
 
-    console.log(`📋 API: Processing ${responses.length} responses for questionnaire ${params.id}`);
+    console.log(`📋 API: Processing ${responses.length} responses for questionnaire ${id}`);
 
-    const questionnaire = await redis.get(`questionnaire:${params.id}`);
+    const questionnaire = await redis.get(`questionnaire:${id}`);
     
     if (!questionnaire) {
-      console.log(`❌ API: Questionnaire not found: ${params.id}`);
+      console.log(`❌ API: Questionnaire not found: ${id}`);
       return NextResponse.json({ error: 'Questionnaire not found' }, { status: 404 });
     }
 
@@ -26,7 +27,7 @@ export async function POST(
 
     // Check if expired
     if (questionnaireData.expiresAt && new Date() > new Date(questionnaireData.expiresAt)) {
-      console.log(`❌ API: Questionnaire expired: ${params.id}`);
+      console.log(`❌ API: Questionnaire expired: ${id}`);
       return NextResponse.json({ error: 'Questionnaire has expired' }, { status: 410 });
     }
 
@@ -38,9 +39,9 @@ export async function POST(
       responses
     };
 
-    await redis.set(`questionnaire:${params.id}`, updatedQuestionnaire);
+    await redis.set(`questionnaire:${id}`, updatedQuestionnaire);
 
-    console.log(`🎉 API: Questionnaire ${params.id} completed by ${questionnaireData.client.name}`);
+    console.log(`🎉 API: Questionnaire ${id} completed by ${questionnaireData.client.name}`);
 
     // TODO: Send notification to admin about completion
     // await sendCompletionNotification(updatedQuestionnaire);

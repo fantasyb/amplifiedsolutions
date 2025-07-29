@@ -4,15 +4,16 @@ import { redis } from '@/lib/redis';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
-    console.log(`📋 API: Fetching questionnaire ${params.id}`);
+    const { id } = await context.params;
+    console.log(`📋 API: Fetching questionnaire ${id}`);
     
-    const questionnaire = await redis.get(`questionnaire:${params.id}`);
+    const questionnaire = await redis.get(`questionnaire:${id}`);
     
     if (!questionnaire) {
-      console.log(`❌ API: Questionnaire not found: ${params.id}`);
+      console.log(`❌ API: Questionnaire not found: ${id}`);
       return NextResponse.json({ error: 'Questionnaire not found' }, { status: 404 });
     }
 
@@ -21,10 +22,10 @@ export async function GET(
     // Check if expired
     if (questionnaireData.expiresAt && new Date() > new Date(questionnaireData.expiresAt)) {
       questionnaireData.status = 'expired';
-      await redis.set(`questionnaire:${params.id}`, questionnaireData);
+      await redis.set(`questionnaire:${id}`, questionnaireData);
     }
 
-    console.log(`✅ API: Returning questionnaire ${params.id} for ${questionnaireData.client.name}`);
+    console.log(`✅ API: Returning questionnaire ${id} for ${questionnaireData.client.name}`);
     return NextResponse.json(questionnaireData);
   } catch (error) {
     console.error('❌ API: Error fetching questionnaire:', error);
