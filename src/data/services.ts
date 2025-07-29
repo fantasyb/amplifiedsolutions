@@ -2,54 +2,62 @@
 import { Service, Testimonial } from '@/types/proposal';
 
 export const availableServices: Record<string, Service> = {
-  'account-management': {
-    id: 'account-management',
-    title: 'Account Management Overview',
-    description: 'Comprehensive account oversight and strategic guidance for your real estate business growth and optimization.',
+  'as-system': {
+    id: 'as-system',
+    title: 'The AS System',
+    description: 'Our best practice Follow Up Boss setup with complete optimization, smart lists, action plans, and ongoing support.',
     features: [
-      'Dedicated account manager as your single point of contact',
-      'Regular performance reviews and optimization recommendations',
-      'Strategic planning sessions to align with your business goals',
-      'Priority support and escalation management'
+      'FUB Pixel Installation for maximum data capture',
+      'Smart lead routing to the right agents at the right time',
+      'Ponds for better lead organization and prioritization',
+      'Proven Smart Lists system for systematic follow-up',
+      'Simplified stages for progress tracking and lead nurturing',
+      '24+ Action Plans with automated email sequences',
+      'Automations for stage changes, tags, and inquiries',
+      'Live team training session with full Q&A',
+      'Resource website with guides and training materials'
     ]
   },
-  'account-engineers': {
-    id: 'account-engineers',
-    title: 'Account Engineers',
-    description: 'Technical implementation and ongoing optimization of your lead generation and management systems.',
+  'lead-management': {
+    id: 'lead-management',
+    title: 'Lead Management',
+    description: 'Turn Your Follow Up Boss Into a Lead Machine. Complete lead lifecycle management from first contact to conversion.',
     features: [
-      'CRM integration and custom workflow development',
-      'Lead routing optimization for maximum conversion',
-      'Advanced reporting and analytics setup',
-      'Marketing automation and drip campaign development',
-      'A/B testing implementation for continuous improvement',
-      'Technical troubleshooting and system maintenance'
-    ],
-    highlighted: true
-  },
-  'leads-manager': {
-    id: 'leads-manager',
-    title: 'Leads Manager',
-    description: 'Dedicated lead management and nurturing to maximize your conversion potential.',
-    features: [
-      'Lead qualification and scoring implementation',
-      'Database segmentation for targeted campaigns',
-      'Lead nurturing sequences and follow-up automation',
-      'Conversion tracking and performance analytics',
-      'Lead source optimization and ROI analysis'
+      'Smart lead routing based on agent availability and expertise',
+      'Agent nudging and accountability for consistent follow-up',
+      'Active lead redistribution when agents aren\'t responding',
+      'Lead reassignment from inactive to active agents',
+      'Proper stage management and pond release systems',
+      'FUB system analysis and bottleneck identification',
+      'Custom configuration and ongoing optimization',
+      'Monthly reporting on lead flow and agent performance'
     ]
   },
-  'account-manager': {
-    id: 'account-manager',
-    title: 'Account Manager',
-    description: 'Strategic oversight and relationship management for sustainable business growth.',
+  'lead-conversion': {
+    id: 'lead-conversion',
+    title: 'Lead Conversion',
+    description: 'Turn Cold Leads Into Live Transfers. Complete ISA calling system with systematic follow-up and full FUB management.',
     features: [
-      'Monthly strategy sessions and performance reviews',
-      'Goal setting and KPI tracking',
-      'Market analysis and competitive positioning',
-      'Growth opportunity identification',
-      'Cross-team coordination and project management',
-      'Quarterly business reviews and planning sessions'
+      'Systematic ISA calling with 8-12 touches on every lead',
+      'Smart list calling when leads heat up and engage',
+      'Thorough lead qualification before live transfers',
+      'Qualified live transfers to agents ready to book appointments',
+      'Complete Follow Up Boss system management included',
+      'Agent nudging and lead reassignment when needed',
+      'Proper lead staging and pond release management',
+      'Monthly reporting on calls, conversions, and lead flow'
+    ]
+  },
+  'real-scout-integration': {
+    id: 'real-scout-integration',
+    title: 'Real Scout Integration',
+    description: 'Complete Real Scout integration with Follow Up Boss, custom smart lists, and comprehensive team training.',
+    features: [
+      'Full Real Scout integration with Follow Up Boss',
+      'Real Scout smart lists for better lead management',
+      'Real Scout workflow optimization and automation',
+      'Team training on Real Scout best practices',
+      'Resource materials and guides'
     ]
   }
 };
