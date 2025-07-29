@@ -1,3 +1,4 @@
+// src/app/admin/login/page.tsx
 'use client';
 
 import { useState } from 'react';
@@ -24,9 +25,11 @@ export default function AdminLoginPage() {
       });
 
       if (response.ok) {
-        // Set admin session
+        // Set admin session in localStorage for immediate client-side access
         localStorage.setItem('adminAuth', 'true');
-        router.push('/admin');
+        
+        // Force a full page refresh to trigger middleware re-check
+        window.location.href = '/admin';
       } else {
         setError('Invalid password');
       }
@@ -90,6 +93,12 @@ export default function AdminLoginPage() {
             )}
           </button>
         </form>
+
+        <div className="mt-6 text-center">
+          <p className="text-xs text-slate-500">
+            Default password: <code className="bg-slate-100 px-1 rounded">amplified2025</code>
+          </p>
+        </div>
       </div>
     </div>
   );
