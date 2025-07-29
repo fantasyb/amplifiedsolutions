@@ -1,4 +1,3 @@
-// src/app/admin/login/page.tsx
 'use client';
 
 import { useState } from 'react';
@@ -25,8 +24,11 @@ export default function AdminLoginPage() {
       });
 
       if (response.ok) {
-        // Set admin session in localStorage for immediate client-side access
+        const result = await response.json();
+        
+        // Set role in localStorage for client-side checks
         localStorage.setItem('adminAuth', 'true');
+        localStorage.setItem('userRole', result.role);
         
         // Force a full page refresh to trigger middleware re-check
         window.location.href = '/admin';
@@ -94,7 +96,12 @@ export default function AdminLoginPage() {
           </button>
         </form>
 
-
+        <div className="mt-6 text-center">
+          <div className="text-xs text-slate-500 space-y-1">
+            <p><strong>Full Admin:</strong> Access to all features</p>
+            <p><strong>Team Access:</strong> Forms and templates only</p>
+          </div>
+        </div>
       </div>
     </div>
   );

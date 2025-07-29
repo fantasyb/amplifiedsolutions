@@ -1,7 +1,6 @@
-// src/app/admin/layout.tsx
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { 
@@ -16,6 +15,24 @@ export default function AdminLayout({
   const pathname = usePathname();
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [accessLevel, setAccessLevel] = useState<'full' | 'limited'>('limited');
+
+  useEffect(() => {
+    // Check access level from localStorage or API
+    const checkAccessLevel = async () => {
+      try {
+        const response = await fetch('/api/admin/check-access');
+        if (response.ok) {
+          const data = await response.json();
+          setAccessLevel(data.accessLevel || 'limited');
+        }
+      } catch (error) {
+        console.error('Error checking access level:', error);
+      }
+    };
+    
+    checkAccessLevel();
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -27,12 +44,29 @@ export default function AdminLayout({
     }
   };
 
-  const navigation = [
-  { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
-  { name: 'Proposals', href: '/admin/proposals', icon: FileText },
-  { name: 'Forms', href: '/admin/questionnaires', icon: MessageSquare },
-  { name: 'Templates', href: '/admin/templates', icon: Settings }, // Add this line
-];
+  // Different navigation based on access level
+  const fullNavigation = [
+    { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
+    { name: 'Proposals', href: '/admin/proposals', icon: FileText },
+    { name: 'Forms', href: '/admin/questionnaires', icon: MessageSquare },
+    { name: 'Templates', href: '/admin/templates', icon: Settings },
+  ];
+
+  const limitedNavigation = [
+    { name: 'Forms', href: '/admin/questionnaires', icon: MessageSquare },
+    { name: 'Templates', href: '/admin/templates', icon: Settings },
+  ];
+
+  const navigation = accessLevel === 'full' ? fullNavigation : limitedNavigation;
+
+  // Redirect limited users away from restricted pages
+  useEffect(() => {
+    if (accessLevel === 'limited') {
+      if (pathname === '/admin' || pathname.startsWith('/admin/proposals')) {
+        router.push('/admin/questionnaires');
+      }
+    }
+  }, [accessLevel, pathname, router]);
 
   return (
     <div className="min-h-screen bg-slate-50 flex">
@@ -51,7 +85,12 @@ export default function AdminLayout({
             <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-sm">AS</span>
             </div>
-            <span className="text-lg font-semibold text-slate-900">Admin</span>
+            <div>
+              <span className="text-lg font-semibold text-slate-900">Admin</span>
+              {accessLevel === 'limited' && (
+                <div className="text-xs text-slate-500">Team Access</div>
+              )}
+            </div>
           </div>
           <button
             onClick={() => setSidebarOpen(false)}
