@@ -5,7 +5,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { 
-  LayoutDashboard, FileText, MessageSquare, LogOut, Menu, X
+  LayoutDashboard, FileText, MessageSquare, LogOut, Menu, X, Settings
 } from 'lucide-react';
 
 export default function AdminLayout({
@@ -28,10 +28,11 @@ export default function AdminLayout({
   };
 
   const navigation = [
-    { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
-    { name: 'Proposals', href: '/admin/proposals', icon: FileText },
-    { name: 'Questionnaires', href: '/admin/questionnaires', icon: MessageSquare },
-  ];
+  { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
+  { name: 'Proposals', href: '/admin/proposals', icon: FileText },
+  { name: 'Forms', href: '/admin/questionnaires', icon: MessageSquare },
+  { name: 'Templates', href: '/admin/templates', icon: Settings }, // Add this line
+];
 
   return (
     <div className="min-h-screen bg-slate-50 flex">

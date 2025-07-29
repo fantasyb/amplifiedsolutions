@@ -1,29 +1,28 @@
-// src/app/admin/questionnaires/page.tsx
 import Link from 'next/link';
-import QuestionnaireList from '@/components/admin/QuestionnaireList';
+import TemplateList from '@/components/admin/TemplateList';
 import { Plus } from 'lucide-react';
 
-export default function AdminFormsPage() {
+export default function AdminTemplatesPage() {
   return (
     <div className="p-8">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-slate-900">Client Forms</h1>
-            <p className="text-slate-600 mt-1">Manage and track client intake forms</p>
+            <h1 className="text-3xl font-bold text-slate-900">Questionnaire Templates</h1>
+            <p className="text-slate-600 mt-1">Create and edit questionnaire templates</p>
           </div>
           <Link
-            href="/admin/questionnaires/new"
+            href="/admin/templates/new"
             className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
           >
             <Plus className="w-4 h-4" />
-            Send New Form
+            New Template
           </Link>
         </div>
 
-        {/* Form List Component */}
-        <QuestionnaireList />
+        {/* Template List Component */}
+        <TemplateList />
       </div>
     </div>
   );

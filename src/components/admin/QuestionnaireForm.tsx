@@ -1,14 +1,19 @@
 // src/components/admin/QuestionnaireForm.tsx
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { getAllTemplates } from '@/data/questionnaire-templates';
-import { QuestionnaireClient } from '@/types/questionnaire';
+import { QuestionnaireClient, QuestionnaireTemplate } from '@/types/questionnaire';
+
+interface TemplateWithMetadata extends QuestionnaireTemplate {
+  isBuiltIn?: boolean;
+}
 
 export default function QuestionnaireForm() {
   const router = useRouter();
   const [selectedTemplate, setSelectedTemplate] = useState('');
+  const [templates, setTemplates] = useState<TemplateWithMetadata[]>([]);
+  const [templatesLoading, setTemplatesLoading] = useState(true);
   const [client, setClient] = useState<QuestionnaireClient>({
     name: '',
     email: '',
@@ -19,7 +24,21 @@ export default function QuestionnaireForm() {
   const [step, setStep] = useState(1);
   const [createdQuestionnaire, setCreatedQuestionnaire] = useState<any>(null);
 
-  const templates = getAllTemplates();
+  useEffect(() => {
+    fetchTemplates();
+  }, []);
+
+  const fetchTemplates = async () => {
+    try {
+      const response = await fetch('/api/templates');
+      const data = await response.json();
+      setTemplates(data);
+    } catch (error) {
+      console.error('Error fetching templates:', error);
+    } finally {
+      setTemplatesLoading(false);
+    }
+  };
 
   const handleClientSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,11 +69,11 @@ export default function QuestionnaireForm() {
         setStep(3); // Go to success step instead of redirecting
       } else {
         console.error('Failed to create questionnaire');
-        alert('Failed to create questionnaire. Please try again.');
+        alert('Failed to create form. Please try again.');
       }
     } catch (error) {
       console.error('Error creating questionnaire:', error);
-      alert('Error creating questionnaire. Please try again.');
+      alert('Error creating form. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -66,7 +85,7 @@ export default function QuestionnaireForm() {
     const url = `${window.location.origin}/questionnaire/${createdQuestionnaire.questionnaireId}`;
     try {
       await navigator.clipboard.writeText(url);
-      alert('Questionnaire URL copied to clipboard!');
+      alert('Form URL copied to clipboard!');
     } catch (err) {
       prompt('Copy this URL to send to your client:', url);
     }
@@ -83,15 +102,15 @@ export default function QuestionnaireForm() {
             </svg>
           </div>
           
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Questionnaire Created Successfully!</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Form Created Successfully!</h2>
           <p className="text-gray-600 mb-6">
-            The questionnaire for <strong>{client.name}</strong> has been created. 
+            The form for <strong>{client.name}</strong> has been created. 
             Since email is not set up yet, you'll need to manually share the URL with your client.
           </p>
 
           <div className="bg-gray-50 rounded-lg p-4 mb-6">
-            <p className="text-sm font-medium text-gray-700 mb-2">Client Questionnaire URL:</p>
-            <code className="text-sm bg-white px-3 py-2 rounded border block">
+            <p className="text-sm font-medium text-gray-700 mb-2">Client Form URL:</p>
+            <code className="text-sm bg-white px-3 py-2 rounded border block break-all">
               {window.location.origin}/questionnaire/{createdQuestionnaire.questionnaireId}
             </code>
           </div>
@@ -109,14 +128,14 @@ export default function QuestionnaireForm() {
               target="_blank"
               className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors text-center"
             >
-              Preview Questionnaire
+              Preview Form
             </a>
             
             <button
               onClick={() => router.push('/admin/questionnaires')}
               className="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-medium transition-colors"
             >
-              Back to Questionnaires
+              Back to Forms
             </button>
           </div>
 
@@ -124,9 +143,9 @@ export default function QuestionnaireForm() {
             <h3 className="font-semibold text-blue-900 mb-2">💡 Next Steps:</h3>
             <ul className="text-sm text-blue-800 text-left space-y-1">
               <li>• Copy the URL above and send it to {client.name} via email</li>
-              <li>• The questionnaire will expire in 30 days</li>
+              <li>• The form will expire in 30 days</li>
               <li>• You'll be able to view responses once the client completes it</li>
-              <li>• Consider setting up email automation for future questionnaires</li>
+              <li>• Consider setting up email automation for future forms</li>
             </ul>
           </div>
         </div>
@@ -242,7 +261,7 @@ export default function QuestionnaireForm() {
         {step === 2 && (
           <div>
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-semibold">Select Questionnaire Template</h2>
+              <h2 className="text-xl font-semibold">Select Form Template</h2>
               <button
                 onClick={() => setStep(1)}
                 className="text-blue-600 hover:text-blue-800 font-medium"
@@ -251,85 +270,115 @@ export default function QuestionnaireForm() {
               </button>
             </div>
 
-            <div className="space-y-4 mb-8">
-              {templates.map((template) => (
-                <div
-                  key={template.id}
-                  className={`border rounded-lg p-6 cursor-pointer transition-colors ${
-                    selectedTemplate === template.id
-                      ? 'border-blue-500 bg-blue-50'
-                      : 'border-gray-200 hover:border-gray-300'
-                  }`}
-                  onClick={() => setSelectedTemplate(template.id)}
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center">
-                        <input
-                          type="radio"
-                          checked={selectedTemplate === template.id}
-                          onChange={() => setSelectedTemplate(template.id)}
-                          className="mr-3 text-blue-600 focus:ring-blue-500"
-                        />
-                        <h3 className="text-lg font-semibold text-gray-900">{template.name}</h3>
+            {templatesLoading ? (
+              <div className="text-center py-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+                <p className="text-gray-500 mt-4">Loading templates...</p>
+              </div>
+            ) : (
+              <>
+                <div className="space-y-4 mb-8">
+                  {templates.map((template) => (
+                    <div
+                      key={template.id}
+                      className={`border rounded-lg p-6 cursor-pointer transition-colors ${
+                        selectedTemplate === template.id
+                          ? 'border-blue-500 bg-blue-50'
+                          : 'border-gray-200 hover:border-gray-300'
+                      }`}
+                      onClick={() => setSelectedTemplate(template.id)}
+                    >
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center">
+                            <input
+                              type="radio"
+                              checked={selectedTemplate === template.id}
+                              onChange={() => setSelectedTemplate(template.id)}
+                              className="mr-3 text-blue-600 focus:ring-blue-500"
+                            />
+                            <div>
+                              <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                                {template.name}
+                                {template.isBuiltIn && (
+                                  <span className="px-2 py-0.5 bg-orange-100 text-orange-800 text-xs font-medium rounded">
+                                    Built-in
+                                  </span>
+                                )}
+                              </h3>
+                            </div>
+                          </div>
+                          <p className="text-gray-600 mt-2 ml-6">{template.description}</p>
+                          <div className="mt-3 ml-6">
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                              {template.questions.length} questions
+                            </span>
+                          </div>
+                        </div>
                       </div>
-                      <p className="text-gray-600 mt-2 ml-6">{template.description}</p>
-                      <div className="mt-3 ml-6">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                          {template.questions.length} questions
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {selectedTemplate && (
-              <div className="bg-gray-50 rounded-lg p-6 mb-8">
-                <h3 className="font-semibold text-gray-900 mb-4">Preview: Questions in this template</h3>
-                <div className="space-y-2">
-                  {templates.find(t => t.id === selectedTemplate)?.questions.slice(0, 5).map((question, index) => (
-                    <div key={question.id} className="flex items-center text-sm">
-                      <span className="text-gray-500 mr-2">{index + 1}.</span>
-                      <span className="text-gray-700">{question.title}</span>
-                      {question.required && <span className="text-red-500 ml-1">*</span>}
                     </div>
                   ))}
-                  {templates.find(t => t.id === selectedTemplate)?.questions.length! > 5 && (
-                    <div className="text-sm text-gray-500 ml-4">
-                      ... and {templates.find(t => t.id === selectedTemplate)?.questions.length! - 5} more questions
-                    </div>
-                  )}
                 </div>
-              </div>
-            )}
 
-            <div className="flex justify-between">
-              <button
-                onClick={() => setStep(1)}
-                className="px-6 py-3 border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50 transition-colors"
-              >
-                Back
-              </button>
-              <button
-                onClick={handleSendQuestionnaire}
-                disabled={!selectedTemplate || loading}
-                className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white px-8 py-3 rounded-lg font-medium transition-colors flex items-center"
-              >
-                {loading ? (
-                  <>
-                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    Creating...
-                  </>
-                ) : (
-                  'Create Questionnaire'
+                {templates.length === 0 && (
+                  <div className="text-center py-8 border-2 border-dashed border-gray-300 rounded-lg">
+                    <p className="text-gray-500 mb-4">No templates available</p>
+                    <a
+                      href="/admin/templates/new"
+                      className="text-blue-600 hover:text-blue-800 font-medium"
+                    >
+                      Create your first template →
+                    </a>
+                  </div>
                 )}
-              </button>
-            </div>
+
+                {selectedTemplate && (
+                  <div className="bg-gray-50 rounded-lg p-6 mb-8">
+                    <h3 className="font-semibold text-gray-900 mb-4">Preview: Questions in this template</h3>
+                    <div className="space-y-2">
+                      {templates.find(t => t.id === selectedTemplate)?.questions.slice(0, 5).map((question, index) => (
+                        <div key={question.id} className="flex items-center text-sm">
+                          <span className="text-gray-500 mr-2">{index + 1}.</span>
+                          <span className="text-gray-700">{question.title}</span>
+                          {question.required && <span className="text-red-500 ml-1">*</span>}
+                        </div>
+                      ))}
+                      {templates.find(t => t.id === selectedTemplate)?.questions.length! > 5 && (
+                        <div className="text-sm text-gray-500 ml-4">
+                          ... and {templates.find(t => t.id === selectedTemplate)?.questions.length! - 5} more questions
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                <div className="flex justify-between">
+                  <button
+                    onClick={() => setStep(1)}
+                    className="px-6 py-3 border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                  >
+                    Back
+                  </button>
+                  <button
+                    onClick={handleSendQuestionnaire}
+                    disabled={!selectedTemplate || loading}
+                    className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white px-8 py-3 rounded-lg font-medium transition-colors flex items-center"
+                  >
+                    {loading ? (
+                      <>
+                        <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Creating...
+                      </>
+                    ) : (
+                      'Create Form'
+                    )}
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         )}
       </div>

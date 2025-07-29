@@ -254,3 +254,15 @@ export function getQuestionnaireTemplate(id: string) {
 export function getAllTemplates() {
   return Object.values(questionnaireTemplates);
 }
+
+export async function getTemplate(templateId: string) {
+  // First check built-in templates
+  const builtInTemplate = getQuestionnaireTemplate(templateId);
+  if (builtInTemplate) {
+    return builtInTemplate;
+  }
+
+  // If not found in built-in templates, it might be a custom one
+  // The API will handle custom template lookup from Redis
+  return null;
+}

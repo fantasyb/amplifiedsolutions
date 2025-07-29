@@ -1,9 +1,22 @@
 // src/app/api/questionnaires/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { QuestionnaireClient, Questionnaire } from '@/types/questionnaire';
-import { getQuestionnaireTemplate } from '@/data/questionnaire-templates';
+import { getQuestionnaireTemplate, getAllTemplates } from '@/data/questionnaire-templates';
 import { redis } from '@/lib/redis';
 import { nanoid } from 'nanoid';
+
+// Helper function to get template from both sources
+async function getTemplate(templateId: string) {
+  // First check built-in templates
+  const builtInTemplate = getQuestionnaireTemplate(templateId);
+  if (builtInTemplate) {
+    return builtInTemplate;
+  }
+
+  // Then check custom templates in Redis
+  const customTemplate = await redis.get(`template:${templateId}`);
+  return customTemplate;
+}
 
 export async function GET() {
   try {
@@ -46,14 +59,16 @@ export async function POST(request: NextRequest) {
     const { templateId, client }: { templateId: string; client: QuestionnaireClient } = data;
     
     console.log('📋 API: Received data for client:', client.name);
+    console.log('🛠️ API: Looking for template:', templateId);
 
-    const template = getQuestionnaireTemplate(templateId);
+    // Get template from both built-in and custom sources
+    const template = await getTemplate(templateId);
     if (!template) {
       console.log('❌ API: Template not found:', templateId);
       return NextResponse.json({ error: 'Template not found' }, { status: 404 });
     }
 
-    console.log('🛠️ API: Using template:', template.name);
+    console.log('🛠️ API: Using template:', (template as any).name);
 
     // Generate unique ID
     const questionnaireId = generateQuestionnaireId(client.name);
@@ -66,7 +81,7 @@ export async function POST(request: NextRequest) {
       id: questionnaireId,
       templateId,
       client,
-      title: template.name,
+      title: (template as any).name,
       status: 'sent',
       createdAt: now,
       sentAt: now,

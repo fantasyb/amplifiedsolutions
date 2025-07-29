@@ -1,3 +1,4 @@
+// src/app/admin/page.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -40,8 +41,8 @@ export default function AdminDashboard() {
     totalProposals: proposals.length,
     acceptedProposals: proposals.filter(p => p.status === 'accepted').length,
     totalRevenue: proposals.filter(p => p.status === 'accepted').reduce((sum, p) => sum + p.cost, 0),
-    totalQuestionnaires: questionnaires.length,
-    completedQuestionnaires: questionnaires.filter(q => q.status === 'completed').length,
+    totalForms: questionnaires.length,
+    completedForms: questionnaires.filter(q => q.status === 'completed').length,
   };
 
   const formatCurrency = (amount: number) => {
@@ -72,7 +73,7 @@ export default function AdminDashboard() {
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold text-slate-900">Admin Dashboard</h1>
-        <p className="text-slate-600 mt-2">Overview of your proposals and questionnaires</p>
+        <p className="text-slate-600 mt-2">Overview of your proposals and forms</p>
       </div>
 
       {/* Stats Grid */}
@@ -106,9 +107,9 @@ export default function AdminDashboard() {
         <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-slate-600">Questionnaires</p>
-              <p className="text-3xl font-bold text-slate-900 mt-1">{stats.totalQuestionnaires}</p>
-              <p className="text-sm text-purple-600 mt-1">{stats.completedQuestionnaires} completed</p>
+              <p className="text-sm font-medium text-slate-600">Forms</p>
+              <p className="text-3xl font-bold text-slate-900 mt-1">{stats.totalForms}</p>
+              <p className="text-sm text-purple-600 mt-1">{stats.completedForms} completed</p>
             </div>
             <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
               <MessageSquare className="w-6 h-6 text-purple-600" />
@@ -121,9 +122,9 @@ export default function AdminDashboard() {
             <div>
               <p className="text-sm font-medium text-slate-600">Completion Rate</p>
               <p className="text-3xl font-bold text-slate-900 mt-1">
-                {stats.totalQuestionnaires > 0 ? Math.round((stats.completedQuestionnaires / stats.totalQuestionnaires) * 100) : 0}%
+                {stats.totalForms > 0 ? Math.round((stats.completedForms / stats.totalForms) * 100) : 0}%
               </p>
-              <p className="text-sm text-slate-500 mt-1">questionnaire responses</p>
+              <p className="text-sm text-slate-500 mt-1">form responses</p>
             </div>
             <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center">
               <CheckCircle className="w-6 h-6 text-orange-600" />
@@ -182,16 +183,16 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* Recent Questionnaires */}
+        {/* Recent Forms */}
         <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-semibold text-slate-900">Recent Questionnaires</h2>
+            <h2 className="text-xl font-semibold text-slate-900">Recent Forms</h2>
             <Link
               href="/admin/questionnaires/new"
               className="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm font-medium"
             >
               <Plus className="w-4 h-4" />
-              New Questionnaire
+              New Form
             </Link>
           </div>
           
@@ -199,7 +200,7 @@ export default function AdminDashboard() {
             {questionnaires.length === 0 ? (
               <div className="text-center py-8 text-slate-500">
                 <MessageSquare className="w-12 h-12 mx-auto mb-4 text-slate-300" />
-                <p>No questionnaires yet</p>
+                <p>No forms yet</p>
               </div>
             ) : (
               questionnaires.slice(0, 5).map((questionnaire) => (
@@ -224,7 +225,7 @@ export default function AdminDashboard() {
                 href="/admin/questionnaires"
                 className="block text-center text-purple-600 hover:text-purple-800 text-sm font-medium py-2"
               >
-                View All Questionnaires ({questionnaires.length}) →
+                View All Forms ({questionnaires.length}) →
               </Link>
             )}
           </div>
