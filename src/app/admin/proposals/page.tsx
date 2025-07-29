@@ -1,34 +1,30 @@
 // src/app/admin/proposals/page.tsx
 import Link from 'next/link';
 import ProposalList from '@/components/admin/ProposalList';
-import { FileText, Plus } from 'lucide-react';
+import { Plus } from 'lucide-react';
 
-export default function ProposalsAdminPage() {
+export default function AdminProposalsPage() {
   return (
-    <div className="space-y-8">
-      <div className="flex items-center justify-between">
-        <div>
-          <div className="flex items-center gap-3 mb-2">
-            <FileText className="w-8 h-8 text-blue-600" />
-            <h1 className="text-3xl font-bold text-slate-900">
-              Proposals
-            </h1>
+    <div className="p-8">
+      <div className="max-w-7xl mx-auto space-y-6">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-slate-900">Proposals</h1>
+            <p className="text-slate-600 mt-1">Manage and track all your client proposals</p>
           </div>
-          <p className="text-lg text-slate-600">
-            Manage and track all your client proposals
-          </p>
+          <Link
+            href="/admin/proposals/new"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+          >
+            <Plus className="w-4 h-4" />
+            New Proposal
+          </Link>
         </div>
 
-        <Link
-          href="/admin/proposals/new"
-          className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors font-medium"
-        >
-          <Plus className="w-5 h-5" />
-          New Proposal
-        </Link>
+        {/* Proposal List Component */}
+        <ProposalList />
       </div>
-
-      <ProposalList />
     </div>
   );
 }
