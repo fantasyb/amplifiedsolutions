@@ -4,26 +4,50 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Proposal } from '@/types/proposal';
-import { ExternalLink, Calendar, DollarSign, User, Eye, Plus, Trash2, Archive, Filter, SortAsc, SortDesc } from 'lucide-react';
+import { ExternalLink, Calendar, DollarSign, User, Eye, Plus, Trash2, Archive, Filter, SortAsc, SortDesc, TrendingUp, Clock } from 'lucide-react';
+
+interface ProposalWithAnalytics extends Proposal {
+  viewCount?: number;
+  lastViewed?: string;
+}
 
 export default function ProposalList() {
-  const [proposals, setProposals] = useState<Proposal[]>([]);
+  const [proposals, setProposals] = useState<ProposalWithAnalytics[]>([]);
+  const [analytics, setAnalytics] = useState<any>({});
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState<string>('all');
-  const [sortBy, setSortBy] = useState<'date' | 'status' | 'amount'>('date');
+  const [sortBy, setSortBy] = useState<'date' | 'status' | 'amount' | 'views'>('date');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
 
   useEffect(() => {
-    fetchProposals();
+    fetchData();
   }, []);
 
-  const fetchProposals = async () => {
+  const fetchData = async () => {
     try {
-      const response = await fetch('/api/proposals');
-      const data = await response.json();
-      setProposals(data);
+      // Fetch proposals and analytics in parallel
+      const [proposalsRes, analyticsRes] = await Promise.all([
+        fetch('/api/proposals'),
+        fetch('/api/admin/analytics')
+      ]);
+      
+      const proposalsData = await proposalsRes.json();
+      const analyticsData = analyticsRes.ok ? await analyticsRes.json() : { proposals: [] };
+      
+      // Merge analytics data with proposals
+      const proposalsWithAnalytics = proposalsData.map((proposal: Proposal) => {
+        const analytics = analyticsData.proposals?.find((a: any) => a.id === proposal.id);
+        return {
+          ...proposal,
+          viewCount: analytics?.open_count ? parseInt(analytics.open_count) : 0,
+          lastViewed: analytics?.latest_timestamp || null,
+        };
+      });
+      
+      setProposals(proposalsWithAnalytics);
+      setAnalytics(analyticsData);
     } catch (error) {
-      console.error('Error fetching proposals:', error);
+      console.error('Error fetching data:', error);
     } finally {
       setLoading(false);
     }
@@ -70,6 +94,9 @@ export default function ProposalList() {
         case 'amount':
           comparison = a.cost - b.cost;
           break;
+        case 'views':
+          comparison = (a.viewCount || 0) - (b.viewCount || 0);
+          break;
       }
       
       return sortOrder === 'asc' ? comparison : -comparison;
@@ -100,6 +127,14 @@ export default function ProposalList() {
     };
   };
 
+  const getEngagementStats = () => {
+    const totalViews = proposals.reduce((sum, p) => sum + (p.viewCount || 0), 0);
+    const viewedProposals = proposals.filter(p => (p.viewCount || 0) > 0).length;
+    const engagementRate = proposals.length > 0 ? Math.round((viewedProposals / proposals.length) * 100) : 0;
+    
+    return { totalViews, viewedProposals, engagementRate };
+  };
+
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -108,11 +143,20 @@ export default function ProposalList() {
     }).format(amount);
   };
 
-  const formatDate = (date: Date) => {
+  const formatDate = (date: Date | string) => {
     return new Date(date).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
+    });
+  };
+
+  const formatDateTime = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
     });
   };
 
@@ -125,9 +169,49 @@ export default function ProposalList() {
   }
 
   const statusCounts = getStatusCounts();
+  const engagementStats = getEngagementStats();
 
   return (
     <div className="space-y-6">
+      {/* Analytics Overview */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="bg-white rounded-xl border border-slate-200 p-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+              <TrendingUp className="w-5 h-5 text-blue-600" />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-slate-600">Total Views</p>
+              <p className="text-2xl font-bold text-slate-900">{engagementStats.totalViews}</p>
+            </div>
+          </div>
+        </div>
+        
+        <div className="bg-white rounded-xl border border-slate-200 p-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+              <Eye className="w-5 h-5 text-green-600" />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-slate-600">Proposals Viewed</p>
+              <p className="text-2xl font-bold text-slate-900">{engagementStats.viewedProposals}/{proposals.length}</p>
+            </div>
+          </div>
+        </div>
+        
+        <div className="bg-white rounded-xl border border-slate-200 p-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+              <span className="text-purple-600 font-bold text-sm">{engagementStats.engagementRate}%</span>
+            </div>
+            <div>
+              <p className="text-sm font-medium text-slate-600">Engagement Rate</p>
+              <p className="text-xs text-slate-500">Proposals opened by clients</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Status Filter Tabs */}
       <div className="bg-white rounded-xl border border-slate-200 p-6">
         <div className="flex flex-wrap gap-2 mb-4">
@@ -168,12 +252,13 @@ export default function ProposalList() {
           
           <select
             value={sortBy}
-            onChange={(e) => setSortBy(e.target.value as 'date' | 'status' | 'amount')}
+            onChange={(e) => setSortBy(e.target.value as 'date' | 'status' | 'amount' | 'views')}
             className="px-3 py-1 border border-slate-300 rounded-lg text-sm"
           >
             <option value="date">Date Created</option>
             <option value="status">Status</option>
             <option value="amount">Amount</option>
+            <option value="views">View Count</option>
           </select>
 
           <button
@@ -248,6 +333,36 @@ export default function ProposalList() {
                   <div className="text-sm text-slate-500">
                     {proposal.services.length} service{proposal.services.length !== 1 ? 's' : ''}
                   </div>
+                </div>
+              </div>
+
+              {/* Analytics Row */}
+              <div className="bg-slate-50 rounded-lg p-3 mb-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-1 text-sm">
+                      <TrendingUp className="w-4 h-4 text-blue-600" />
+                      <span className="font-medium text-slate-900">{proposal.viewCount || 0}</span>
+                      <span className="text-slate-600">views</span>
+                    </div>
+                    
+                    {proposal.lastViewed ? (
+                      <div className="flex items-center gap-1 text-sm text-slate-600">
+                        <Clock className="w-4 h-4" />
+                        <span>Last viewed {formatDateTime(proposal.lastViewed)}</span>
+                      </div>
+                    ) : (
+                      <div className="text-sm text-slate-500">
+                        📬 Not viewed yet
+                      </div>
+                    )}
+                  </div>
+                  
+                  {proposal.viewCount && proposal.viewCount > 0 && (
+                    <div className="text-xs text-green-600 font-medium">
+                      ✅ Client engaged
+                    </div>
+                  )}
                 </div>
               </div>
 

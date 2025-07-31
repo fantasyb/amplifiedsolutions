@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 import { getProposal } from '@/data/proposals';
 import ProposalContainer from '@/components/proposals/ProposalContainer';
+import TrackingPixel from '@/components/TrackingPixel';
 
 interface ProposalPageProps {
   params: Promise<{
@@ -29,6 +30,9 @@ export default async function ProposalPage({ params, searchParams }: ProposalPag
   
   return (
     <div>
+      {/* Tracking Pixel - Invisible tracking for analytics */}
+      <TrackingPixel type="proposal" id={id} />
+      
       {/* Success Banner */}
       {success && (
         <div className="bg-green-50 border-l-4 border-green-400 p-6 mb-8 mx-4 sm:mx-6 lg:mx-8 mt-8 rounded-r-lg">

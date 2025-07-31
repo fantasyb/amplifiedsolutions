@@ -1,18 +1,32 @@
 // src/components/proposals/PricingSection.tsx
-import { DollarSign, Clock, Shield } from 'lucide-react';
+import { DollarSign } from 'lucide-react';
 
 interface PricingSectionProps {
   cost: number;
   notes?: string;
+  isRecurring?: boolean;
+  recurringPeriod?: string; // 'monthly', 'quarterly', 'annually', etc.
 }
 
-export default function PricingSection({ cost, notes }: PricingSectionProps) {
+export default function PricingSection({ cost, notes, isRecurring = false, recurringPeriod = 'monthly' }: PricingSectionProps) {
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'USD',
       minimumFractionDigits: 0,
     }).format(amount);
+  };
+
+  const getPeriodText = () => {
+    if (!isRecurring) return 'One-time investment';
+    
+    switch (recurringPeriod?.toLowerCase()) {
+      case 'monthly': return 'per month';
+      case 'quarterly': return 'per quarter';
+      case 'annually': return 'per year';
+      case 'weekly': return 'per week';
+      default: return `per ${recurringPeriod}`;
+    }
   };
 
   return (
@@ -32,7 +46,7 @@ export default function PricingSection({ cost, notes }: PricingSectionProps) {
         <div className="text-center mb-8">
           <h2 className="text-3xl font-bold mb-3">Investment</h2>
           <p className="text-slate-300 text-lg">
-            A comprehensive solution tailored to your success
+            {isRecurring ? 'Ongoing partnership for continuous growth' : 'A comprehensive solution tailored to your success'}
           </p>
         </div>
 
@@ -49,32 +63,17 @@ export default function PricingSection({ cost, notes }: PricingSectionProps) {
           </div>
           
           <p className="text-slate-300 text-lg">
-            One-time setup and implementation
+            {getPeriodText()}
           </p>
+          
+          {isRecurring && (
+            <p className="text-slate-400 text-sm mt-2">
+              Flexible billing • Cancel anytime
+            </p>
+          )}
         </div>
 
-        {/* Value Props */}
-        <div className="grid md:grid-cols-3 gap-6 mb-8">
-          <div className="text-center p-6 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10">
-            <Clock className="w-8 h-8 text-blue-400 mx-auto mb-3" />
-            <h4 className="font-semibold mb-2">Quick Setup</h4>
-            <p className="text-sm text-slate-300">Implementation within 2-3 weeks</p>
-          </div>
-          
-          <div className="text-center p-6 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10">
-            <Shield className="w-8 h-8 text-green-400 mx-auto mb-3" />
-            <h4 className="font-semibold mb-2">Guaranteed Results</h4>
-            <p className="text-sm text-slate-300">ROI-focused implementation</p>
-          </div>
-          
-          <div className="text-center p-6 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10">
-            <DollarSign className="w-8 h-8 text-yellow-400 mx-auto mb-3" />
-            <h4 className="font-semibold mb-2">No Hidden Fees</h4>
-            <p className="text-sm text-slate-300">Transparent, all-inclusive pricing</p>
-          </div>
-        </div>
-
-        {/* Notes */}
+        {/* Notes - Only show if provided */}
         {notes && (
           <div className="p-6 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10">
             <h4 className="font-semibold mb-3 flex items-center gap-2">

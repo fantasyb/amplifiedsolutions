@@ -11,6 +11,12 @@ export async function POST(request: NextRequest) {
   try {
     const data = await request.json();
     console.log('📋 API: Received data for client:', data.clientName);
+    console.log('💰 API: Payment data:', {
+      paymentType: data.paymentType,
+      isRecurring: data.isRecurring,
+      downPayment: data.downPayment,
+      installmentCount: data.installmentCount
+    });
     
     // Generate unique ID
     const proposalId = generateProposalId(data.clientName);
@@ -31,19 +37,20 @@ export async function POST(request: NextRequest) {
     console.log('💳 API: About to create Stripe session with ID:', proposalId);
     
     const stripeCheckoutUrl = await createStripeCheckoutSession({
-      proposalId: proposalId, // Make sure we're passing the right ID
+      proposalId: proposalId,
       clientName: data.clientName,
       clientEmail: data.clientEmail,
       cost: data.cost,
       paymentType: data.paymentType,
       downPayment: data.downPayment,
       installmentCount: data.installmentCount,
+      isRecurring: data.isRecurring, // Add this
       services: selectedServices,
     });
     
     console.log('✅ API: Stripe session created, URL received');
     
-    // Create proposal object
+    // Create proposal object - ADD THE MISSING FIELDS HERE
     const proposalData = {
       client: {
         name: data.clientName,
@@ -56,12 +63,21 @@ export async function POST(request: NextRequest) {
       notes: data.notes || undefined,
       stripeCheckoutUrl,
       expiresAt,
+      // ADD THE RECURRING FIELDS
+      isRecurring: data.isRecurring || false,
+      paymentType: data.paymentType || 'full',
+      downPayment: data.downPayment,
+      installmentCount: data.installmentCount,
     };
     
     console.log('💾 API: About to save proposal with ID:', proposalId);
+    console.log('💾 API: Proposal includes recurring data:', {
+      isRecurring: proposalData.isRecurring,
+      paymentType: proposalData.paymentType
+    });
     
     // Create and save proposal
-    const proposal = await createProposal(proposalData, proposalId); // Add await here
+    const proposal = await createProposal(proposalData, proposalId);
     
     console.log('🎉 API: Proposal created successfully with ID:', proposal.id);
     
@@ -88,9 +104,10 @@ async function createStripeCheckoutSession(params: {
   paymentType: string;
   downPayment?: number;
   installmentCount?: number;
+  isRecurring?: boolean; // Add this
   services: any[];
 }) {
-  const { proposalId, clientName, clientEmail, cost, paymentType, downPayment, installmentCount, services } = params;
+  const { proposalId, clientName, clientEmail, cost, paymentType, downPayment, installmentCount, isRecurring, services } = params;
   
   const baseUrl = getBaseUrl();
   
@@ -102,29 +119,59 @@ async function createStripeCheckoutSession(params: {
       success_url: `${baseUrl}/proposal/${proposalId}?success=true`,
       cancel_url: `${baseUrl}/proposal/${proposalId}?canceled=true`,
       metadata: {
-        proposalId: proposalId, // ⭐ This is the key fix!
+        proposalId: proposalId,
         clientName,
         paymentType,
+        isRecurring: isRecurring ? 'true' : 'false', // Add this
       },
     };
 
     if (paymentType === 'full') {
-      // Full payment
-      sessionData.line_items = [{
-        price_data: {
+      if (isRecurring) {
+        // Create recurring subscription for full payment
+        const product = await stripe.products.create({
+          name: `${clientName} - Monthly Service`,
+          description: `Recurring monthly service: ${services.map(s => s.title).join(', ')}`,
+        });
+        
+        const price = await stripe.prices.create({
+          product: product.id,
+          unit_amount: cost * 100,
           currency: 'usd',
-          product_data: {
-            name: `Amplified Solutions - ${clientName}`,
-            description: `Services: ${services.map(s => s.title).join(', ')}`,
+          recurring: {
+            interval: 'month',
           },
-          unit_amount: cost * 100, // Stripe expects cents
-        },
-        quantity: 1,
-      }];
-      sessionData.mode = 'payment';
+        });
+        
+        sessionData.line_items = [{
+          price: price.id,
+          quantity: 1,
+        }];
+        sessionData.mode = 'subscription';
+        sessionData.subscription_data = {
+          metadata: {
+            proposalId: proposalId,
+            isRecurring: 'true',
+          },
+        };
+      } else {
+        // One-time full payment
+        sessionData.line_items = [{
+          price_data: {
+            currency: 'usd',
+            product_data: {
+              name: `Amplified Solutions - ${clientName}`,
+              description: `Services: ${services.map(s => s.title).join(', ')}`,
+            },
+            unit_amount: cost * 100,
+          },
+          quantity: 1,
+        }];
+        sessionData.mode = 'payment';
+      }
       
     } else if (paymentType === 'partial') {
-      // Down payment only
+      // Down payment only (one-time)
       sessionData.line_items = [{
         price_data: {
           currency: 'usd',
@@ -142,7 +189,6 @@ async function createStripeCheckoutSession(params: {
       // Subscription for installments
       const installmentAmount = Math.round(cost / installmentCount!);
       
-      // Create a product and price for the installment
       const product = await stripe.products.create({
         name: `${clientName} - Service Package`,
         description: `${installmentCount} monthly payments for services`,
@@ -164,9 +210,10 @@ async function createStripeCheckoutSession(params: {
       sessionData.mode = 'subscription';
       sessionData.subscription_data = {
         metadata: {
-          proposalId: proposalId, // ⭐ Also add here for subscriptions
+          proposalId: proposalId,
           installmentCount: installmentCount!.toString(),
           totalPayments: installmentCount!.toString(),
+          isRecurring: isRecurring ? 'true' : 'false',
         },
       };
     }

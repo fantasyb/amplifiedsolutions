@@ -11,6 +11,9 @@ interface ProposalContainerProps {
 }
 
 export default function ProposalContainer({ proposal }: ProposalContainerProps) {
+  // Destructure with defaults to handle missing properties
+  const { isRecurring = false, paymentType, downPayment, installmentCount } = proposal;
+
   return (
     <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-5xl mx-auto space-y-12">
@@ -33,7 +36,12 @@ export default function ProposalContainer({ proposal }: ProposalContainerProps) 
         </div>
 
         {/* Pricing */}
-        <PricingSection cost={proposal.cost} notes={proposal.notes} />
+        <PricingSection 
+          cost={proposal.cost} 
+          notes={proposal.notes}
+          isRecurring={isRecurring}
+          recurringPeriod="monthly"
+        />
 
         {/* Accept Button */}
         <AcceptButton 

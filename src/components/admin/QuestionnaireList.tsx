@@ -5,27 +5,52 @@ import Link from 'next/link';
 import { Questionnaire } from '@/types/questionnaire';
 import { 
   ExternalLink, Calendar, FileText, User, Eye, Trash2, Copy, 
-  Filter, SortAsc, SortDesc, CheckCircle, Clock, Send, XCircle, Plus 
+  Filter, SortAsc, SortDesc, CheckCircle, Clock, Send, XCircle, Plus,
+  TrendingUp
 } from 'lucide-react';
 
+interface QuestionnaireWithAnalytics extends Questionnaire {
+  viewCount?: number;
+  lastViewed?: string;
+}
+
 export default function QuestionnaireList() {
-  const [questionnaires, setQuestionnaires] = useState<Questionnaire[]>([]);
+  const [questionnaires, setQuestionnaires] = useState<QuestionnaireWithAnalytics[]>([]);
+  const [analytics, setAnalytics] = useState<any>({});
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState<string>('all');
-  const [sortBy, setSortBy] = useState<'date' | 'status' | 'client'>('date');
+  const [sortBy, setSortBy] = useState<'date' | 'status' | 'client' | 'views'>('date');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
 
   useEffect(() => {
-    fetchQuestionnaires();
+    fetchData();
   }, []);
 
-  const fetchQuestionnaires = async () => {
+  const fetchData = async () => {
     try {
-      const response = await fetch('/api/questionnaires');
-      const data = await response.json();
-      setQuestionnaires(data);
+      // Fetch questionnaires and analytics in parallel
+      const [questionnairesRes, analyticsRes] = await Promise.all([
+        fetch('/api/questionnaires'),
+        fetch('/api/admin/analytics')
+      ]);
+      
+      const questionnairesData = await questionnairesRes.json();
+      const analyticsData = analyticsRes.ok ? await analyticsRes.json() : { questionnaires: [] };
+      
+      // Merge analytics data with questionnaires
+      const questionnairesWithAnalytics = questionnairesData.map((questionnaire: Questionnaire) => {
+        const analytics = analyticsData.questionnaires?.find((a: any) => a.id === questionnaire.id);
+        return {
+          ...questionnaire,
+          viewCount: analytics?.open_count ? parseInt(analytics.open_count) : 0,
+          lastViewed: analytics?.latest_timestamp || null,
+        };
+      });
+      
+      setQuestionnaires(questionnairesWithAnalytics);
+      setAnalytics(analyticsData);
     } catch (error) {
-      console.error('Error fetching questionnaires:', error);
+      console.error('Error fetching data:', error);
     } finally {
       setLoading(false);
     }
@@ -81,6 +106,9 @@ export default function QuestionnaireList() {
         case 'client':
           comparison = a.client.name.localeCompare(b.client.name);
           break;
+        case 'views':
+          comparison = (a.viewCount || 0) - (b.viewCount || 0);
+          break;
       }
       
       return sortOrder === 'asc' ? comparison : -comparison;
@@ -126,11 +154,30 @@ export default function QuestionnaireList() {
     };
   };
 
-  const formatDate = (date: Date) => {
+  const getEngagementStats = () => {
+    const totalViews = questionnaires.reduce((sum, q) => sum + (q.viewCount || 0), 0);
+    const viewedQuestionnaires = questionnaires.filter(q => (q.viewCount || 0) > 0).length;
+    const completedCount = questionnaires.filter(q => q.status === 'completed').length;
+    const engagementRate = questionnaires.length > 0 ? Math.round((viewedQuestionnaires / questionnaires.length) * 100) : 0;
+    const completionRate = questionnaires.length > 0 ? Math.round((completedCount / questionnaires.length) * 100) : 0;
+    
+    return { totalViews, viewedQuestionnaires, engagementRate, completionRate };
+  };
+
+  const formatDate = (date: Date | string) => {
     return new Date(date).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
+    });
+  };
+
+  const formatDateTime = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
     });
   };
 
@@ -143,9 +190,61 @@ export default function QuestionnaireList() {
   }
 
   const statusCounts = getStatusCounts();
+  const engagementStats = getEngagementStats();
 
   return (
     <div className="space-y-6">
+      {/* Analytics Overview */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="bg-white rounded-xl border border-slate-200 p-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+              <TrendingUp className="w-5 h-5 text-blue-600" />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-slate-600">Total Views</p>
+              <p className="text-2xl font-bold text-slate-900">{engagementStats.totalViews}</p>
+            </div>
+          </div>
+        </div>
+        
+        <div className="bg-white rounded-xl border border-slate-200 p-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+              <Eye className="w-5 h-5 text-purple-600" />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-slate-600">Forms Viewed</p>
+              <p className="text-2xl font-bold text-slate-900">{engagementStats.viewedQuestionnaires}/{questionnaires.length}</p>
+            </div>
+          </div>
+        </div>
+        
+        <div className="bg-white rounded-xl border border-slate-200 p-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+              <span className="text-orange-600 font-bold text-sm">{engagementStats.engagementRate}%</span>
+            </div>
+            <div>
+              <p className="text-sm font-medium text-slate-600">Engagement Rate</p>
+              <p className="text-xs text-slate-500">Forms opened by clients</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-xl border border-slate-200 p-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+              <span className="text-green-600 font-bold text-sm">{engagementStats.completionRate}%</span>
+            </div>
+            <div>
+              <p className="text-sm font-medium text-slate-600">Completion Rate</p>
+              <p className="text-xs text-slate-500">Forms fully completed</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Status Filter Tabs */}
       <div className="bg-white rounded-xl border border-slate-200 p-6">
         <div className="flex flex-wrap gap-2 mb-4">
@@ -186,12 +285,13 @@ export default function QuestionnaireList() {
           
           <select
             value={sortBy}
-            onChange={(e) => setSortBy(e.target.value as 'date' | 'status' | 'client')}
+            onChange={(e) => setSortBy(e.target.value as 'date' | 'status' | 'client' | 'views')}
             className="px-3 py-1 border border-slate-300 rounded-lg text-sm"
           >
             <option value="date">Date Created</option>
             <option value="status">Status</option>
             <option value="client">Client Name</option>
+            <option value="views">View Count</option>
           </select>
 
           <button
@@ -267,6 +367,48 @@ export default function QuestionnaireList() {
                   <div className="text-sm text-slate-500">
                     Template: {questionnaire.templateId.toUpperCase().replace('-', ' ')}
                   </div>
+                </div>
+              </div>
+
+              {/* Analytics Row */}
+              <div className="bg-slate-50 rounded-lg p-3 mb-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-1 text-sm">
+                      <TrendingUp className="w-4 h-4 text-purple-600" />
+                      <span className="font-medium text-slate-900">{questionnaire.viewCount || 0}</span>
+                      <span className="text-slate-600">views</span>
+                    </div>
+                    
+                    {questionnaire.lastViewed ? (
+                      <div className="flex items-center gap-1 text-sm text-slate-600">
+                        <Clock className="w-4 h-4" />
+                        <span>Last viewed {formatDateTime(questionnaire.lastViewed)}</span>
+                      </div>
+                    ) : (
+                      <div className="text-sm text-slate-500">
+                        📧 Not viewed yet
+                      </div>
+                    )}
+                  </div>
+                  
+                  {questionnaire.viewCount && questionnaire.viewCount > 0 && (
+                    <div className="flex items-center gap-2">
+                      {questionnaire.status === 'completed' ? (
+                        <div className="text-xs text-green-600 font-medium">
+                          ✅ Completed
+                        </div>
+                      ) : questionnaire.status === 'in-progress' ? (
+                        <div className="text-xs text-yellow-600 font-medium">
+                          🟡 In Progress
+                        </div>
+                      ) : (
+                        <div className="text-xs text-blue-600 font-medium">
+                          👁️ Client engaged
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
 

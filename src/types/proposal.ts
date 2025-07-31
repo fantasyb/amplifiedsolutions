@@ -31,4 +31,9 @@ export interface Proposal {
   createdAt: Date;
   expiresAt?: Date;
   status: 'pending' | 'accepted' | 'rejected' | 'expired';
+  // Add recurring payment fields
+  isRecurring?: boolean;
+  paymentType?: 'full' | 'partial' | 'installments';
+  downPayment?: number;
+  installmentCount?: number;
 }

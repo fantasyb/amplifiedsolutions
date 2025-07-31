@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { Proposal } from '@/types/proposal';
 import { Questionnaire } from '@/types/questionnaire';
 import { 
-  FileText, MessageSquare, Plus, DollarSign, CheckCircle, Eye 
+  FileText, MessageSquare, Plus, DollarSign, CheckCircle, Eye, BookOpen, Link as LinkIcon, Video, Users
 } from 'lucide-react';
 
 export default function AdminDashboard() {
@@ -73,7 +73,7 @@ export default function AdminDashboard() {
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold text-slate-900">Admin Dashboard</h1>
-        <p className="text-slate-600 mt-2">Overview of your proposals and forms</p>
+        <p className="text-slate-600 mt-2">Overview of your proposals, forms, and content management</p>
       </div>
 
       {/* Stats Grid */}
@@ -133,7 +133,77 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* Recent Items */}
+      {/* Quick Actions - Content Management */}
+      <div className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl border border-indigo-200 p-6">
+        <h2 className="text-xl font-semibold text-slate-900 mb-4">Content Management</h2>
+        <p className="text-slate-600 mb-6">Manage reports, resources, training materials, and links for client portals</p>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <Link
+            href="/admin/content"
+            className="flex items-center gap-3 p-4 bg-white rounded-lg hover:shadow-md transition-all border border-slate-200"
+          >
+            <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+              <FileText className="w-5 h-5 text-blue-600" />
+            </div>
+            <div>
+              <h3 className="font-medium text-slate-900">Reports</h3>
+              <p className="text-sm text-slate-600">Analytics & dashboards</p>
+            </div>
+          </Link>
+
+          <Link
+            href="/admin/content"
+            className="flex items-center gap-3 p-4 bg-white rounded-lg hover:shadow-md transition-all border border-slate-200"
+          >
+            <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+              <BookOpen className="w-5 h-5 text-green-600" />
+            </div>
+            <div>
+              <h3 className="font-medium text-slate-900">Resources</h3>
+              <p className="text-sm text-slate-600">Files & documents</p>
+            </div>
+          </Link>
+
+          <Link
+            href="/admin/content"
+            className="flex items-center gap-3 p-4 bg-white rounded-lg hover:shadow-md transition-all border border-slate-200"
+          >
+            <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+              <Video className="w-5 h-5 text-purple-600" />
+            </div>
+            <div>
+              <h3 className="font-medium text-slate-900">Training</h3>
+              <p className="text-sm text-slate-600">Videos & guides</p>
+            </div>
+          </Link>
+
+          <Link
+            href="/admin/content"
+            className="flex items-center gap-3 p-4 bg-white rounded-lg hover:shadow-md transition-all border border-slate-200"
+          >
+            <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+              <LinkIcon className="w-5 h-5 text-orange-600" />
+            </div>
+            <div>
+              <h3 className="font-medium text-slate-900">Quick Links</h3>
+              <p className="text-sm text-slate-600">External resources</p>
+            </div>
+          </Link>
+        </div>
+
+        <div className="mt-4 flex justify-center">
+          <Link
+            href="/admin/content"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium"
+          >
+            <BookOpen className="w-5 h-5" />
+            Manage All Content
+          </Link>
+        </div>
+      </div>
+
+      {/* Existing Recent Items */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Recent Proposals */}
         <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">

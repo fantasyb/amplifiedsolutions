@@ -1,73 +1,40 @@
+// src/components/portal/ClientPortalLayout.tsx
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
+import { ClientPortal } from '@/types/global';
 import { 
-  LayoutDashboard, FileText, MessageSquare, LogOut, Menu, X, Settings, User
+  LayoutDashboard, 
+  FileText, 
+  MessageSquare, 
+  BarChart3, 
+  PlayCircle, 
+  BookOpen, 
+  ExternalLink,
+  Menu,
+  X
 } from 'lucide-react';
 
-export default function AdminLayout({
-  children,
-}: {
+interface ClientPortalLayoutProps {
   children: React.ReactNode;
-}) {
+  clientPortal: ClientPortal;
+}
+
+export default function ClientPortalLayout({ children, clientPortal }: ClientPortalLayoutProps) {
   const pathname = usePathname();
-  const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [accessLevel, setAccessLevel] = useState<'full' | 'limited'>('limited');
 
-  useEffect(() => {
-    // Check access level from localStorage or API
-    const checkAccessLevel = async () => {
-      try {
-        const response = await fetch('/api/admin/check-access');
-        if (response.ok) {
-          const data = await response.json();
-          setAccessLevel(data.accessLevel || 'limited');
-        }
-      } catch (error) {
-        console.error('Error checking access level:', error);
-      }
-    };
-    
-    checkAccessLevel();
-  }, []);
-
-  const handleLogout = async () => {
-    try {
-      await fetch('/api/admin/logout', { method: 'POST' });
-      localStorage.removeItem('adminAuth');
-      router.push('/admin/login');
-    } catch (error) {
-      console.error('Logout error:', error);
-    }
-  };
-
-  // Different navigation based on access level
-  const fullNavigation = [
-    { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
-    { name: 'Clients', href: '/admin/clients', icon: User },
-    { name: 'Proposals', href: '/admin/proposals', icon: FileText },
-    { name: 'Forms', href: '/admin/questionnaires', icon: MessageSquare },
-    { name: 'Templates', href: '/admin/templates', icon: Settings },
+  const navigation = [
+    { name: 'Dashboard', href: `/portal/${clientPortal.id}`, icon: LayoutDashboard },
+    { name: 'Proposals', href: `/portal/${clientPortal.id}/proposals`, icon: FileText },
+    { name: 'Forms', href: `/portal/${clientPortal.id}/forms`, icon: MessageSquare },
+    { name: 'Reports', href: `/portal/${clientPortal.id}/reports`, icon: BarChart3 },
+    { name: 'Training', href: `/portal/${clientPortal.id}/training`, icon: PlayCircle },
+    { name: 'Resources', href: `/portal/${clientPortal.id}/resources`, icon: BookOpen },
+    { name: 'Quick Links', href: `/portal/${clientPortal.id}/links`, icon: ExternalLink },
   ];
-
-  const limitedNavigation = [
-    { name: 'Forms', href: '/admin/questionnaires', icon: MessageSquare },
-    { name: 'Templates', href: '/admin/templates', icon: Settings },
-  ];
-
-  const navigation = accessLevel === 'full' ? fullNavigation : limitedNavigation;
-
-  // Redirect limited users away from restricted pages
-  useEffect(() => {
-    if (accessLevel === 'limited') {
-      if (pathname === '/admin' || pathname.startsWith('/admin/proposals') || pathname.startsWith('/admin/clients')) {
-        router.push('/admin/questionnaires');
-      }
-    }
-  }, [accessLevel, pathname, router]);
 
   return (
     <div className="min-h-screen bg-slate-50 flex">
@@ -87,10 +54,7 @@ export default function AdminLayout({
               <span className="text-white font-bold text-sm">AS</span>
             </div>
             <div>
-              <span className="text-lg font-semibold text-slate-900">Admin</span>
-              {accessLevel === 'limited' && (
-                <div className="text-xs text-slate-500">Team Access</div>
-              )}
+              <span className="text-lg font-semibold text-slate-900">Client Portal</span>
             </div>
           </div>
           <button
@@ -101,11 +65,19 @@ export default function AdminLayout({
           </button>
         </div>
 
+        {/* Client Info */}
+        <div className="px-6 py-4 border-b border-slate-200 bg-blue-50">
+          <div className="text-sm font-medium text-blue-900">{clientPortal.clientName}</div>
+          {clientPortal.clientCompany && (
+            <div className="text-xs text-blue-700">{clientPortal.clientCompany}</div>
+          )}
+          <div className="text-xs text-blue-600">{clientPortal.clientEmail}</div>
+        </div>
+
         <nav className="flex-1 px-4 py-6">
           <div className="space-y-2">
             {navigation.map((item) => {
-              const isActive = pathname === item.href || 
-                (item.href !== '/admin' && pathname.startsWith(item.href));
+              const isActive = pathname === item.href;
               
               return (
                 <Link
@@ -127,13 +99,9 @@ export default function AdminLayout({
         </nav>
 
         <div className="border-t border-slate-200 p-4">
-          <button
-            onClick={handleLogout}
-            className="flex items-center w-full px-4 py-3 text-sm font-medium text-slate-700 rounded-lg hover:bg-red-50 hover:text-red-700 transition-colors"
-          >
-            <LogOut className="w-5 h-5 mr-3" />
-            Logout
-          </button>
+          <div className="text-xs text-slate-500 text-center">
+            Powered by <span className="font-medium">Amplified Solutions</span>
+          </div>
         </div>
       </div>
 
@@ -151,7 +119,7 @@ export default function AdminLayout({
             <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-sm">AS</span>
             </div>
-            <span className="text-lg font-semibold text-slate-900">Admin</span>
+            <span className="text-lg font-semibold text-slate-900">Portal</span>
           </div>
           <div className="w-6"></div>
         </div>

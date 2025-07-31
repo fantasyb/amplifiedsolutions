@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { Questionnaire, Question, QuestionnaireResponse } from '@/types/questionnaire';
 import { getQuestionnaireTemplate } from '@/data/questionnaire-templates';
+import TrackingPixel from '@/components/TrackingPixel';
 
 export default function ClientQuestionnairePage() {
   const params = useParams();
@@ -275,6 +276,9 @@ export default function ClientQuestionnairePage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Tracking Pixel - Invisible tracking for analytics */}
+      <TrackingPixel type="questionnaire" id={params.id as string} />
+      
       {/* Header */}
       <div className="bg-white shadow-sm border-b">
         <div className="max-w-4xl mx-auto px-6 py-4">
