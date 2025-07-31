@@ -94,7 +94,7 @@ export default function AcceptButton({ stripeCheckoutUrl, cost }: AcceptButtonPr
             href="mailto:hello@amplifiedsolutions.io" 
             className="text-white font-medium hover:text-blue-200 transition-colors"
           >
-            Contact us directly at hello@amplifiedsolutions.io
+            Contact us directly at joey@amplifiedsolutions.com
           </a>
         </div>
       </div>

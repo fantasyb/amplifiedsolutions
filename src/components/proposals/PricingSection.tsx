@@ -68,7 +68,7 @@ export default function PricingSection({ cost, notes, isRecurring = false, recur
           
           {isRecurring && (
             <p className="text-slate-400 text-sm mt-2">
-              Flexible billing • Cancel anytime
+              30-days notice to cancel
             </p>
           )}
         </div>

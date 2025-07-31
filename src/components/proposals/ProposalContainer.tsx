@@ -30,10 +30,7 @@ export default function ProposalContainer({ proposal }: ProposalContainerProps) 
           <ServiceBreakdown services={proposal.services} />
         </div>
 
-        {/* Testimonials */}
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-8 lg:p-12">
-          <TestimonialCards />
-        </div>
+    
 
         {/* Pricing */}
         <PricingSection 
