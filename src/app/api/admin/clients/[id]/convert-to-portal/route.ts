@@ -5,7 +5,7 @@ import { generateClientPortalId } from '@/lib/clientPortal';
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Check admin authentication
@@ -16,7 +16,7 @@ export async function POST(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const clientId = params.id;
+    const { id: clientId } = await params;
     console.log('🔄 Converting manual client to portal:', clientId);
 
     // Get the existing manual client
