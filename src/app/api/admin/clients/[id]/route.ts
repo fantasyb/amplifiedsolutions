@@ -5,7 +5,7 @@ import { redis } from '@/lib/redis';
 // GET - Fetch single client
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Check admin authentication
@@ -16,7 +16,7 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const clientId = params.id;
+    const { id: clientId } = await params;
     console.log('📋 Fetching client:', clientId);
 
     let clientData = null;
@@ -152,7 +152,7 @@ export async function GET(
 // PUT - Update client
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Check admin authentication
@@ -163,7 +163,7 @@ export async function PUT(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const clientId = params.id;
+    const { id: clientId } = await params;
     const updateData = await request.json();
     const { name, email, company, phone, status, notes } = updateData;
 
@@ -261,7 +261,7 @@ export async function PUT(
 // DELETE - Delete client
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Check admin authentication
@@ -272,7 +272,7 @@ export async function DELETE(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const clientId = params.id;
+    const { id: clientId } = await params;
     console.log('🗑️ Deleting client:', clientId);
 
     // Find and delete from manual clients
