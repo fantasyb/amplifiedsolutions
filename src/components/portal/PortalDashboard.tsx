@@ -1,4 +1,7 @@
 // src/components/portal/PortalDashboard.tsx
+'use client';
+
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { ClientPortal } from '@/types/global';
 import { 
@@ -13,7 +16,10 @@ import {
   BarChart3,
   PlayCircle,
   BookOpen,
-  ExternalLink
+  ExternalLink,
+  Video,
+  Upload,
+  LinkIcon
 } from 'lucide-react';
 
 interface PortalDashboardProps {
@@ -22,78 +28,82 @@ interface PortalDashboardProps {
   questionnaires: any[];
 }
 
+interface ActivityItem {
+  id: string;
+  type: 'content_added' | 'content_updated' | 'system_update' | 'announcement';
+  title: string;
+  description: string;
+  category: 'reports' | 'resources' | 'training' | 'links';
+  date: string;
+  contentId?: string;
+}
+
 export default function PortalDashboard({ clientPortal, proposals, questionnaires }: PortalDashboardProps) {
-  const getFirstName = (fullName: string) => {
-    return fullName.split(' ')[0];
+  const [recentActivity, setRecentActivity] = useState<ActivityItem[]>([]);
+  const [contentStats, setContentStats] = useState({
+    reports: 0,
+    resources: 0,
+    training: 0,
+    links: 0
+  });
+  const [loading, setLoading] = useState(true);
+
+  // Load recent activity and content stats
+  useEffect(() => {
+    loadPortalData();
+  }, [clientPortal.id]);
+
+  const loadPortalData = async () => {
+    try {
+      // Load recent activity
+      const activityResponse = await fetch(`/api/portal/activity?clientId=${clientPortal.id}&limit=5`);
+      if (activityResponse.ok) {
+        const { activities } = await activityResponse.json();
+        setRecentActivity(activities);
+      }
+
+      // Load content for stats
+      const contentResponse = await fetch(`/api/portal/content?clientId=${clientPortal.id}`);
+      if (contentResponse.ok) {
+        const content = await contentResponse.json();
+        setContentStats({
+          reports: content.reports?.length || 0,
+          resources: content.resources?.length || 0,
+          training: content.training?.length || 0,
+          links: content.links?.length || 0
+        });
+      }
+    } catch (error) {
+      console.error('Error loading portal data:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const getStats = () => {
-    const pendingProposals = proposals.filter(p => p.status === 'pending').length;
-    const acceptedProposals = proposals.filter(p => p.status === 'accepted').length;
-    const incompleteQuestionnaires = questionnaires.filter(q => q.status !== 'completed').length;
-    const completedQuestionnaires = questionnaires.filter(q => q.status === 'completed').length;
-    const totalValue = proposals.reduce((sum, p) => sum + (p.status === 'accepted' ? p.cost : 0), 0);
-    
-    const completionRate = questionnaires.length > 0 
-      ? Math.round((completedQuestionnaires / questionnaires.length) * 100) 
-      : 0;
-
-    return {
-      pendingProposals,
-      acceptedProposals,
-      incompleteQuestionnaires,
-      completedQuestionnaires,
-      totalValue,
-      completionRate
-    };
+  const getActivityIcon = (category: string) => {
+    switch (category) {
+      case 'reports':
+        return <BarChart3 className="w-4 h-4 text-blue-600" />;
+      case 'resources':
+        return <BookOpen className="w-4 h-4 text-green-600" />;
+      case 'training':
+        return <PlayCircle className="w-4 h-4 text-purple-600" />;
+      default:
+        return <FileText className="w-4 h-4 text-slate-600" />;
+    }
   };
 
-  const getRecentActivity = () => {
-    const activity: Array<{
-      type: 'proposal' | 'questionnaire';
-      title: string;
-      description: string;
-      date: Date | string;
-      status: string;
-      id: string;
-    }> = [];
-    
-    // Add recent proposals
-    proposals.slice(0, 3).forEach(proposal => {
-      activity.push({
-        type: 'proposal',
-        title: `Proposal created`,
-        description: `${proposal.services.length} services - ${proposal.cost}`,
-        date: proposal.createdAt,
-        status: proposal.status,
-        id: proposal.id
-      });
-    });
-
-    // Add recent questionnaires
-    questionnaires.slice(0, 3).forEach(questionnaire => {
-      activity.push({
-        type: 'questionnaire',
-        title: `Form assigned: ${questionnaire.title}`,
-        description: questionnaire.status === 'completed' ? 'Completed' : 'Needs completion',
-        date: questionnaire.createdAt,
-        status: questionnaire.status,
-        id: questionnaire.id
-      });
-    });
-
-    // Sort by date and take the 5 most recent
-    return activity
-      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-      .slice(0, 5);
-  };
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0,
-    }).format(amount);
+  const getActivityBgColor = (category: string) => {
+    switch (category) {
+      case 'reports':
+        return 'bg-blue-100';
+      case 'resources':
+        return 'bg-green-100';
+      case 'training':
+        return 'bg-purple-100';
+      default:
+        return 'bg-slate-100';
+    }
   };
 
   const formatDate = (date: Date | string) => {
@@ -103,18 +113,17 @@ export default function PortalDashboard({ clientPortal, proposals, questionnaire
     });
   };
 
-  const stats = getStats();
-  const recentActivity = getRecentActivity();
+  const totalContent = contentStats.reports + contentStats.resources + contentStats.training + contentStats.links;
 
   return (
     <div className="p-8">
       {/* Welcome Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-slate-900">
-          Welcome back, {getFirstName(clientPortal.clientName)}! 👋
+          Welcome back! 👋
         </h1>
         <p className="text-slate-600 mt-2">
-          Here's what's happening with your account at Amplified Solutions.
+          Access your resources, training materials, and tools from Amplified Solutions.
         </p>
       </div>
 
@@ -123,11 +132,11 @@ export default function PortalDashboard({ clientPortal, proposals, questionnaire
         <div className="bg-white rounded-xl border border-slate-200 p-6">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-              <FileText className="w-6 h-6 text-blue-600" />
+              <BarChart3 className="w-6 h-6 text-blue-600" />
             </div>
             <div>
-              <p className="text-sm font-medium text-slate-600">Active Proposals</p>
-              <p className="text-2xl font-bold text-slate-900">{stats.pendingProposals}</p>
+              <p className="text-sm font-medium text-slate-600">Reports Available</p>
+              <p className="text-2xl font-bold text-slate-900">{contentStats.reports}</p>
             </div>
           </div>
         </div>
@@ -135,23 +144,11 @@ export default function PortalDashboard({ clientPortal, proposals, questionnaire
         <div className="bg-white rounded-xl border border-slate-200 p-6">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-              <CheckCircle className="w-6 h-6 text-green-600" />
+              <BookOpen className="w-6 h-6 text-green-600" />
             </div>
             <div>
-              <p className="text-sm font-medium text-slate-600">Accepted Projects</p>
-              <p className="text-2xl font-bold text-slate-900">{stats.acceptedProposals}</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-xl border border-slate-200 p-6">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
-              <MessageSquare className="w-6 h-6 text-orange-600" />
-            </div>
-            <div>
-              <p className="text-sm font-medium text-slate-600">Pending Forms</p>
-              <p className="text-2xl font-bold text-slate-900">{stats.incompleteQuestionnaires}</p>
+              <p className="text-sm font-medium text-slate-600">Resources</p>
+              <p className="text-2xl font-bold text-slate-900">{contentStats.resources}</p>
             </div>
           </div>
         </div>
@@ -159,83 +156,47 @@ export default function PortalDashboard({ clientPortal, proposals, questionnaire
         <div className="bg-white rounded-xl border border-slate-200 p-6">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-              <DollarSign className="w-6 h-6 text-purple-600" />
+              <PlayCircle className="w-6 h-6 text-purple-600" />
             </div>
             <div>
-              <p className="text-sm font-medium text-slate-600">Total Value</p>
-              <p className="text-2xl font-bold text-slate-900">{formatCurrency(stats.totalValue)}</p>
+              <p className="text-sm font-medium text-slate-600">Training Modules</p>
+              <p className="text-2xl font-bold text-slate-900">{contentStats.training}</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-xl border border-slate-200 p-6">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+              <ExternalLink className="w-6 h-6 text-orange-600" />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-slate-600">Quick Links</p>
+              <p className="text-2xl font-bold text-slate-900">{contentStats.links}</p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Action Items */}
-      {(stats.pendingProposals > 0 || stats.incompleteQuestionnaires > 0) && (
-        <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl border border-blue-200 p-6 mb-8">
-          <h2 className="text-xl font-bold text-slate-900 mb-4">Action Items</h2>
-          <div className="space-y-3">
-            {stats.pendingProposals > 0 && (
-              <div className="flex items-center justify-between bg-white rounded-lg p-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                    <FileText className="w-4 h-4 text-blue-600" />
-                  </div>
-                  <div>
-                    <p className="font-medium text-slate-900">Review pending proposals</p>
-                    <p className="text-sm text-slate-600">{stats.pendingProposals} proposal{stats.pendingProposals !== 1 ? 's' : ''} awaiting your decision</p>
-                  </div>
-                </div>
-                <Link
-                  href={`/portal/${clientPortal.id}/proposals`}
-                  className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                >
-                  Review
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
-              </div>
-            )}
-
-            {stats.incompleteQuestionnaires > 0 && (
-              <div className="flex items-center justify-between bg-white rounded-lg p-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
-                    <MessageSquare className="w-4 h-4 text-orange-600" />
-                  </div>
-                  <div>
-                    <p className="font-medium text-slate-900">Complete pending forms</p>
-                    <p className="text-sm text-slate-600">{stats.incompleteQuestionnaires} form{stats.incompleteQuestionnaires !== 1 ? 's' : ''} need your input</p>
-                  </div>
-                </div>
-                <Link
-                  href={`/portal/${clientPortal.id}/forms`}
-                  className="flex items-center gap-2 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors"
-                >
-                  Complete
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
       {/* Quick Access Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
         {/* Recent Activity */}
         <div className="bg-white rounded-xl border border-slate-200 p-6">
-          <h2 className="text-xl font-bold text-slate-900 mb-4">Recent Activity</h2>
-          {recentActivity.length > 0 ? (
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-bold text-slate-900">Recent Updates</h2>
+            <span className="text-sm text-slate-500">From Amplified Solutions</span>
+          </div>
+          
+          {loading ? (
+            <div className="flex items-center justify-center py-8">
+              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+            </div>
+          ) : recentActivity.length > 0 ? (
             <div className="space-y-3">
-              {recentActivity.map((item, index) => (
-                <div key={index} className="flex items-center gap-3 p-3 hover:bg-slate-50 rounded-lg">
-                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-                    item.type === 'proposal' ? 'bg-blue-100' : 'bg-orange-100'
-                  }`}>
-                    {item.type === 'proposal' ? (
-                      <FileText className="w-4 h-4 text-blue-600" />
-                    ) : (
-                      <MessageSquare className="w-4 h-4 text-orange-600" />
-                    )}
+              {recentActivity.map((item) => (
+                <div key={item.id} className="flex items-center gap-3 p-3 hover:bg-slate-50 rounded-lg">
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${getActivityBgColor(item.category)}`}>
+                    {getActivityIcon(item.category)}
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="font-medium text-slate-900 truncate">{item.title}</p>
@@ -248,7 +209,13 @@ export default function PortalDashboard({ clientPortal, proposals, questionnaire
               ))}
             </div>
           ) : (
-            <p className="text-slate-500">No recent activity</p>
+            <div className="text-center py-8">
+              <div className="w-12 h-12 bg-slate-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                <Calendar className="w-6 h-6 text-slate-400" />
+              </div>
+              <p className="text-slate-500">No recent updates</p>
+              <p className="text-sm text-slate-400">New content will appear here when added</p>
+            </div>
           )}
         </div>
 
@@ -291,25 +258,19 @@ export default function PortalDashboard({ clientPortal, proposals, questionnaire
         </div>
       </div>
 
-      {/* Progress Summary */}
-      {questionnaires.length > 0 && (
-        <div className="bg-white rounded-xl border border-slate-200 p-6 mb-8">
-          <h2 className="text-xl font-bold text-slate-900 mb-4">Your Progress</h2>
-          <div className="flex items-center gap-4">
-            <div className="flex-1">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-slate-700">Form Completion</span>
-                <span className="text-sm text-slate-600">{stats.completedQuestionnaires}/{questionnaires.length} completed</span>
-              </div>
-              <div className="w-full bg-slate-200 rounded-full h-3">
-                <div 
-                  className="bg-green-600 h-3 rounded-full transition-all duration-500"
-                  style={{ width: `${stats.completionRate}%` }}
-                ></div>
-              </div>
+      {/* Content Summary */}
+      {totalContent > 0 && (
+        <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl border border-blue-200 p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-xl font-bold text-slate-900 mb-2">Your Resource Library</h2>
+              <p className="text-slate-600">
+                {totalContent} resources available across all categories
+              </p>
             </div>
-            <div className="text-2xl font-bold text-green-600">
-              {stats.completionRate}%
+            <div className="text-right">
+              <div className="text-3xl font-bold text-blue-600">{totalContent}</div>
+              <div className="text-sm text-slate-600">Total Resources</div>
             </div>
           </div>
         </div>

@@ -28,8 +28,8 @@ export default function ClientPortalLayout({ children, clientPortal }: ClientPor
 
   const navigation = [
     { name: 'Dashboard', href: `/portal/${clientPortal.id}`, icon: LayoutDashboard },
-    { name: 'Proposals', href: `/portal/${clientPortal.id}/proposals`, icon: FileText },
-    { name: 'Forms', href: `/portal/${clientPortal.id}/forms`, icon: MessageSquare },
+    //{ name: 'Proposals', href: `/portal/${clientPortal.id}/proposals`, icon: FileText },
+    //{ name: 'Forms', href: `/portal/${clientPortal.id}/forms`, icon: MessageSquare },
     { name: 'Reports', href: `/portal/${clientPortal.id}/reports`, icon: BarChart3 },
     { name: 'Training', href: `/portal/${clientPortal.id}/training`, icon: PlayCircle },
     { name: 'Resources', href: `/portal/${clientPortal.id}/resources`, icon: BookOpen },
@@ -48,30 +48,29 @@ export default function ClientPortalLayout({ children, clientPortal }: ClientPor
 
       {/* Sidebar */}
       <div className={`${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-xl transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0`}>
-        <div className="flex items-center justify-between h-16 px-6 border-b border-slate-200">
-          <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">AS</span>
-            </div>
-            <div>
-              <span className="text-lg font-semibold text-slate-900">Client Portal</span>
-            </div>
+        <div className="flex items-center justify-between h-16 px-6 border-b border-slate-200 relative">
+          <div className="flex items-center justify-center flex-1">
+            <img 
+              src="/AmplifiedSolutions_Logo-V2_Main.png" 
+              alt="Amplified Solutions" 
+              className="h-8 w-auto"
+            />
           </div>
           <button
             onClick={() => setSidebarOpen(false)}
-            className="lg:hidden text-slate-400 hover:text-slate-600"
+            className="lg:hidden text-slate-400 hover:text-slate-600 absolute top-4 right-4"
           >
             <X className="w-6 h-6" />
           </button>
         </div>
 
         {/* Client Info */}
-        <div className="px-6 py-4 border-b border-slate-200 bg-blue-50">
-          <div className="text-sm font-medium text-blue-900">{clientPortal.clientName}</div>
+        <div className="px-6 py-5 border-b border-slate-200 bg-gradient-to-r from-blue-50 to-indigo-50">
+          <div className="text-base font-semibold text-slate-900">{clientPortal.clientName}</div>
           {clientPortal.clientCompany && (
-            <div className="text-xs text-blue-700">{clientPortal.clientCompany}</div>
+            <div className="text-sm text-slate-600 mt-1">{clientPortal.clientCompany}</div>
           )}
-          <div className="text-xs text-blue-600">{clientPortal.clientEmail}</div>
+          <div className="text-sm text-blue-600 mt-1">{clientPortal.clientEmail}</div>
         </div>
 
         <nav className="flex-1 px-4 py-6">
@@ -83,10 +82,10 @@ export default function ClientPortalLayout({ children, clientPortal }: ClientPor
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
+                  className={`flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 ${
                     isActive
-                      ? 'bg-blue-100 text-blue-700'
-                      : 'text-slate-700 hover:bg-slate-100'
+                      ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/25'
+                      : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
                   }`}
                   onClick={() => setSidebarOpen(false)}
                 >
@@ -98,9 +97,9 @@ export default function ClientPortalLayout({ children, clientPortal }: ClientPor
           </div>
         </nav>
 
-        <div className="border-t border-slate-200 p-4">
-          <div className="text-xs text-slate-500 text-center">
-            Powered by <span className="font-medium">Amplified Solutions</span>
+        <div className="border-t border-slate-200 p-4 bg-slate-50">
+          <div className="text-xs text-slate-500 text-center font-medium">
+            Powered by <span className="font-semibold text-slate-700">Amplified Solutions</span>
           </div>
         </div>
       </div>
@@ -115,11 +114,12 @@ export default function ClientPortalLayout({ children, clientPortal }: ClientPor
           >
             <Menu className="w-6 h-6" />
           </button>
-          <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">AS</span>
-            </div>
-            <span className="text-lg font-semibold text-slate-900">Portal</span>
+          <div className="flex items-center justify-center">
+            <img 
+              src="/AmplifiedSolutions_Logo-V2_Main.png" 
+              alt="Amplified Solutions" 
+              className="h-7 w-auto"
+            />
           </div>
           <div className="w-6"></div>
         </div>

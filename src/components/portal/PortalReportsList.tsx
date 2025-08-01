@@ -16,7 +16,8 @@ import {
   Lock,
   FileText,
   Video,
-  Link
+  Link,
+  Mail
 } from 'lucide-react';
 
 interface ContentItem {
@@ -44,17 +45,29 @@ export default function PortalReportsList({ clientPortal }: PortalReportsListPro
 
   const fetchReports = async () => {
     try {
-      const response = await fetch(`/api/portal/content?category=reports&clientId=${clientPortal.id}`);
+      const response = await fetch(`/api/portal/content?clientId=${clientPortal.id}`);
       if (response.ok) {
         const data = await response.json();
-        setReports(data);
+        console.log('Portal content data:', data);
+        
+        // Extract just the reports array from the response
+        const reportsData = data.reports || [];
+        console.log('Reports data:', reportsData);
+        setReports(reportsData);
+      } else {
+        console.error('Failed to fetch reports');
+        setReports([]);
       }
     } catch (error) {
       console.error('Error fetching reports:', error);
+      setReports([]);
     } finally {
       setLoading(false);
     }
   };
+
+  // Ensure reports is an array before using filter/map
+  const safeReports = Array.isArray(reports) ? reports : [];
 
   const getIcon = (type: string) => {
     switch (type) {
@@ -90,11 +103,13 @@ export default function PortalReportsList({ clientPortal }: PortalReportsListPro
     );
   }
 
-  if (reports.length === 0) {
+  if (safeReports.length === 0) {
     return (
-      <div className="text-center py-12">
-        <BarChart3 className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-        <h3 className="text-lg font-medium text-slate-900 mb-2">No Reports Available</h3>
+      <div className="text-center py-12 bg-white rounded-xl border border-slate-200">
+        <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <BarChart3 className="w-8 h-8 text-slate-400" />
+        </div>
+        <h3 className="text-xl font-semibold text-slate-900 mb-2">No Reports Available</h3>
         <p className="text-slate-600">
           Your reports and analytics dashboards will appear here once they're added by your account manager.
         </p>
@@ -113,7 +128,7 @@ export default function PortalReportsList({ clientPortal }: PortalReportsListPro
             </div>
             <div>
               <p className="text-sm font-medium text-slate-600">Available Reports</p>
-              <p className="text-2xl font-bold text-slate-900">{reports.length}</p>
+              <p className="text-2xl font-bold text-slate-900">{safeReports.length}</p>
             </div>
           </div>
         </div>
@@ -126,7 +141,7 @@ export default function PortalReportsList({ clientPortal }: PortalReportsListPro
             <div>
               <p className="text-sm font-medium text-slate-600">Interactive Reports</p>
               <p className="text-2xl font-bold text-slate-900">
-                {reports.filter(r => r.type === 'link').length}
+                {safeReports.filter(r => r.type === 'link').length}
               </p>
             </div>
           </div>
@@ -140,7 +155,7 @@ export default function PortalReportsList({ clientPortal }: PortalReportsListPro
             <div>
               <p className="text-sm font-medium text-slate-600">Downloaded Reports</p>
               <p className="text-2xl font-bold text-slate-900">
-                {reports.filter(r => r.type === 'file').length}
+                {safeReports.filter(r => r.type === 'file').length}
               </p>
             </div>
           </div>
@@ -152,7 +167,7 @@ export default function PortalReportsList({ clientPortal }: PortalReportsListPro
         <h2 className="text-xl font-bold text-slate-900 mb-6">Your Reports & Analytics</h2>
         
         <div className="grid gap-4">
-          {reports.map((report) => {
+          {safeReports.map((report) => {
             const IconComponent = getIcon(report.type);
             const iconColors = getIconColor(report.type);
             
@@ -217,36 +232,21 @@ export default function PortalReportsList({ clientPortal }: PortalReportsListPro
       {/* Help Section */}
       <div className="bg-slate-50 rounded-xl border border-slate-200 p-6">
         <h2 className="text-xl font-bold text-slate-900 mb-4">Need Help?</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="flex items-start gap-3">
-            <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
-              <BarChart3 className="w-4 h-4 text-blue-600" />
-            </div>
-            <div>
-              <h3 className="font-semibold text-slate-900 mb-1">Understanding Your Data</h3>
-              <p className="text-sm text-slate-600 mb-2">
-                Learn how to read and interpret your performance metrics.
-              </p>
-              <a href="mailto:support@amplifiedsolutions.com?subject=Help with Reports" className="text-sm text-blue-600 hover:text-blue-700">
-                Get Help →
-              </a>
-            </div>
+        <div className="text-center">
+          <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+            <Mail className="w-6 h-6 text-blue-600" />
           </div>
-
-          <div className="flex items-start gap-3">
-            <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
-              <Users className="w-4 h-4 text-green-600" />
-            </div>
-            <div>
-              <h3 className="font-semibold text-slate-900 mb-1">Request Custom Report</h3>
-              <p className="text-sm text-slate-600 mb-2">
-                Need a specific analysis? We can create custom reports for you.
-              </p>
-              <a href="mailto:support@amplifiedsolutions.com?subject=Custom Report Request" className="text-sm text-blue-600 hover:text-blue-700">
-                Request Report →
-              </a>
-            </div>
-          </div>
+          <h3 className="font-semibold text-slate-900 mb-2">Contact Support</h3>
+          <p className="text-slate-600 mb-4">
+            Need help understanding your reports or have questions? We're here to help.
+          </p>
+          <a 
+            href="mailto:support@amplifiedsolutions.com"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            <Mail className="w-4 h-4" />
+            Email Support
+          </a>
         </div>
       </div>
     </div>

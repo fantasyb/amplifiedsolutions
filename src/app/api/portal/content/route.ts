@@ -6,14 +6,12 @@ import { redis } from '@/lib/redis';
 function safeParse(data: any): any[] {
   if (!data) return [];
   if (Array.isArray(data)) return data;
-  if (typeof data === 'object') return [];
   if (typeof data === 'string') {
     if (data === '[]' || data === '') return [];
     try {
       const parsed = JSON.parse(data);
       return Array.isArray(parsed) ? parsed : [];
     } catch (error) {
-      console.error('Error parsing JSON:', error);
       return [];
     }
   }
@@ -22,38 +20,44 @@ function safeParse(data: any): any[] {
 
 export async function GET(request: Request) {
   try {
-    const url = new URL(request.url);
-    const category = url.searchParams.get('category');
-    const clientId = url.searchParams.get('clientId');
+    const { searchParams } = new URL(request.url);
+    const clientId = searchParams.get('clientId');
 
-    if (!category) {
-      return NextResponse.json({ error: 'Category is required' }, { status: 400 });
-    }
+    // Get all content from Redis
+    const [reports, resources, training, links] = await Promise.all([
+      redis.get('content:reports'),
+      redis.get('content:resources'), 
+      redis.get('content:training'),
+      redis.get('content:links')
+    ]);
 
-    // Get content for the specified category
-    const contentData = await redis.get(`content:${category}`);
-    const allContent = safeParse(contentData);
-
-    console.log(`📋 Found ${allContent.length} ${category} items total`);
-
-    // Filter content that is available to all clients or specifically assigned to this client
-    const availableContent = allContent.filter((item: any) => {
-      // If no clientIds specified, available to all clients
-      if (!item.clientIds || item.clientIds.length === 0) {
-        return true;
-      }
+    // Parse and filter content based on client access
+    const filterContentForClient = (content: any[], clientId: string | null) => {
+      if (!clientId) return content; // Return all if no specific client
       
-      // If clientId provided, check if this client has access
-      if (clientId && item.clientIds.includes(clientId)) {
-        return true;
-      }
-      
-      return false;
-    });
+      return content.filter(item => {
+        // If no clientIds specified, it's available to all clients
+        if (!item.clientIds || item.clientIds.length === 0) {
+          return true;
+        }
+        // Otherwise, check if this client has access
+        return item.clientIds.includes(clientId);
+      });
+    };
 
-    console.log(`📋 Found ${availableContent.length} ${category} items for client ${clientId || 'all'}`);
+    const allReports = safeParse(reports);
+    const allResources = safeParse(resources);
+    const allTraining = safeParse(training);
+    const allLinks = safeParse(links);
 
-    return NextResponse.json(availableContent);
+    const filteredContent = {
+      reports: filterContentForClient(allReports, clientId),
+      resources: filterContentForClient(allResources, clientId),
+      training: filterContentForClient(allTraining, clientId),
+      links: filterContentForClient(allLinks, clientId)
+    };
+
+    return NextResponse.json(filteredContent);
   } catch (error) {
     console.error('Error fetching portal content:', error);
     return NextResponse.json({ error: 'Failed to fetch content' }, { status: 500 });

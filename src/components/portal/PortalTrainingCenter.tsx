@@ -14,132 +14,104 @@ import {
   Download,
   Calendar,
   User,
-  Award
+  Award,
+  Video,
+  FileText,
+  Link as LinkIcon,
+  Mail
 } from 'lucide-react';
+
+interface TrainingItem {
+  id: string;
+  title: string;
+  description: string;
+  url: string;
+  type: 'link' | 'file' | 'video';
+  category: string;
+  clientIds: string[];
+  createdAt: string;
+  featured?: boolean;
+  completed?: boolean;
+}
 
 interface PortalTrainingCenterProps {
   clientPortal: ClientPortal;
 }
 
 export default function PortalTrainingCenter({ clientPortal }: PortalTrainingCenterProps) {
-  const [videos, setVideos] = useState<any[]>([]);
+  const [trainings, setTrainings] = useState<TrainingItem[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // TODO: Fetch client-specific training content from API
-    // For now, we'll use mock data
-    const mockVideos = [
-      {
-        id: 'lead-gen-basics',
-        title: 'Lead Generation Fundamentals',
-        description: 'Master the basics of generating high-quality leads for your business',
-        duration: '15:30',
-        category: 'Lead Generation',
-        difficulty: 'Beginner',
-        completed: true,
-        thumbnail: '/api/placeholder/400/225',
-        videoUrl: 'https://www.youtube.com/watch?v=example1',
-        instructor: 'Joey Ahern',
-        uploadDate: '2024-01-15',
-        views: 1250
-      },
-      {
-        id: 'crm-setup',
-        title: 'CRM Setup & Configuration',
-        description: 'Step-by-step guide to setting up your CRM for maximum efficiency',
-        duration: '22:45',
-        category: 'CRM Management',
-        difficulty: 'Intermediate',
-        completed: false,
-        thumbnail: '/api/placeholder/400/225',
-        videoUrl: 'https://www.youtube.com/watch?v=example2',
-        instructor: 'Lee Johnson',
-        uploadDate: '2024-01-10',
-        views: 890
-      },
-      {
-        id: 'conversion-optimization',
-        title: 'Conversion Rate Optimization',
-        description: 'Advanced techniques to improve your conversion rates and ROI',
-        duration: '28:15',
-        category: 'Optimization',
-        difficulty: 'Advanced',
-        completed: false,
-        thumbnail: '/api/placeholder/400/225',
-        videoUrl: 'https://www.youtube.com/watch?v=example3',
-        instructor: 'Kris Lindahl',
-        uploadDate: '2024-01-08',
-        views: 2100
-      },
-      {
-        id: 'email-marketing',
-        title: 'Email Marketing Mastery',
-        description: 'Create compelling email campaigns that convert prospects into clients',
-        duration: '19:20',
-        category: 'Email Marketing',
-        difficulty: 'Intermediate',
-        completed: true,
-        thumbnail: '/api/placeholder/400/225',
-        videoUrl: 'https://www.youtube.com/watch?v=example4',
-        instructor: 'Cynthia Howe',
-        uploadDate: '2024-01-05',
-        views: 1650
-      },
-      {
-        id: 'social-media-leads',
-        title: 'Social Media Lead Generation',
-        description: 'Leverage social platforms to generate consistent, quality leads',
-        duration: '25:10',
-        category: 'Lead Generation',
-        difficulty: 'Beginner',
-        completed: false,
-        thumbnail: '/api/placeholder/400/225',
-        videoUrl: 'https://www.youtube.com/watch?v=example5',
-        instructor: 'Rosario Martinez',
-        uploadDate: '2024-01-01',
-        views: 950
-      },
-      {
-        id: 'analytics-reporting',
-        title: 'Analytics & Reporting Deep Dive',
-        description: 'Understand your data and make informed business decisions',
-        duration: '35:45',
-        category: 'Analytics',
-        difficulty: 'Advanced',
-        completed: false,
-        thumbnail: '/api/placeholder/400/225',
-        videoUrl: 'https://www.youtube.com/watch?v=example6',
-        instructor: 'Joey Ahern',
-        uploadDate: '2023-12-28',
-        views: 1850
-      }
-    ];
-
-    setVideos(mockVideos);
-    setLoading(false);
+    fetchTrainings();
   }, [clientPortal]);
 
-  const categories = ['all', ...Array.from(new Set(videos.map(v => v.category)))];
+  const fetchTrainings = async () => {
+    try {
+      const response = await fetch(`/api/portal/content?clientId=${clientPortal.id}`);
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Portal content data:', data);
+        
+        // Extract just the training array from the response
+        const trainingData = data.training || [];
+        console.log('Training data:', trainingData);
+        setTrainings(trainingData);
+      } else {
+        console.error('Failed to fetch training materials');
+        setTrainings([]);
+      }
+    } catch (error) {
+      console.error('Error fetching training materials:', error);
+      setTrainings([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  const filteredVideos = videos.filter(video => {
-    const matchesSearch = video.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         video.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === 'all' || video.category === selectedCategory;
+  // Ensure trainings is an array before using map
+  const safeTrainings = Array.isArray(trainings) ? trainings : [];
+  const categories = ['all', ...Array.from(new Set(safeTrainings.map(t => t.category || 'General')))];
+
+  const filteredTrainings = safeTrainings.filter(training => {
+    const matchesSearch = training.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         training.description.toLowerCase().includes(searchTerm.toLowerCase());
+    const trainingCategory = training.category || 'General';
+    const matchesCategory = selectedCategory === 'all' || trainingCategory === selectedCategory;
     return matchesSearch && matchesCategory;
   });
 
-  const getDifficultyColor = (difficulty: string) => {
-    switch (difficulty) {
-      case 'Beginner':
-        return 'bg-green-100 text-green-700';
-      case 'Intermediate':
-        return 'bg-yellow-100 text-yellow-700';
-      case 'Advanced':
-        return 'bg-red-100 text-red-700';
+  const getIcon = (training: TrainingItem) => {
+    if (training.type === 'video') return Video;
+    if (training.type === 'file') return FileText;
+    return LinkIcon;
+  };
+
+  const getIconColor = (type: string) => {
+    switch (type) {
+      case 'video':
+        return 'text-purple-600 bg-purple-100';
+      case 'file':
+        return 'text-blue-600 bg-blue-100';
+      case 'link':
+        return 'text-green-600 bg-green-100';
       default:
-        return 'bg-slate-100 text-slate-700';
+        return 'text-slate-600 bg-slate-100';
+    }
+  };
+
+  const getTypeLabel = (type: string) => {
+    switch (type) {
+      case 'video':
+        return 'Video';
+      case 'file':
+        return 'Document';
+      case 'link':
+        return 'External Link';
+      default:
+        return 'Content';
     }
   };
 
@@ -151,10 +123,23 @@ export default function PortalTrainingCenter({ clientPortal }: PortalTrainingCen
     });
   };
 
-  const getProgress = () => {
-    const completedCount = videos.filter(v => v.completed).length;
-    return videos.length > 0 ? Math.round((completedCount / videos.length) * 100) : 0;
+  const handleTrainingClick = (training: TrainingItem) => {
+    if (training.type === 'file') {
+      // For files, open in new tab for viewing or download
+      window.open(training.url, '_blank');
+    } else {
+      // For videos and links, open in new tab
+      window.open(training.url, '_blank', 'noopener,noreferrer');
+    }
   };
+
+  // Group trainings by category
+  const trainingsByCategory = filteredTrainings.reduce((acc, training) => {
+    const category = training.category || 'General';
+    if (!acc[category]) acc[category] = [];
+    acc[category].push(training);
+    return acc;
+  }, {} as Record<string, TrainingItem[]>);
 
   if (loading) {
     return (
@@ -166,7 +151,7 @@ export default function PortalTrainingCenter({ clientPortal }: PortalTrainingCen
 
   return (
     <div className="space-y-8">
-      {/* Progress Overview */}
+      {/* Overview Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div className="bg-white rounded-xl border border-slate-200 p-6">
           <div className="flex items-center gap-3">
@@ -174,22 +159,8 @@ export default function PortalTrainingCenter({ clientPortal }: PortalTrainingCen
               <PlayCircle className="w-6 h-6 text-blue-600" />
             </div>
             <div>
-              <p className="text-sm font-medium text-slate-600">Total Videos</p>
-              <p className="text-2xl font-bold text-slate-900">{videos.length}</p>
-            </div>
-          </div>
-        </div>
-        
-        <div className="bg-white rounded-xl border border-slate-200 p-6">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-              <CheckCircle className="w-6 h-6 text-green-600" />
-            </div>
-            <div>
-              <p className="text-sm font-medium text-slate-600">Completed</p>
-              <p className="text-2xl font-bold text-slate-900">
-                {videos.filter(v => v.completed).length}
-              </p>
+              <p className="text-sm font-medium text-slate-600">Total Materials</p>
+              <p className="text-2xl font-bold text-slate-900">{safeTrainings.length}</p>
             </div>
           </div>
         </div>
@@ -197,15 +168,26 @@ export default function PortalTrainingCenter({ clientPortal }: PortalTrainingCen
         <div className="bg-white rounded-xl border border-slate-200 p-6">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-              <Clock className="w-6 h-6 text-purple-600" />
+              <Video className="w-6 h-6 text-purple-600" />
             </div>
             <div>
-              <p className="text-sm font-medium text-slate-600">Total Duration</p>
+              <p className="text-sm font-medium text-slate-600">Videos</p>
               <p className="text-2xl font-bold text-slate-900">
-                {Math.floor(videos.reduce((acc, v) => {
-                  const [minutes, seconds] = v.duration.split(':').map(Number);
-                  return acc + minutes + (seconds / 60);
-                }, 0))}m
+                {safeTrainings.filter(t => t.type === 'video').length}
+              </p>
+            </div>
+          </div>
+        </div>
+        
+        <div className="bg-white rounded-xl border border-slate-200 p-6">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+              <FileText className="w-6 h-6 text-green-600" />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-slate-600">Documents</p>
+              <p className="text-2xl font-bold text-slate-900">
+                {safeTrainings.filter(t => t.type === 'file').length}
               </p>
             </div>
           </div>
@@ -214,29 +196,15 @@ export default function PortalTrainingCenter({ clientPortal }: PortalTrainingCen
         <div className="bg-white rounded-xl border border-slate-200 p-6">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
-              <Award className="w-6 h-6 text-orange-600" />
+              <LinkIcon className="w-6 h-6 text-orange-600" />
             </div>
             <div>
-              <p className="text-sm font-medium text-slate-600">Progress</p>
-              <p className="text-2xl font-bold text-slate-900">{getProgress()}%</p>
+              <p className="text-sm font-medium text-slate-600">External Links</p>
+              <p className="text-2xl font-bold text-slate-900">
+                {safeTrainings.filter(t => t.type === 'link').length}
+              </p>
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* Progress Bar */}
-      <div className="bg-white rounded-xl border border-slate-200 p-6">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-bold text-slate-900">Your Learning Progress</h2>
-          <span className="text-sm text-slate-600">
-            {videos.filter(v => v.completed).length} of {videos.length} completed
-          </span>
-        </div>
-        <div className="w-full bg-slate-200 rounded-full h-3">
-          <div 
-            className="bg-green-600 h-3 rounded-full transition-all duration-500"
-            style={{ width: `${getProgress()}%` }}
-          ></div>
         </div>
       </div>
 
@@ -248,7 +216,7 @@ export default function PortalTrainingCenter({ clientPortal }: PortalTrainingCen
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
               <input
                 type="text"
-                placeholder="Search training videos..."
+                placeholder="Search training materials..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -273,87 +241,114 @@ export default function PortalTrainingCenter({ clientPortal }: PortalTrainingCen
         </div>
       </div>
 
-      {/* Video Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredVideos.map((video) => (
-          <div
-            key={video.id}
-            className="bg-white rounded-xl border border-slate-200 overflow-hidden hover:shadow-lg transition-shadow"
-          >
-            {/* Video Thumbnail */}
-            <div className="relative">
-              <div className="aspect-video bg-slate-200 flex items-center justify-center">
-                <PlayCircle className="w-12 h-12 text-slate-400" />
-              </div>
-              <div className="absolute bottom-2 right-2 bg-black bg-opacity-75 text-white text-xs px-2 py-1 rounded">
-                {video.duration}
-              </div>
-              {video.completed && (
-                <div className="absolute top-2 right-2">
-                  <CheckCircle className="w-6 h-6 text-green-500 bg-white rounded-full" />
-                </div>
-              )}
-            </div>
-
-            {/* Video Info */}
-            <div className="p-4">
-              <div className="flex items-start justify-between mb-2">
-                <h3 className="font-semibold text-slate-900 leading-tight">{video.title}</h3>
-                <span className={`px-2 py-1 rounded-full text-xs font-medium ${getDifficultyColor(video.difficulty)}`}>
-                  {video.difficulty}
-                </span>
-              </div>
-              
-              <p className="text-sm text-slate-600 mb-3 line-clamp-2">{video.description}</p>
-              
-              <div className="flex items-center gap-4 text-xs text-slate-500 mb-4">
-                <div className="flex items-center gap-1">
-                  <User className="w-3 h-3" />
-                  {video.instructor}
-                </div>
-                <div className="flex items-center gap-1">
-                  <Calendar className="w-3 h-3" />
-                  {formatDate(video.uploadDate)}
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <div className="text-xs text-slate-500">
-                  {video.views.toLocaleString()} views
-                </div>
+      {/* Training Materials organized by category */}
+      {Object.entries(trainingsByCategory).length > 0 ? (
+        Object.entries(trainingsByCategory).map(([category, categoryTrainings]) => (
+          <div key={category} className="bg-white rounded-xl border border-slate-200 p-6">
+            <h2 className="text-xl font-bold text-slate-900 mb-6">{category}</h2>
+            <div className="grid gap-6">
+              {categoryTrainings.map((training) => {
+                const IconComponent = getIcon(training);
+                const iconColors = getIconColor(training.type);
                 
-                <a
-                  href={video.videoUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
-                >
-                  <PlayCircle className="w-4 h-4" />
-                  Watch
-                  <ExternalLink className="w-3 h-3" />
-                </a>
-              </div>
+                return (
+                  <div
+                    key={training.id}
+                    className="border border-slate-200 rounded-lg hover:shadow-md transition-shadow overflow-hidden"
+                  >
+                    <div className="p-6">
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-start gap-4 flex-1">
+                          <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${iconColors}`}>
+                            <IconComponent className="w-6 h-6" />
+                          </div>
+                          
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-3 mb-2">
+                              <h3 className="font-semibold text-slate-900 text-lg">{training.title}</h3>
+                              <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                                training.type === 'video' ? 'bg-purple-100 text-purple-700' :
+                                training.type === 'file' ? 'bg-blue-100 text-blue-700' :
+                                'bg-green-100 text-green-700'
+                              }`}>
+                                {getTypeLabel(training.type)}
+                              </span>
+                            </div>
+                            
+                            <p className="text-slate-600 mb-4">{training.description}</p>
+                            
+                            <div className="flex items-center gap-6 text-sm text-slate-500">
+                              <div className="flex items-center gap-1">
+                                <Calendar className="w-4 h-4" />
+                                Added {formatDate(training.createdAt)}
+                              </div>
+                              {training.type === 'link' && (
+                                <div className="flex items-center gap-1 truncate">
+                                  <ExternalLink className="w-4 h-4" />
+                                  <span className="truncate max-w-48">{training.url}</span>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-3 ml-4">
+                          <button
+                            onClick={() => handleTrainingClick(training)}
+                            className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+                              training.type === 'video' 
+                                ? 'bg-purple-600 hover:bg-purple-700 text-white'
+                                : training.type === 'file'
+                                ? 'bg-blue-600 hover:bg-blue-700 text-white'
+                                : 'bg-green-600 hover:bg-green-700 text-white'
+                            }`}
+                          >
+                            {training.type === 'video' ? (
+                              <>
+                                <PlayCircle className="w-4 h-4" />
+                                Watch
+                              </>
+                            ) : training.type === 'file' ? (
+                              <>
+                                <FileText className="w-4 h-4" />
+                                View
+                              </>
+                            ) : (
+                              <>
+                                <ExternalLink className="w-4 h-4" />
+                                Visit
+                              </>
+                            )}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
-        ))}
-      </div>
-
-      {/* No Results */}
-      {filteredVideos.length === 0 && (
+        ))
+      ) : (
         <div className="text-center py-12 bg-white rounded-xl border border-slate-200">
           <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <PlayCircle className="w-8 h-8 text-slate-400" />
           </div>
-          <h3 className="text-xl font-semibold text-slate-900 mb-2">No videos found</h3>
+          <h3 className="text-xl font-semibold text-slate-900 mb-2">
+            {searchTerm || selectedCategory !== 'all' ? 'No training materials found' : 'No training materials available'}
+          </h3>
           <p className="text-slate-600">
-            Try adjusting your search terms or category filter.
+            {searchTerm || selectedCategory !== 'all' 
+              ? 'Try adjusting your search terms or category filter.'
+              : 'Your account manager will add training videos and materials here to help you succeed.'
+            }
           </p>
         </div>
       )}
 
-      {/* Recommended Learning Path */}
+      {/* Getting Started Guide */}
       <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl border border-blue-200 p-6">
-        <h2 className="text-xl font-bold text-slate-900 mb-4">Recommended Learning Path</h2>
+        <h2 className="text-xl font-bold text-slate-900 mb-4">Getting Started</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="bg-white rounded-lg p-4">
             <div className="flex items-center gap-3 mb-2">
@@ -362,7 +357,7 @@ export default function PortalTrainingCenter({ clientPortal }: PortalTrainingCen
               </div>
               <h3 className="font-semibold text-slate-900">Foundation</h3>
             </div>
-            <p className="text-sm text-slate-600">Start with lead generation basics and CRM setup</p>
+            <p className="text-sm text-slate-600">Start with basic concepts and fundamental strategies</p>
           </div>
 
           <div className="bg-white rounded-lg p-4">
@@ -370,9 +365,9 @@ export default function PortalTrainingCenter({ clientPortal }: PortalTrainingCen
               <div className="w-8 h-8 bg-yellow-100 rounded-lg flex items-center justify-center">
                 <span className="text-yellow-600 font-bold text-sm">2</span>
               </div>
-              <h3 className="font-semibold text-slate-900">Growth</h3>
+              <h3 className="font-semibold text-slate-900">Implementation</h3>
             </div>
-            <p className="text-sm text-slate-600">Learn email marketing and social media strategies</p>
+            <p className="text-sm text-slate-600">Apply what you've learned with hands-on exercises</p>
           </div>
 
           <div className="bg-white rounded-lg p-4">
@@ -382,8 +377,29 @@ export default function PortalTrainingCenter({ clientPortal }: PortalTrainingCen
               </div>
               <h3 className="font-semibold text-slate-900">Optimization</h3>
             </div>
-            <p className="text-sm text-slate-600">Master conversion optimization and analytics</p>
+            <p className="text-sm text-slate-600">Refine your approach and maximize results</p>
           </div>
+        </div>
+      </div>
+
+      {/* Help Section */}
+      <div className="bg-slate-50 rounded-xl border border-slate-200 p-6">
+        <h2 className="text-xl font-bold text-slate-900 mb-4">Need Help?</h2>
+        <div className="text-center">
+          <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+            <Mail className="w-6 h-6 text-blue-600" />
+          </div>
+          <h3 className="font-semibold text-slate-900 mb-2">Contact Support</h3>
+          <p className="text-slate-600 mb-4">
+            Questions about training materials or need help with something? We're here to help.
+          </p>
+          <a 
+            href="mailto:support@amplifiedsolutions.com"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            <Mail className="w-4 h-4" />
+            Email Support
+          </a>
         </div>
       </div>
     </div>

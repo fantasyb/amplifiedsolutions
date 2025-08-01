@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -15,10 +14,12 @@ import {
   Search,
   Filter,
   Globe,
-  DollarSign,
   Clock,
   CheckCircle,
-  AlertCircle
+  AlertCircle,
+  Edit,
+  Settings,
+  Trash2
 } from 'lucide-react';
 
 interface ClientData {
@@ -153,10 +154,9 @@ export default function AdminClientsPage() {
     return {
       totalClients: clients.length,
       activeClients: clients.filter(c => c.status === 'active').length,
-      totalRevenue: clients.reduce((sum, c) => sum + c.totalValue, 0),
       totalPortalViews: clients.reduce((sum, c) => sum + (c.totalPortalViews || 0), 0),
-      averageValue: clients.length > 0 ? clients.reduce((sum, c) => sum + c.totalValue, 0) / clients.length : 0,
-      withPortals: clients.filter(c => c.portalId).length
+      withPortals: clients.filter(c => c.portalId).length,
+      totalForms: clients.reduce((sum, c) => sum + c.questionnaireCount, 0)
     };
   };
 
@@ -197,8 +197,8 @@ export default function AdminClientsPage() {
         </Link>
       </div>
 
-      {/* Overview Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
+      {/* Overview Stats - REMOVED TOTAL REVENUE */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
         <div className="bg-white rounded-xl border border-slate-200 p-4">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
@@ -219,18 +219,6 @@ export default function AdminClientsPage() {
             <div>
               <p className="text-sm font-medium text-slate-600">Active</p>
               <p className="text-2xl font-bold text-slate-900">{stats.activeClients}</p>
-            </div>
-          </div>
-        </div>
-        
-        <div className="bg-white rounded-xl border border-slate-200 p-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-              <DollarSign className="w-5 h-5 text-purple-600" />
-            </div>
-            <div>
-              <p className="text-sm font-medium text-slate-600">Total Revenue</p>
-              <p className="text-2xl font-bold text-slate-900">{formatCurrency(stats.totalRevenue)}</p>
             </div>
           </div>
         </div>
@@ -261,14 +249,12 @@ export default function AdminClientsPage() {
 
         <div className="bg-white rounded-xl border border-slate-200 p-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center">
-              <span className="text-yellow-600 font-bold text-sm">
-                {formatCurrency(stats.averageValue).replace('$', '$').slice(0, 4)}
-              </span>
+            <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+              <MessageSquare className="w-5 h-5 text-purple-600" />
             </div>
             <div>
-              <p className="text-sm font-medium text-slate-600">Avg Value</p>
-              <p className="text-lg font-bold text-slate-900">{formatCurrency(stats.averageValue)}</p>
+              <p className="text-sm font-medium text-slate-600">Total Forms</p>
+              <p className="text-2xl font-bold text-slate-900">{clients.reduce((sum, c) => sum + c.questionnaireCount, 0)}</p>
             </div>
           </div>
         </div>
@@ -401,15 +387,6 @@ export default function AdminClientsPage() {
                     <p className="text-sm text-slate-500">{client.phone}</p>
                   )}
                 </div>
-                
-                <div className="text-right">
-                  <div className="text-2xl font-bold text-slate-900">
-                    {formatCurrency(client.totalValue)}
-                  </div>
-                  <div className="text-sm text-slate-500">
-                    Total Value
-                  </div>
-                </div>
               </div>
 
               {/* Stats Row */}
@@ -432,17 +409,19 @@ export default function AdminClientsPage() {
                 </div>
               </div>
 
-              {/* Portal Info */}
+              {/* Portal Info - FIXED DISPLAY */}
               {client.portalId && (
                 <div className="bg-blue-50 rounded-lg p-3 mb-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <Globe className="w-4 h-4 text-blue-600" />
                       <div>
-                        <span className="text-sm font-medium text-blue-900">Portal Active</span>
-                        {client.totalPortalViews && (
+                        <span className="text-sm font-medium text-blue-900">
+                          Portal Active
+                        </span>
+                        {client.totalPortalViews !== undefined && (
                           <div className="text-xs text-blue-700">
-                            {client.totalPortalViews} views
+                            {client.totalPortalViews} total views
                             {client.lastPortalAccess && (
                               <span> • Last access: {formatDate(client.lastPortalAccess)}</span>
                             )}
@@ -458,7 +437,6 @@ export default function AdminClientsPage() {
                     >
                       <Eye className="w-3 h-3" />
                       View Portal
-                      <ExternalLink className="w-3 h-3" />
                     </a>
                   </div>
                 </div>
@@ -478,14 +456,18 @@ export default function AdminClientsPage() {
                 )}
               </div>
 
-              {/* Actions */}
-              <div className="flex items-center justify-between pt-4 border-t border-slate-200">
-                <div className="flex items-center gap-2 text-sm text-slate-600">
-                  <Users className="w-4 h-4" />
-                  <span>Client since {formatDate(client.createdAt)}</span>
-                </div>
-
+              {/* Actions - ADDED EDIT FUNCTIONALITY */}
+              <div className="flex items-center justify-end pt-4 border-t border-slate-200">
                 <div className="flex items-center gap-3">
+                  {/* Edit Client Button - Now links to proper edit page */}
+                  <Link
+                    href={`/admin/clients/${client.id}/edit`}
+                    className="flex items-center gap-2 px-3 py-2 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 transition-colors"
+                  >
+                    <Edit className="w-4 h-4" />
+                    Edit
+                  </Link>
+
                   <Link
                     href={`/admin/proposals/new?client=${encodeURIComponent(client.email)}`}
                     className="flex items-center gap-2 px-4 py-2 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 transition-colors"
@@ -509,17 +491,10 @@ export default function AdminClientsPage() {
                           console.log('Creating portal for', client.email);
                           
                           // Call the portal creation API
-                          const response = await fetch('/api/admin/portals/create', {
-                            method: 'POST',
-                            headers: {
-                              'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify({
-                              clientEmail: client.email,
-                              clientName: client.name,
-                              clientCompany: client.company
-                            }),
-                          });
+                          const response = await fetch(`/api/admin/clients/${client.id}/convert-to-portal`, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+});
 
                           if (response.ok) {
                             const result = await response.json();
