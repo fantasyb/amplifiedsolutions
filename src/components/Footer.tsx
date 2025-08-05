@@ -64,6 +64,11 @@ export default function Footer({ onOpenModal }: FooterProps) {
                 </Link>
               </li>
               <li>
+                <Link href="/newsletter" className="hover:text-white transition-colors duration-200">
+                  Newsletter
+                </Link>
+              </li>
+              <li>
                 <Link href="/contact" className="hover:text-white transition-colors duration-200">
                   Contact Us
                 </Link>
@@ -88,6 +93,12 @@ export default function Footer({ onOpenModal }: FooterProps) {
                 className="block text-white/70 hover:text-white transition-colors duration-200"
               >
                 Schedule a Call
+              </Link>
+              <Link 
+                href="/newsletter"
+                className="block text-white/70 hover:text-white transition-colors duration-200"
+              >
+                Join Newsletter
               </Link>
               <div className="flex space-x-4 pt-2">
                 <a href="https://www.facebook.com/AmplifiedSolutions/" target="_blank" rel="noopener noreferrer" className="text-white/70 hover:text-white transition-colors duration-200">

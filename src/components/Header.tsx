@@ -105,6 +105,13 @@ export default function Header({ onOpenModal }: HeaderProps) {
               </Link>
               
               <Link 
+                href="/newsletter" 
+                className="text-gray-700 hover:text-[#647b75] font-medium transition-colors duration-200"
+              >
+                Newsletter
+              </Link>
+              
+              <Link 
                 href="/contact" 
                 className="text-gray-700 hover:text-[#647b75] font-medium transition-colors duration-200"
               >
@@ -205,6 +212,14 @@ export default function Header({ onOpenModal }: HeaderProps) {
               onClick={() => setIsMenuOpen(false)}
             >
               Blog
+            </Link>
+            
+            <Link 
+              href="/newsletter" 
+              className="block px-3 py-2 text-gray-700 hover:text-[#647b75] font-medium"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Newsletter
             </Link>
             
             <Link 
