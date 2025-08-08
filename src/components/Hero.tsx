@@ -38,47 +38,40 @@ export default function Hero({ onOpenModal }: HeroProps) {
 
       {/* Content */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-        <div className="grid lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+        <div className="max-w-4xl mx-auto text-center">
           
-          {/* Left Content - Mobile First */}
-          <div className={`lg:col-span-7 text-center lg:text-left transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+          {/* Main Content - Centered */}
+          <div className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
 
-            {/* Mobile-Optimized Headline */}
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black leading-tight text-gray-900 mb-6" 
+            {/* Heading */}
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black leading-tight text-gray-900 mb-6" 
                 style={{fontFamily: 'Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif'}}>
-              <span className="block">
-                We turn cold leads into
+              <span className="inline">
+                Revenue starts
               </span>
-              <span className="relative inline-block mt-2">
-                <span className="relative z-10 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-                  warm conversations.
-                </span>
-                {/* Mobile-friendly highlight - simpler approach */}
-                <span 
-                  className="absolute bottom-1 left-0 w-full h-2 md:h-4 bg-[#FFD580] opacity-70 rounded-full transition-all duration-700 delay-500" 
-                  style={{
-                    transform: isVisible ? 'scaleX(1)' : 'scaleX(0)',
-                    transformOrigin: 'left center'
-                  }}
-                ></span>
+              {' '}
+              <span className="inline text-[#FFD580]">
+                here.
               </span>
             </h1>
 
-            {/* Mobile-Optimized Subheader */}
-            <p className="text-base sm:text-lg md:text-xl text-gray-600 leading-relaxed max-w-2xl mx-auto lg:mx-0 mb-8">
-              While your competition lets leads go cold, we work new leads and smart lists 
-              through systematic follow-up to deliver 
-              <span className="font-semibold text-gray-800"> live transfers and appointments </span> 
-              ready for your agents to close.
+            {/* Subheading */}
+            <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-semibold text-gray-800 mb-4">
+              Your partner in lead generation, conversion, and pipeline management.
             </p>
 
-            {/* Mobile-Optimized CTA */}
+            {/* Description */}
+            <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-600 leading-relaxed max-w-3xl mx-auto mb-10">
+              We deliver complete solutions to scale your real estate business.
+            </p>
+
+            {/* CTA Button */}
             <div className="pt-2">
               <button
                 onClick={onOpenModal}
-                className="group inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-bold text-gray-800 bg-[#FFD580] rounded-lg transition-all duration-200 hover:bg-[#ffcf66] hover:shadow-xl transform hover:-translate-y-1 hover:scale-105 w-full sm:w-auto"
+                className="group inline-flex items-center justify-center px-8 sm:px-10 py-4 sm:py-5 text-base sm:text-lg font-bold text-gray-800 bg-[#FFD580] rounded-lg transition-all duration-200 hover:bg-[#ffcf66] hover:shadow-xl transform hover:-translate-y-1 hover:scale-105 uppercase tracking-wider"
               >
-                Stop Wasting Leads
+                Get Started Today
                 <svg className="ml-2 w-4 h-4 sm:w-5 sm:h-5 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                 </svg>
@@ -86,17 +79,6 @@ export default function Hero({ onOpenModal }: HeroProps) {
             </div>
           </div>
 
-          {/* Right Content - Hidden on mobile, visible on lg+ */}
-          <div className={`lg:col-span-5 hidden lg:flex items-center justify-center transition-all duration-1000 delay-300 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-8'}`}>
-            <div className="relative w-full h-96">
-              <Image
-                src="/Amp_Illustration_ISA.jpg"
-                alt="ISA calling leads"
-                fill
-                className="object-contain rounded-lg"
-              />
-            </div>
-          </div>
         </div>
       </div>
     </section>

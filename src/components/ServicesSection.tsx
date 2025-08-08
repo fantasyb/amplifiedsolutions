@@ -28,14 +28,14 @@ export default function ServicesSection() {
     {
       icon: (
         <svg className="w-8 h-8 text-[#647b75]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
         </svg>
       ),
-      title: "Lead Management",
-      subtitle: "Follow Up Boss Optimization",
-      description: "We handle your Follow Up Boss lead routing, agent nudging, reassignment, and pipeline tracking.",
-      href: "/services/lead-management",
-      highlights: ["Lead Routing", "Agent Nudging", "Pipeline Tracking"]
+      title: "Lead Generation",
+      subtitle: "Hyperlocal PPC Advertising",
+      description: "Capture ready-to-buy prospects in your exact neighborhoods with targeted campaigns that deliver qualified leads directly to your pipeline.",
+      href: "/services/ppc", // Updated to PPC page (to be created)
+      highlights: ["Targeted Campaigns", "Qualified Leads", "Neighborhood Focus"]
     },
     {
       icon: (
@@ -44,10 +44,22 @@ export default function ServicesSection() {
         </svg>
       ),
       title: "Lead Conversion",
-      subtitle: "ISA Calling + Management",
-      description: "Complete lead conversion services with ISA calling, management, and systematic follow-up.",
+      subtitle: "ISA Services + Systematic Follow-Up",
+      description: "Convert more leads into appointments with dedicated ISA calling, 8-12 touch sequences, and smart list monitoring.",
       href: "/services/lead-conversion",
-      highlights: ["ISA Calling", "Lead Qualification", "Live Transfers"]
+      highlights: ["ISA Calling", "8-12 Touches", "Smart Lists"]
+    },
+    {
+      icon: (
+        <svg className="w-8 h-8 text-[#647b75]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+        </svg>
+      ),
+      title: "Pipeline Management",
+      subtitle: "Follow Up Boss Optimization",
+      description: "Master your CRM with expert lead routing, agent accountability systems, and real-time performance tracking.",
+      href: "/services/lead-management",
+      highlights: ["Lead Routing", "Agent Accountability", "Performance Tracking"]
     }
   ];
 
@@ -68,12 +80,15 @@ export default function ServicesSection() {
       <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-8">
         {/* Header */}
         <div className={`text-center mb-16 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+          <p className="text-sm md:text-base font-bold text-[#647b75] tracking-wider uppercase mb-4">
+            What We Do
+          </p>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-gray-900 mb-6"
               style={{fontFamily: 'Inter, ui-sans-serif, system-ui, sans-serif'}}>
-            We work the leads so{' '}
+            The complete system your{' '}
             <span className="relative">
               <span className="relative z-10 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-                you can close the deals.
+                real estate business needs
               </span>
               {/* Animated highlight */}
               <span className={`absolute bottom-1 left-0 w-full h-3 bg-[#FFD580] opacity-70 rounded-full transition-all duration-700 delay-500 ${isVisible ? 'scale-x-100' : 'scale-x-0'}`}
@@ -88,13 +103,12 @@ export default function ServicesSection() {
             <div className={`w-16 h-1 bg-[#FFD580] rounded-full transition-all duration-500 delay-700 ${isVisible ? 'scale-x-100' : 'scale-x-0'}`}></div>
           </div>
           <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">
-            Get organized systems that turn every lead into revenue. No more missed opportunities, 
-            no more leads falling through the cracks.
+            We've helped hundreds of agents and teams turn chaotic lead management into predictable revenue through proven systems and dedicated support.
           </p>
         </div>
 
         {/* Service Cards */}
-        <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {services.map((service, index) => (
             <div 
               key={index} 
@@ -140,7 +154,7 @@ export default function ServicesSection() {
               <div className="mt-auto relative z-10">
                 <Link 
                   href={service.href}
-                  className="group/link flex items-center text-[#647b75] font-semibold hover:text-[#5a6f69] transition-all duration-200"
+                  className="group/link flex items-center text-[#647b75] font-semibold hover:text-[#5a6f69] transition-all duration-200 uppercase text-sm tracking-wider"
                 >
                   Learn More
                   <svg className="w-4 h-4 ml-2 transform group-hover/link:translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">

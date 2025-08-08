@@ -31,9 +31,6 @@ export default function HomePage() {
         {/* Hero Section */}
         <Hero onOpenModal={handleOpenModal} />
         
-        {/* Problem Section */}
-        <ProblemSection />
-        
         {/* Services Section */}
         <ServicesSection />
         

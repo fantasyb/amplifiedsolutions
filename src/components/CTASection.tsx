@@ -10,7 +10,7 @@ export default function CTASection({ onOpenModal }: CTASectionProps) {
       <div className="max-w-6xl mx-auto px-6 lg:px-8">
         <div className="text-center">
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-light text-gray-900">
-            Ready to stop wasting leads?{' '}
+            Ready to grow your business?{' '}
             <button
               onClick={onOpenModal}
               className="text-gray-900 underline decoration-2 underline-offset-4 hover:text-[#647b75] transition-colors duration-200 font-light"

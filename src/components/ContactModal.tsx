@@ -14,12 +14,13 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
     lastName: '',
     email: '',
     company: '',
-    phone: ''
+    phone: '',
+    notes: ''
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
@@ -76,7 +77,8 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
         lastName: '',
         email: '',
         company: '',
-        phone: ''
+        phone: '',
+        notes: ''
       });
       onClose();
     } else {
@@ -236,6 +238,23 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                   onChange={handleInputChange}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FFD580] focus:border-[#FFD580] transition-colors duration-200 text-gray-800 placeholder-gray-400"
                   placeholder="(555) 123-4567"
+                />
+              </div>
+
+              {/* Notes/Message */}
+              <div>
+                <label htmlFor="notes" className="block text-sm font-semibold text-gray-700 mb-2">
+                  How can we help? *
+                </label>
+                <textarea
+                  id="notes"
+                  name="notes"
+                  value={formData.notes}
+                  onChange={handleInputChange}
+                  required
+                  rows={4}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FFD580] focus:border-[#FFD580] transition-colors duration-200 text-gray-800 placeholder-gray-400 resize-none"
+                  placeholder="Tell us about your needs... (e.g., I need help with PPC lead generation, ISA services, lead management, etc.)"
                 />
               </div>
 

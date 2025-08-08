@@ -108,7 +108,7 @@ export default function AboutPage() {
           </h1>
           <div className="w-32 h-2 bg-[#FFD580] mx-auto mb-12 rounded-full"></div>
           <p className="text-2xl md:text-3xl text-white/90 max-w-4xl mx-auto leading-relaxed font-light">
-            We work the leads your agents won't
+            Your complete partner in real estate growth
           </p>
         </div>
       </section>
@@ -121,17 +121,17 @@ export default function AboutPage() {
               Our Mission
             </h2>
             <p className="text-2xl md:text-3xl text-gray-700 leading-relaxed mb-8 font-light">
-              To turn your abandoned leads into appointments through systematic follow-up and professional ISA services.
+              To deliver complete lead-to-close solutions that transform how real estate teams scale their business.
             </p>
             <p className="text-xl text-gray-600 leading-relaxed mb-16">
-              We handle your Follow Up Boss lead management, agent accountability, and ISA calling so you can focus on closing deals. Your leads need someone to call them - we call them.
+              We generate high-intent local leads through targeted PPC, convert them with professional ISA services, and optimize your entire pipeline through Follow Up Boss management. From first click to closed deal, we handle the systems so you can focus on selling.
             </p>
             
             <button
               onClick={openModal}
               className="bg-[#FFD580] hover:bg-[#ffcf66] text-gray-900 font-black px-12 py-6 rounded-2xl transition-all duration-300 transform hover:-translate-y-2 hover:shadow-2xl text-xl"
             >
-              Stop Wasting Leads
+              Start Growing Today
             </button>
           </div>
         </div>
@@ -180,7 +180,7 @@ export default function AboutPage() {
               </h2>
               <div className="w-24 h-1 bg-[#647b75] mb-8"></div>
               <p className="text-xl text-gray-700 leading-relaxed mb-12">
-                The leaders driving our mission forward and delivering world-class results for our clients every single day.
+                The leaders driving innovation in real estate lead generation, conversion, and management. We're building the future of how teams scale.
               </p>
               
               <div className="space-y-6">
@@ -237,11 +237,11 @@ export default function AboutPage() {
         
         <div className="relative z-10 max-w-5xl mx-auto px-6 lg:px-8 text-center">
           <h3 className="text-5xl md:text-6xl font-black text-white mb-8 leading-tight">
-            Ready to Stop Wasting 
-            <span className="text-[#FFD580]"> Leads?</span>
+            Ready to Scale Your 
+            <span className="text-[#FFD580]"> Real Estate Business?</span>
           </h3>
           <p className="text-2xl text-white/90 mb-12 max-w-3xl mx-auto leading-relaxed">
-            Join the growing community of real estate professionals who are converting more leads through systematic follow-up and professional ISA services.
+            Join hundreds of teams who trust us to generate, nurture, and manage their leads while they focus on what they do best - selling homes.
           </p>
           
           <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
@@ -249,7 +249,7 @@ export default function AboutPage() {
               onClick={openModal}
               className="bg-[#FFD580] hover:bg-[#ffcf66] text-gray-900 font-black px-12 py-6 rounded-2xl transition-all duration-300 transform hover:-translate-y-2 hover:shadow-2xl text-xl"
             >
-              Start Converting Leads
+              Get Started Today
             </button>
             <button
               onClick={openCalendly}

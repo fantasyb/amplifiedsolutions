@@ -64,18 +64,25 @@ export default function Header({ onOpenModal }: HeaderProps) {
                 >
                   <div className="py-2">
                     <Link 
-                      href="/services/lead-management" 
+                      href="/services/ppc" 
                       className="block px-4 py-3 text-gray-700 hover:text-[#647b75] hover:bg-gray-50 transition-colors duration-200"
                     >
-                      <div className="font-medium">Lead Management</div>
-                      <div className="text-sm text-gray-500">Follow Up Boss optimization</div>
+                      <div className="font-medium">Lead Generation</div>
+                      <div className="text-sm text-gray-500">Hyperlocal PPC advertising</div>
                     </Link>
                     <Link 
                       href="/services/lead-conversion" 
                       className="block px-4 py-3 text-gray-700 hover:text-[#647b75] hover:bg-gray-50 transition-colors duration-200"
                     >
                       <div className="font-medium">Lead Conversion</div>
-                      <div className="text-sm text-gray-500">Complete lifecycle management</div>
+                      <div className="text-sm text-gray-500">ISA services & systematic follow-up</div>
+                    </Link>
+                    <Link 
+                      href="/services/lead-management" 
+                      className="block px-4 py-3 text-gray-700 hover:text-[#647b75] hover:bg-gray-50 transition-colors duration-200"
+                    >
+                      <div className="font-medium">Pipeline Management</div>
+                      <div className="text-sm text-gray-500">Follow Up Boss optimization</div>
                     </Link>
                   </div>
                 </div>
@@ -172,11 +179,11 @@ export default function Header({ onOpenModal }: HeaderProps) {
               
               <div className={`mt-2 space-y-1 transition-all duration-200 ${isServicesOpen ? 'block' : 'hidden'}`}>
                 <Link 
-                  href="/services/lead-management" 
+                  href="/services/ppc" 
                   className="block pl-4 py-2 text-gray-600 hover:text-[#647b75]"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  Lead Management
+                  Lead Generation
                 </Link>
                 <Link 
                   href="/services/lead-conversion" 
@@ -184,6 +191,13 @@ export default function Header({ onOpenModal }: HeaderProps) {
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Lead Conversion
+                </Link>
+                <Link 
+                  href="/services/lead-management" 
+                  className="block pl-4 py-2 text-gray-600 hover:text-[#647b75]"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Pipeline Management
                 </Link>
               </div>
             </div>
