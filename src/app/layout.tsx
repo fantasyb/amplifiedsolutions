@@ -10,12 +10,12 @@ const manrope = Manrope({
 });
 
 export const metadata: Metadata = {
-  title: "Amplified Solutions - Lead Management & Conversion Experts",
-  description: "We turn cold leads into warm conversations. Complete Follow Up Boss optimization, ISA calling, and lead conversion services for real estate teams.",
-  keywords: "lead management, ISA services, follow up boss, real estate leads, lead conversion, systematic follow-up, lead warming",
+  title: "Amplified Solutions - Complete Lead-to-Close Solutions for Real Estate",
+  description: "We generate, nurture, and manage your leads so you can focus on selling. Hyperlocal PPC, professional ISA services, and Follow Up Boss optimization for real estate teams.",
+  keywords: "real estate lead generation, hyperlocal PPC, ISA services, follow up boss, lead conversion, pipeline management, real estate marketing, lead management",
   openGraph: {
-    title: "Amplified Solutions - Lead Management & Conversion Experts",
-    description: "We turn cold leads into warm conversations. Complete Follow Up Boss optimization, ISA calling, and lead conversion services for real estate teams.",
+    title: "Amplified Solutions - Complete Lead-to-Close Solutions for Real Estate",
+    description: "We generate, nurture, and manage your leads so you can focus on selling. Hyperlocal PPC, professional ISA services, and Follow Up Boss optimization for real estate teams.",
     url: "https://amplifiedsolutions.com",
     siteName: "Amplified Solutions",
     images: [
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
         url: "/AmplifiedSolutions_Logo-V2_Main.png",
         width: 1200,
         height: 630,
-        alt: "Amplified Solutions - Lead Management & Conversion Experts",
+        alt: "Amplified Solutions - Complete Lead-to-Close Solutions",
       },
     ],
     locale: "en_US",
@@ -31,8 +31,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Amplified Solutions - Lead Management & Conversion Experts",
-    description: "We turn cold leads into warm conversations. Complete Follow Up Boss optimization, ISA calling, and lead conversion services for real estate teams.",
+    title: "Amplified Solutions - Complete Lead-to-Close Solutions for Real Estate",
+    description: "We generate, nurture, and manage your leads so you can focus on selling. Hyperlocal PPC, professional ISA services, and Follow Up Boss optimization.",
     images: ["/AmplifiedSolutions_Logo-V2_Main.png"],
   },
 };
