@@ -59,6 +59,21 @@ export const availableServices: Record<string, Service> = {
       'Team training on Real Scout best practices',
       'Resource materials and guides'
     ]
+  },
+  'recruiting-system': {
+    id: 'recruiting-system',
+    title: 'Follow Up Boss Recruiting System',
+    description: 'Your one-stop recruiting solution for streamlined agent acquisition on Follow Up Boss. Turn recruiting from a grind into an exhilarating growth engine.',
+    features: [
+      'Recruiting-specific pond and smart list for dedicated agent acquisition',
+      'Complete recruiting deal board for pipeline monitoring and insights',
+      'Plug-and-play email and text templates for proven outreach',
+      'Comprehensive training guide and videos for immediate implementation',
+      'Set-it-and-forget-it system requiring no ongoing maintenance',
+      'Scalable solution that grows with your team size',
+      'Immediate ROI from day one of implementation',
+      'Administrative task automation and manual tracking elimination'
+    ]
   }
 };
 
