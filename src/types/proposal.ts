@@ -12,6 +12,7 @@ export interface Service {
   description: string;
   features: string[];
   highlighted?: boolean;
+  price?: number; // Add price field for individual services if needed
 }
 
 export interface Testimonial {
@@ -27,13 +28,18 @@ export interface Proposal {
   services: Service[];
   cost: number;
   notes?: string;
-  stripeCheckoutUrl: string;
   createdAt: Date;
   expiresAt?: Date;
   status: 'pending' | 'accepted' | 'rejected' | 'expired';
-  // Add recurring payment fields
+  
+  // Payment configuration
   isRecurring?: boolean;
+  recurringInterval?: 'month' | 'year'; // Added for subscription interval
   paymentType?: 'full' | 'partial' | 'installments';
   downPayment?: number;
   installmentCount?: number;
+  
+  // Payment link tracking (instead of stripeCheckoutUrl)
+  paymentLinkId?: string; // Store Stripe payment link ID if you want to track it
+  paymentLinkUrl?: string; // Optionally cache the URL, though you'll generate it on-demand
 }

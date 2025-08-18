@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
         console.log(`Session metadata:`, session.metadata);
         
         if (proposalId) {
-          const updated = await updateProposalStatus(proposalId, 'accepted'); // Add await
+          const updated = await updateProposalStatus(proposalId, 'accepted');
           if (updated) {
             console.log(`✅ Proposal ${proposalId} marked as accepted`);
           }
@@ -51,11 +51,36 @@ export async function POST(request: NextRequest) {
         console.log(`🔄 Subscription created for proposal: ${subscriptionProposalId}`);
         
         if (subscriptionProposalId) {
-          const updated = await updateProposalStatus(subscriptionProposalId, 'accepted'); // Add await
+          const updated = await updateProposalStatus(subscriptionProposalId, 'accepted');
           if (updated) {
             console.log(`✅ Proposal ${subscriptionProposalId} marked as accepted`);
           }
         }
+        break;
+      
+      // New events for payment links
+      case 'payment_link.created':
+        console.log(`🔗 Payment link created:`, event.data.object.id);
+        break;
+      
+      case 'invoice.payment_succeeded':
+        const invoice = event.data.object;
+        const invoiceProposalId = invoice.metadata?.proposalId;
+        
+        console.log(`💰 Invoice paid for proposal: ${invoiceProposalId}`);
+        
+        if (invoiceProposalId) {
+          const updated = await updateProposalStatus(invoiceProposalId, 'accepted');
+          if (updated) {
+            console.log(`✅ Proposal ${invoiceProposalId} marked as accepted via invoice`);
+          }
+        }
+        break;
+      
+      case 'invoice.payment_failed':
+        const failedInvoice = event.data.object;
+        console.log(`❌ Invoice payment failed:`, failedInvoice.id);
+        // You might want to notify the customer or update proposal status
         break;
       
       default:

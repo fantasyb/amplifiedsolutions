@@ -1,4 +1,6 @@
 // src/components/proposals/ProposalContainer.tsx
+'use client';
+
 import { Proposal } from '@/types/proposal';
 import ProposalHeader from './ProposalHeader';
 import ServiceBreakdown from './ServiceBreakdown';
@@ -12,7 +14,22 @@ interface ProposalContainerProps {
 
 export default function ProposalContainer({ proposal }: ProposalContainerProps) {
   // Destructure with defaults to handle missing properties
-  const { isRecurring = false, paymentType, downPayment, installmentCount } = proposal;
+  const { 
+    isRecurring = false, 
+    paymentType, 
+    downPayment, 
+    installmentCount
+  } = proposal;
+
+  // Create a description for the payment
+  const paymentDescription = `${proposal.client.name} - Services Agreement`;
+
+  // Determine subscription interval based on isRecurring
+  const getSubscriptionInterval = (): 'month' | 'year' => {
+    // You can customize this logic based on your business needs
+    // For now, defaulting to monthly subscriptions
+    return 'month';
+  };
 
   return (
     <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
@@ -30,7 +47,8 @@ export default function ProposalContainer({ proposal }: ProposalContainerProps) 
           <ServiceBreakdown services={proposal.services} />
         </div>
 
-    
+        {/* Testimonials - uncomment if you have them */}
+        {/* <TestimonialCards /> */}
 
         {/* Pricing */}
         <PricingSection 
@@ -40,10 +58,14 @@ export default function ProposalContainer({ proposal }: ProposalContainerProps) 
           recurringPeriod="monthly"
         />
 
-        {/* Accept Button */}
+        {/* Accept Button - Updated to use payment links */}
         <AcceptButton 
-          stripeCheckoutUrl={proposal.stripeCheckoutUrl} 
-          cost={proposal.cost}
+          proposalId={proposal.id}
+          amount={proposal.cost}
+          description={paymentDescription}
+          clientEmail={proposal.client.email}
+          isSubscription={isRecurring}
+          subscriptionInterval={getSubscriptionInterval()}
         />
 
         {/* Footer */}

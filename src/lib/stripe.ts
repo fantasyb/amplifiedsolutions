@@ -1,4 +1,6 @@
-// src/lib/stripe.ts
+// ============================================
+// 1. UPDATE: src/lib/stripe.ts
+// ============================================
 import Stripe from 'stripe';
 
 // Server-side Stripe instance (using default API version)

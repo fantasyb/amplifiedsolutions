@@ -5,17 +5,74 @@ import { useState } from 'react';
 import { ArrowRight, CreditCard, Shield, Clock } from 'lucide-react';
 
 interface AcceptButtonProps {
-  stripeCheckoutUrl: string;
-  cost: number;
+  proposalId: string;
+  amount: number;
+  description: string;
+  clientEmail?: string;
+  isSubscription?: boolean;
+  subscriptionInterval?: 'month' | 'year';
 }
 
-export default function AcceptButton({ stripeCheckoutUrl, cost }: AcceptButtonProps) {
+export default function AcceptButton({ 
+  proposalId, 
+  amount, 
+  description, 
+  clientEmail,
+  isSubscription = false,
+  subscriptionInterval = 'month'
+}: AcceptButtonProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleAccept = async () => {
     setIsLoading(true);
-    // Add any tracking/analytics here
-    window.location.href = stripeCheckoutUrl;
+    setError(null);
+    
+    try {
+      // Call the API to create a payment link
+      const response = await fetch('/api/create-payment-link', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          proposalId,
+          amount,
+          description,
+          customerEmail: clientEmail,
+          isSubscription,
+          subscriptionInterval
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to create payment link');
+      }
+
+      const { url } = await response.json();
+      
+      // Add any tracking/analytics here
+      if (typeof window !== 'undefined' && window.gtag) {
+        window.gtag('event', 'begin_checkout', {
+          value: amount,
+          currency: 'USD',
+          items: [{
+            item_id: proposalId,
+            item_name: description,
+            price: amount,
+            quantity: 1
+          }]
+        });
+      }
+      
+      // Redirect to the payment link
+      window.location.href = url;
+    } catch (err) {
+      console.error('Error creating payment link:', err);
+      setError(err instanceof Error ? err.message : 'Something went wrong');
+      setIsLoading(false);
+    }
   };
 
   const formatCurrency = (amount: number) => {
@@ -24,6 +81,15 @@ export default function AcceptButton({ stripeCheckoutUrl, cost }: AcceptButtonPr
       currency: 'USD',
       minimumFractionDigits: 0,
     }).format(amount);
+  };
+
+  const getButtonText = () => {
+    if (isLoading) return 'Creating payment link...';
+    if (isSubscription) {
+      const interval = subscriptionInterval === 'month' ? 'Monthly' : 'Yearly';
+      return `Accept Proposal & Pay ${formatCurrency(amount)}/${interval}`;
+    }
+    return `Accept Proposal & Pay ${formatCurrency(amount)}`;
   };
 
   return (
@@ -66,6 +132,19 @@ export default function AcceptButton({ stripeCheckoutUrl, cost }: AcceptButtonPr
           </div>
         </div>
 
+        {/* Error Message */}
+        {error && (
+          <div className="mb-6 p-4 bg-red-500/20 border border-red-400/50 rounded-lg text-center">
+            <p className="text-red-100">{error}</p>
+            <button 
+              onClick={() => setError(null)}
+              className="mt-2 text-sm underline hover:no-underline"
+            >
+              Try again
+            </button>
+          </div>
+        )}
+
         {/* Main CTA Button */}
         <div className="text-center">
           <button
@@ -73,7 +152,7 @@ export default function AcceptButton({ stripeCheckoutUrl, cost }: AcceptButtonPr
             disabled={isLoading}
             className="group relative inline-flex items-center gap-3 px-12 py-5 bg-white text-blue-700 rounded-2xl font-bold text-xl shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
           >
-            <span>Accept Proposal & Pay {formatCurrency(cost)}</span>
+            <span>{getButtonText()}</span>
             <ArrowRight className={`w-6 h-6 transition-transform duration-300 ${isLoading ? 'animate-pulse' : 'group-hover:translate-x-1'}`} />
             
             {/* Button shine effect */}
@@ -81,7 +160,10 @@ export default function AcceptButton({ stripeCheckoutUrl, cost }: AcceptButtonPr
           </button>
           
           <p className="text-blue-100 text-sm mt-4 max-w-md mx-auto">
-            By clicking above, you agree to our terms of service and will be redirected to our secure payment processor.
+            {isSubscription 
+              ? `By clicking above, you agree to our terms of service and authorize recurring ${subscriptionInterval}ly charges.`
+              : 'By clicking above, you agree to our terms of service and will be redirected to our secure payment processor.'
+            }
           </p>
         </div>
 
@@ -91,7 +173,7 @@ export default function AcceptButton({ stripeCheckoutUrl, cost }: AcceptButtonPr
             Questions about this proposal?
           </p>
           <a 
-            href="mailto:hello@amplifiedsolutions.io" 
+            href="mailto:joey@amplifiedsolutions.com" 
             className="text-white font-medium hover:text-blue-200 transition-colors"
           >
             Contact us directly at joey@amplifiedsolutions.com
