@@ -21,6 +21,19 @@ export default function ProposalContainer({ proposal }: ProposalContainerProps) 
     installmentCount
   } = proposal;
 
+  // Ensure cost is a number
+  const getCostAsNumber = (): number => {
+    const cost = proposal.cost;
+    if (typeof cost === 'number') return cost;
+    // Convert to string first to handle any type
+    const costString = String(cost);
+    // Remove any formatting like $, commas, etc.
+    const cleanedCost = costString.replace(/[^0-9.-]+/g, '');
+    return parseFloat(cleanedCost) || 0;
+  };
+
+  const numericCost = getCostAsNumber();
+
   // Create a description for the payment
   const paymentDescription = `${proposal.client.name} - Services Agreement`;
 
@@ -61,7 +74,7 @@ export default function ProposalContainer({ proposal }: ProposalContainerProps) 
         {/* Accept Button - Updated to use payment links */}
         <AcceptButton 
           proposalId={proposal.id}
-          amount={proposal.cost}
+          amount={numericCost}
           description={paymentDescription}
           clientEmail={proposal.client.email}
           isSubscription={isRecurring}

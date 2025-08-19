@@ -44,7 +44,9 @@ export async function POST(request: NextRequest) {
       });
 
       // Create payment link for subscription
-      paymentLink = await stripe.paymentLinks.create({
+      // Note: For recurring prices, we cannot use customer_creation with prefilled_email
+      // We'll need to handle customer info differently
+      const paymentLinkParams: any = {
         line_items: [
           {
             price: price.id,
@@ -53,16 +55,25 @@ export async function POST(request: NextRequest) {
         ],
         metadata: {
           proposalId,
-          ...(customerEmail && { customerEmail })
+          customerEmail: customerEmail || '' // Store email in metadata instead
         },
         after_completion: {
           type: 'redirect',
           redirect: {
             url: `${getBaseUrl()}/proposal/${proposalId}?success=true`
           }
-        },
-        customer_creation: 'always'
-      });
+        }
+      };
+
+      // For subscriptions, we can't prefill email, but we can still collect it
+      if (customerEmail) {
+        // Add phone number collection to get more customer info
+        paymentLinkParams.phone_number_collection = {
+          enabled: true
+        };
+      }
+
+      paymentLink = await stripe.paymentLinks.create(paymentLinkParams);
 
     } else {
       // Create one-time payment link
@@ -80,7 +91,8 @@ export async function POST(request: NextRequest) {
         }
       });
 
-      paymentLink = await stripe.paymentLinks.create({
+      // For one-time payments, we can use customer_creation with prefilled email
+      const paymentLinkParams: any = {
         line_items: [
           {
             price: price.id,
@@ -88,21 +100,31 @@ export async function POST(request: NextRequest) {
           }
         ],
         metadata: {
-          proposalId,
-          ...(customerEmail && { customerEmail })
+          proposalId
         },
         after_completion: {
           type: 'redirect',
           redirect: {
             url: `${getBaseUrl()}/proposal/${proposalId}?success=true`
           }
-        },
-        customer_creation: 'always'
-      });
+        }
+      };
+
+      // Only add customer_creation for one-time payments
+      if (customerEmail) {
+        paymentLinkParams.customer_creation = 'always';
+        paymentLinkParams.prefilled_email = customerEmail;
+      }
+
+      paymentLink = await stripe.paymentLinks.create(paymentLinkParams);
     }
 
-    // Store the payment link URL in your database if needed
-    // await updateProposal(proposalId, { paymentLinkId: paymentLink.id });
+    console.log(`✅ Created payment link for proposal ${proposalId}:`, {
+      id: paymentLink.id,
+      url: paymentLink.url,
+      isSubscription,
+      amount
+    });
 
     return NextResponse.json({ 
       url: paymentLink.url,
@@ -111,8 +133,18 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     console.error('Error creating payment link:', error);
+    
+    // More detailed error logging
+    if (error instanceof Error) {
+      console.error('Error details:', {
+        message: error.message,
+        name: error.name,
+        stack: error.stack
+      });
+    }
+    
     return NextResponse.json(
-      { error: 'Failed to create payment link' },
+      { error: error instanceof Error ? error.message : 'Failed to create payment link' },
       { status: 500 }
     );
   }
