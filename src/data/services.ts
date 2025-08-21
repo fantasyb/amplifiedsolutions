@@ -48,6 +48,24 @@ export const availableServices: Record<string, Service> = {
       'Monthly reporting on calls, conversions, and lead flow'
     ]
   },
+  'hyperlocal-leads': {
+    id: 'hyperlocal-leads',
+    title: 'Hyper-local Leads',
+    description: 'Capture ready-to-buy local leads with hyperlocal PPC campaigns that deliver qualified prospects directly to your pipeline, targeting exact neighborhoods and buyer intent in your market.',
+    highlighted: false, // Mark as featured since it's a new premium service
+    features: [
+      'Neighborhood-level targeting focused on your exact zip codes',
+      'High-intent buyer targeting - people actively searching for homes now',
+      'Market analysis to identify high-value neighborhoods in your area',
+      'Complete PPC campaign creation and management',
+      'Continuous optimization for more qualified leads month over month',
+      'Direct Follow Up Boss integration with seamless lead flow',
+      'Real-time lead delivery as they come in',
+      'Monthly performance reporting on lead flow and quality',
+      'Wrong location and low-intent traffic filtering',
+      'Complete tracking from ad click to pipeline'
+    ]
+  },
   'real-scout-integration': {
     id: 'real-scout-integration',
     title: 'Real Scout Integration',
