@@ -590,16 +590,193 @@ export default function ProposalForm() {
         </div>
       </div>
 
-      {/* Payment Options (keeping existing code) */}
+      {/* Payment Options */}
       <div className="bg-white rounded-xl border border-slate-200 p-8">
         <div className="flex items-center gap-3 mb-6">
           <DollarSign className="w-6 h-6 text-blue-600" />
           <h2 className="text-2xl font-bold text-slate-900">Payment Options</h2>
         </div>
         
-        {/* Rest of payment options code remains the same */}
         <div className="space-y-6">
-          {/* ... existing payment options code ... */}
+          {/* Payment Type Selection */}
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-4">
+              Payment Structure
+            </label>
+            <div className="grid md:grid-cols-3 gap-4">
+              <div
+                className={`border-2 rounded-lg p-4 cursor-pointer transition-all ${
+                  formData.paymentType === 'full'
+                    ? 'border-blue-500 bg-blue-50'
+                    : 'border-slate-200 hover:border-slate-300'
+                }`}
+                onClick={() => setFormData(prev => ({ ...prev, paymentType: 'full' }))}
+              >
+                <div className="flex items-center gap-3">
+                  <div className={`w-4 h-4 rounded-full border-2 ${
+                    formData.paymentType === 'full'
+                      ? 'border-blue-500 bg-blue-500'
+                      : 'border-slate-300'
+                  }`}>
+                    {formData.paymentType === 'full' && (
+                      <div className="w-2 h-2 bg-white rounded-full mx-auto mt-0.5" />
+                    )}
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-slate-900">Full Payment</h4>
+                    <p className="text-sm text-slate-600">Pay entire amount (one-time or recurring)</p>
+                  </div>
+                </div>
+              </div>
+
+              <div
+                className={`border-2 rounded-lg p-4 cursor-pointer transition-all ${
+                  formData.paymentType === 'partial'
+                    ? 'border-blue-500 bg-blue-50'
+                    : 'border-slate-200 hover:border-slate-300'
+                }`}
+                onClick={() => setFormData(prev => ({ ...prev, paymentType: 'partial' }))}
+              >
+                <div className="flex items-center gap-3">
+                  <div className={`w-4 h-4 rounded-full border-2 ${
+                    formData.paymentType === 'partial'
+                      ? 'border-blue-500 bg-blue-500'
+                      : 'border-slate-300'
+                  }`}>
+                    {formData.paymentType === 'partial' && (
+                      <div className="w-2 h-2 bg-white rounded-full mx-auto mt-0.5" />
+                    )}
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-slate-900">Down Payment</h4>
+                    <p className="text-sm text-slate-600">Pay partial amount to start</p>
+                  </div>
+                </div>
+              </div>
+
+              <div
+                className={`border-2 rounded-lg p-4 cursor-pointer transition-all ${
+                  formData.paymentType === 'installments'
+                    ? 'border-blue-500 bg-blue-50'
+                    : 'border-slate-200 hover:border-slate-300'
+                }`}
+                onClick={() => setFormData(prev => ({ ...prev, paymentType: 'installments' }))}
+              >
+                <div className="flex items-center gap-3">
+                  <div className={`w-4 h-4 rounded-full border-2 ${
+                    formData.paymentType === 'installments'
+                      ? 'border-blue-500 bg-blue-500'
+                      : 'border-slate-300'
+                  }`}>
+                    {formData.paymentType === 'installments' && (
+                      <div className="w-2 h-2 bg-white rounded-full mx-auto mt-0.5" />
+                    )}
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-slate-900">Installments</h4>
+                    <p className="text-sm text-slate-600">Split into multiple payments</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Conditional Payment Details */}
+          {formData.paymentType === 'full' && (
+            <div className="p-4 bg-blue-50 rounded-lg">
+              <div className="flex items-center gap-3">
+                <input
+                  type="checkbox"
+                  id="isRecurringFull"
+                  checked={formData.isRecurring}
+                  onChange={(e) => setFormData(prev => ({ ...prev, isRecurring: e.target.checked }))}
+                  className="w-4 h-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500"
+                />
+                <label htmlFor="isRecurringFull" className="text-sm font-medium text-slate-700">
+                  Make this a recurring monthly payment
+                </label>
+              </div>
+              {formData.isRecurring && (
+                <p className="text-xs text-slate-500 mt-2 ml-7">
+                  Client will be charged ${formData.cost} every month for ongoing services.
+                </p>
+              )}
+            </div>
+          )}
+
+          {formData.paymentType === 'partial' && (
+            <div className="grid md:grid-cols-2 gap-6 p-4 bg-blue-50 rounded-lg">
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  Down Payment Amount ($)
+                </label>
+                <input
+                  type="number"
+                  value={formData.downPayment}
+                  onChange={(e) => setFormData(prev => ({ ...prev, downPayment: Number(e.target.value) }))}
+                  className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white"
+                  min="0"
+                  max={formData.cost}
+                  step="1"
+                />
+              </div>
+              <div className="flex items-end">
+                <div className="text-sm text-slate-600">
+                  <div>Remaining: <span className="font-semibold">${formData.cost - formData.downPayment}</span></div>
+                  <div>Percentage: <span className="font-semibold">{Math.round((formData.downPayment / formData.cost) * 100)}%</span></div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {formData.paymentType === 'installments' && (
+            <div className="space-y-4 p-4 bg-blue-50 rounded-lg">
+              <div className="grid md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                    Number of Installments
+                  </label>
+                  <select
+                    value={formData.installmentCount}
+                    onChange={(e) => setFormData(prev => ({ ...prev, installmentCount: Number(e.target.value) }))}
+                    className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white"
+                  >
+                    <option value={2}>2 payments</option>
+                    <option value={3}>3 payments</option>
+                    <option value={4}>4 payments</option>
+                    <option value={6}>6 payments</option>
+                  </select>
+                </div>
+                <div className="flex items-end">
+                  <div className="text-sm text-slate-600">
+                    <div>Per installment: <span className="font-semibold">${Math.round(formData.cost / formData.installmentCount)}</span></div>
+                    <div>Every 30 days</div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Recurring Toggle */}
+              <div className="border-t border-blue-200 pt-4">
+                <div className="flex items-center gap-3">
+                  <input
+                    type="checkbox"
+                    id="isRecurring"
+                    checked={formData.isRecurring}
+                    onChange={(e) => setFormData(prev => ({ ...prev, isRecurring: e.target.checked }))}
+                    className="w-4 h-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500"
+                  />
+                  <label htmlFor="isRecurring" className="text-sm font-medium text-slate-700">
+                    Make this a recurring service (continues monthly after installments complete)
+                  </label>
+                </div>
+                {formData.isRecurring && (
+                  <p className="text-xs text-slate-500 mt-2 ml-7">
+                    After {formData.installmentCount} payments, client will be charged ${Math.round(formData.cost / formData.installmentCount)} monthly for ongoing services.
+                  </p>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
