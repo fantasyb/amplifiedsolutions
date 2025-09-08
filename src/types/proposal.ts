@@ -38,8 +38,20 @@ export interface Proposal {
   paymentType?: 'full' | 'partial' | 'installments';
   downPayment?: number;
   installmentCount?: number;
+
+  
   
   // Payment link tracking (instead of stripeCheckoutUrl)
   paymentLinkId?: string; // Store Stripe payment link ID if you want to track it
   paymentLinkUrl?: string; // Optionally cache the URL, though you'll generate it on-demand
+}
+
+export interface Service {
+  id: string;
+  title: string;
+  description: string;
+  features: string[];
+  highlighted?: boolean;
+  price?: number; // Individual service price
+  isCustom?: boolean; // Flag for custom services
 }

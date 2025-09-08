@@ -2,7 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { availableServices } from '@/data/services';
 import { getProposals, createProposal, deleteProposal } from '@/data/proposals';
-import { Proposal } from '@/types/proposal';
+import { Proposal, Service } from '@/types/proposal';
 import { stripe, getBaseUrl } from '@/lib/stripe';
 
 export async function POST(request: NextRequest) {
@@ -26,12 +26,31 @@ export async function POST(request: NextRequest) {
     const expiresAt = new Date();
     expiresAt.setDate(expiresAt.getDate() + data.expiresIn);
     
-    // Get selected services
+    // Get selected predefined services
     const selectedServices = data.selectedServices
       .map((serviceId: string) => availableServices[serviceId])
       .filter(Boolean);
     
-    console.log('🛠️ API: Selected services:', selectedServices.length);
+    // Combine predefined and custom services
+    const customServices = data.customServices || [];
+    const allServices = [...selectedServices, ...customServices];
+    
+    console.log('🛠️ API: Total services:', allServices.length);
+    console.log('🛠️ API: Predefined services:', selectedServices.length);
+    console.log('🛠️ API: Custom services:', customServices.length);
+    
+    // Calculate total cost if custom services are included
+    let totalCost = data.cost;
+    if (customServices.length > 0) {
+      // Option 1: Use the provided total cost from the form
+      // This is what we're doing - trusting the form's calculation
+      
+      // Option 2: Recalculate from services (uncomment if you want server-side validation)
+      // totalCost = selectedServices.reduce((sum: number, s: Service) => sum + (s.price || 0), 0) +
+      //             customServices.reduce((sum: number, s: Service) => sum + (s.price || 0), 0);
+      
+      console.log('💵 API: Total cost with custom services:', totalCost);
+    }
     
     // Create Stripe checkout session based on payment type
     console.log('💳 API: About to create Stripe session with ID:', proposalId);
@@ -40,17 +59,17 @@ export async function POST(request: NextRequest) {
       proposalId: proposalId,
       clientName: data.clientName,
       clientEmail: data.clientEmail,
-      cost: data.cost,
+      cost: totalCost,
       paymentType: data.paymentType,
       downPayment: data.downPayment,
       installmentCount: data.installmentCount,
-      isRecurring: data.isRecurring, // Add this
-      services: selectedServices,
+      isRecurring: data.isRecurring,
+      services: allServices,
     });
     
     console.log('✅ API: Stripe session created, URL received');
     
-    // Create proposal object - ADD THE MISSING FIELDS HERE
+    // Create proposal object with all services
     const proposalData = {
       client: {
         name: data.clientName,
@@ -58,12 +77,11 @@ export async function POST(request: NextRequest) {
         company: data.clientCompany || undefined,
         phone: data.clientPhone || undefined,
       },
-      services: selectedServices,
-      cost: data.cost,
+      services: allServices, // Store all services (predefined + custom)
+      cost: totalCost,
       notes: data.notes || undefined,
       stripeCheckoutUrl,
       expiresAt,
-      // ADD THE RECURRING FIELDS
       isRecurring: data.isRecurring || false,
       paymentType: data.paymentType || 'full',
       downPayment: data.downPayment,
@@ -71,9 +89,12 @@ export async function POST(request: NextRequest) {
     };
     
     console.log('💾 API: About to save proposal with ID:', proposalId);
-    console.log('💾 API: Proposal includes recurring data:', {
+    console.log('💾 API: Proposal includes:', {
+      totalServices: proposalData.services.length,
+      customServices: proposalData.services.filter((s: Service) => s.isCustom).length,
       isRecurring: proposalData.isRecurring,
-      paymentType: proposalData.paymentType
+      paymentType: proposalData.paymentType,
+      totalCost: proposalData.cost
     });
     
     // Create and save proposal
@@ -104,14 +125,28 @@ async function createStripeCheckoutSession(params: {
   paymentType: string;
   downPayment?: number;
   installmentCount?: number;
-  isRecurring?: boolean; // Add this
-  services: any[];
+  isRecurring?: boolean;
+  services: Service[];
 }) {
   const { proposalId, clientName, clientEmail, cost, paymentType, downPayment, installmentCount, isRecurring, services } = params;
   
   const baseUrl = getBaseUrl();
   
   console.log(`💳 Creating Stripe session for proposal: ${proposalId}`);
+  
+  // Create detailed service descriptions
+  const serviceDescriptions = services.map(s => {
+    const customTag = s.isCustom ? ' (Custom)' : '';
+    const priceTag = s.price ? ` - $${s.price}` : '';
+    return `${s.title}${customTag}${priceTag}`;
+  });
+  
+  const serviceDescriptionShort = serviceDescriptions.join(', ');
+  const serviceDescriptionLong = serviceDescriptions.join('\n• ');
+  
+  // Count custom vs standard services
+  const customServiceCount = services.filter(s => s.isCustom).length;
+  const standardServiceCount = services.filter(s => !s.isCustom).length;
   
   try {
     let sessionData: any = {
@@ -122,7 +157,10 @@ async function createStripeCheckoutSession(params: {
         proposalId: proposalId,
         clientName,
         paymentType,
-        isRecurring: isRecurring ? 'true' : 'false', // Add this
+        isRecurring: isRecurring ? 'true' : 'false',
+        hasCustomServices: customServiceCount > 0 ? 'true' : 'false',
+        customServiceCount: customServiceCount.toString(),
+        standardServiceCount: standardServiceCount.toString(),
       },
     };
 
@@ -130,8 +168,8 @@ async function createStripeCheckoutSession(params: {
       if (isRecurring) {
         // Create recurring subscription for full payment
         const product = await stripe.products.create({
-          name: `${clientName} - Monthly Service`,
-          description: `Recurring monthly service: ${services.map(s => s.title).join(', ')}`,
+          name: `${clientName} - Monthly Service Package`,
+          description: `Recurring monthly service package including:\n• ${serviceDescriptionLong}`,
         });
         
         const price = await stripe.prices.create({
@@ -152,6 +190,7 @@ async function createStripeCheckoutSession(params: {
           metadata: {
             proposalId: proposalId,
             isRecurring: 'true',
+            serviceCount: services.length.toString(),
           },
         };
       } else {
@@ -161,7 +200,7 @@ async function createStripeCheckoutSession(params: {
             currency: 'usd',
             product_data: {
               name: `Amplified Solutions - ${clientName}`,
-              description: `Services: ${services.map(s => s.title).join(', ')}`,
+              description: `Service Package (${services.length} services):\n• ${serviceDescriptionLong}`,
             },
             unit_amount: cost * 100,
           },
@@ -172,26 +211,29 @@ async function createStripeCheckoutSession(params: {
       
     } else if (paymentType === 'partial') {
       // Down payment only (one-time)
+      const downPaymentPercentage = Math.round((downPayment! / cost) * 100);
+      
       sessionData.line_items = [{
         price_data: {
           currency: 'usd',
           product_data: {
             name: `Down Payment - ${clientName}`,
-            description: `Initial payment for services (${Math.round((downPayment! / cost) * 100)}% of total)`,
+            description: `Initial payment (${downPaymentPercentage}% of total $${cost})\nFor services:\n• ${serviceDescriptionLong}`,
           },
           unit_amount: downPayment! * 100,
         },
         quantity: 1,
       }];
       sessionData.mode = 'payment';
+      sessionData.metadata.remainingBalance = (cost - downPayment!).toString();
       
     } else if (paymentType === 'installments') {
       // Subscription for installments
       const installmentAmount = Math.round(cost / installmentCount!);
       
       const product = await stripe.products.create({
-        name: `${clientName} - Service Package`,
-        description: `${installmentCount} monthly payments for services`,
+        name: `${clientName} - Service Package (${installmentCount} Installments)`,
+        description: `${installmentCount} monthly payments for:\n• ${serviceDescriptionLong}`,
       });
       
       const price = await stripe.prices.create({
@@ -214,33 +256,56 @@ async function createStripeCheckoutSession(params: {
           installmentCount: installmentCount!.toString(),
           totalPayments: installmentCount!.toString(),
           isRecurring: isRecurring ? 'true' : 'false',
+          currentPayment: '1',
         },
       };
+      
+      // Add trial period if you want to delay first payment
+      // sessionData.subscription_data.trial_period_days = 7;
     }
 
     const session = await stripe.checkout.sessions.create(sessionData);
     
     console.log(`✅ Created Stripe session ${session.id} for proposal ${proposalId}`);
-    console.log(`📋 Session metadata:`, session.metadata);
+    console.log(`📋 Session details:`, {
+      mode: sessionData.mode,
+      paymentType,
+      amount: paymentType === 'partial' ? downPayment : cost,
+      serviceCount: services.length,
+      customServices: customServiceCount,
+    });
     
     return session.url!;
     
   } catch (error) {
     console.error('❌ Stripe error:', error);
-    // Fallback to a test URL if Stripe fails
+    // Fallback to a test URL if Stripe fails (for development)
     return `https://checkout.stripe.com/c/pay/test_fallback_${proposalId}`;
   }
 }
 
 export async function GET() {
-  // Return all proposals for admin view
-  const allProposals = Object.values(await getProposals()).map(proposal => ({
-    ...proposal,
-    // Don't expose sensitive data in list view
-    stripeCheckoutUrl: undefined,
-  }));
-  
-  return NextResponse.json(allProposals);
+  try {
+    // Return all proposals for admin view
+    const allProposals = Object.values(await getProposals()).map(proposal => ({
+      ...proposal,
+      // Don't expose sensitive data in list view
+      stripeCheckoutUrl: undefined,
+      // Add summary info for custom services
+      customServiceCount: proposal.services?.filter((s: Service) => s.isCustom).length || 0,
+      standardServiceCount: proposal.services?.filter((s: Service) => !s.isCustom).length || 0,
+    }));
+    
+    console.log(`📊 API: Returning ${allProposals.length} proposals`);
+    
+    return NextResponse.json(allProposals);
+  } catch (error) {
+    console.error('❌ API: Error fetching proposals:', error);
+    return NextResponse.json(
+      { error: 'Failed to fetch proposals' },
+      { status: 500 }
+    );
+  }
 }
 
 export async function DELETE(request: NextRequest) {
@@ -280,6 +345,8 @@ function generateProposalId(clientName: string): string {
     .replace(/-+/g, '-')
     .replace(/^-|-$/g, '');
   
+  const timestamp = Date.now().toString(36);
   const randomSuffix = Math.random().toString(36).substring(2, 8);
-  return `${nameSlug}-${randomSuffix}`;
+  
+  return `${nameSlug}-${timestamp}-${randomSuffix}`;
 }
