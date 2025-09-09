@@ -44,8 +44,6 @@ export async function POST(request: NextRequest) {
       });
 
       // Create payment link for subscription
-      // Note: For recurring prices, we cannot use customer_creation with prefilled_email
-      // We'll need to handle customer info differently
       const paymentLinkParams: any = {
         line_items: [
           {
@@ -55,7 +53,7 @@ export async function POST(request: NextRequest) {
         ],
         metadata: {
           proposalId,
-          customerEmail: customerEmail || '' // Store email in metadata instead
+          customerEmail: customerEmail || '' // Store email in metadata for reference
         },
         after_completion: {
           type: 'redirect',
@@ -65,13 +63,14 @@ export async function POST(request: NextRequest) {
         }
       };
 
-      // For subscriptions, we can't prefill email, but we can still collect it
-      if (customerEmail) {
-        // Add phone number collection to get more customer info
-        paymentLinkParams.phone_number_collection = {
-          enabled: true
-        };
-      }
+      // For subscriptions, collect customer information
+      // Note: We cannot prefill the email, but we can require it to be collected
+      paymentLinkParams.customer_creation = 'always';
+      
+      // Optional: Enable phone number collection
+      paymentLinkParams.phone_number_collection = {
+        enabled: false // Set to true if you want to collect phone numbers
+      };
 
       paymentLink = await stripe.paymentLinks.create(paymentLinkParams);
 
@@ -91,7 +90,7 @@ export async function POST(request: NextRequest) {
         }
       });
 
-      // For one-time payments, we can use customer_creation with prefilled email
+      // For one-time payments
       const paymentLinkParams: any = {
         line_items: [
           {
@@ -100,7 +99,8 @@ export async function POST(request: NextRequest) {
           }
         ],
         metadata: {
-          proposalId
+          proposalId,
+          customerEmail: customerEmail || '' // Store email in metadata for reference
         },
         after_completion: {
           type: 'redirect',
@@ -110,11 +110,13 @@ export async function POST(request: NextRequest) {
         }
       };
 
-      // Only add customer_creation for one-time payments
-      if (customerEmail) {
-        paymentLinkParams.customer_creation = 'always';
-        paymentLinkParams.prefilled_email = customerEmail;
-      }
+      // Always create customer for one-time payments too
+      // This ensures we collect email addresses
+      paymentLinkParams.customer_creation = 'always';
+      
+      // Note: Stripe Payment Links API does NOT support prefilled_email
+      // The customer will need to enter their email on the payment page
+      // If you need to prefill email, you should use Checkout Sessions instead
 
       paymentLink = await stripe.paymentLinks.create(paymentLinkParams);
     }
@@ -123,7 +125,8 @@ export async function POST(request: NextRequest) {
       id: paymentLink.id,
       url: paymentLink.url,
       isSubscription,
-      amount
+      amount,
+      customerEmail: customerEmail || 'not provided'
     });
 
     return NextResponse.json({ 
