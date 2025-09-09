@@ -63,11 +63,11 @@ export async function POST(request: NextRequest) {
         }
       };
 
-      // For subscriptions, collect customer information
-      // Note: We cannot prefill the email, but we can require it to be collected
-      paymentLinkParams.customer_creation = 'always';
+      // IMPORTANT: For recurring prices (subscriptions), we CANNOT use customer_creation
+      // Stripe will automatically collect customer email for subscriptions
+      // Do NOT add customer_creation for recurring prices - it will cause an error
       
-      // Optional: Enable phone number collection
+      // Optional: Enable phone number collection for subscriptions
       paymentLinkParams.phone_number_collection = {
         enabled: false // Set to true if you want to collect phone numbers
       };
