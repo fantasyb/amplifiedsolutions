@@ -64,6 +64,12 @@ export async function POST(request: NextRequest) {
       inquiryDescription += `\n\nDetected interests: ${serviceInterests.join(', ')}`;
     }
 
+    // Build tags array - always include "AS email list", optionally add company tag
+    const tags = ['AS email list'];
+    if (company) {
+      tags.push(`Company: ${company}`);
+    }
+
     // Use proper FUB event structure
     const fubPayload = {
       source: 'Website Contact Modal',
@@ -75,14 +81,12 @@ export async function POST(request: NextRequest) {
         lastName,
         emails: [{ value: email, type: 'work' }],
         ...(phone && { phones: [{ value: phone, type: 'work' }] }),
-        ...(company && { 
-          tags: [`Company: ${company}`],
+        tags,
+        ...(company && {
           customFields: [{ name: 'Company', value: company }]
         }),
-        assignments: [{
-          user: null,
-          stage: leadStage
-        }]
+        assignedTo: 'joey@amplifiedsolutions.com',
+        stage: leadStage
       }
     };
 
