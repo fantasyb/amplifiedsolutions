@@ -47,22 +47,13 @@ export default function Hero({ onOpenModal }: HeroProps) {
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black leading-tight text-gray-900 mb-6" 
                 style={{fontFamily: 'Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif'}}>
               <span className="inline">
-                Revenue starts
-              </span>
-              {' '}
-              <span className="inline text-[#FFD580]">
-                here.
+                Follow Up Boss automation that actually works
               </span>
             </h1>
 
-            {/* Subheading */}
-            <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-semibold text-gray-800 mb-4">
-              Your partner in lead generation, conversion, and pipeline management.
-            </p>
-
             {/* Description */}
             <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-600 leading-relaxed max-w-3xl mx-auto mb-10">
-              We deliver complete solutions to scale your real estate business.
+              We build your CRM the right way—with proven workflows, intelligent routing, and automated follow-up that converts leads without overwhelming you.
             </p>
 
             {/* CTA Button */}

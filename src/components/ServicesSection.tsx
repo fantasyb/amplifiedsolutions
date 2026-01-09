@@ -25,43 +25,103 @@ export default function ServicesSection() {
   }, []);
 
   const services = [
-    {
-      icon: (
-        <svg className="w-8 h-8 text-[#647b75]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-        </svg>
-      ),
-      title: "Lead Generation",
-      subtitle: "Hyperlocal PPC Advertising",
-      description: "Capture ready-to-buy prospects in your exact neighborhoods with targeted campaigns that deliver qualified leads directly to your pipeline.",
-      href: "/services/ppc", // Updated to PPC page (to be created)
-      highlights: ["Targeted Campaigns", "Qualified Leads", "Neighborhood Focus"]
-    },
-    {
-      icon: (
-        <svg className="w-8 h-8 text-[#647b75]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-        </svg>
-      ),
-      title: "Lead Conversion",
-      subtitle: "ISA Services + Systematic Follow-Up",
-      description: "Convert more leads into appointments with dedicated ISA calling, 8-12 touch sequences, and smart list monitoring.",
-      href: "/services/lead-conversion",
-      highlights: ["ISA Calling", "8-12 Touches", "Smart Lists"]
-    },
-    {
-      icon: (
-        <svg className="w-8 h-8 text-[#647b75]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-        </svg>
-      ),
-      title: "Pipeline Management",
-      subtitle: "Follow Up Boss Optimization",
-      description: "Master your CRM with expert lead routing, agent accountability systems, and real-time performance tracking.",
-      href: "/services/lead-management",
-      highlights: ["Lead Routing", "Agent Accountability", "Performance Tracking"]
-    }
-  ];
+  {
+    icon: (
+      <svg className="w-8 h-8 text-[#647b75]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+      </svg>
+    ),
+    title: "Action Plans",
+    subtitle: "Automated email sequences that get responses",
+    description: "Pre-built drip campaigns for buyers, sellers, renters, and sphere with empathetic, personable copy that generates conversations.",
+    href: "/services/action-plans",
+    highlights: ["Proven Templates", "Reply-Based Content"]
+  },
+  {
+    icon: (
+      <svg className="w-8 h-8 text-[#647b75]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+      </svg>
+    ),
+    title: "Smart Lists",
+    subtitle: "Know exactly who to call, every day",
+    description: "Ten priority-based lists that update automatically based on lead behavior, so you stop guessing and start converting.",
+    href: "/services/smart-lists",
+    highlights: ["Priority-Based", "Auto-Updating"]
+  },
+  {
+    icon: (
+      <svg className="w-8 h-8 text-[#647b75]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+      </svg>
+    ),
+    title: "Lead Ponds",
+    subtitle: "Turn cold leads into hot opportunities",
+    description: "Intelligent ponds that group unnurtured leads by criteria—so agents can claim high-potential prospects instead of letting them go cold.",
+    href: "/services/ponds",
+    highlights: ["Agent Choice", "Smart Filtering"]
+  },
+  {
+    icon: (
+      <svg className="w-8 h-8 text-[#647b75]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+      </svg>
+    ),
+    title: "Lead Flows",
+    subtitle: "Automatic assignment and routing",
+    description: "Intelligent workflows that route new leads to the right action plan and agent instantly—no manual sorting required.",
+    href: "/services/lead-flows",
+    highlights: ["Auto-Assignment", "Instant Routing"]
+  },
+  {
+    icon: (
+      <svg className="w-8 h-8 text-[#647b75]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
+      </svg>
+    ),
+    title: "Stages & Pipeline",
+    subtitle: "Simplified pipeline management",
+    description: "Clean stage definitions and streamlined workflows that help your team collaborate and move deals forward efficiently.",
+    href: "/services/stages",
+    highlights: ["Simplified Stages", "Clear Definitions"]
+  },
+  {
+    icon: (
+      <svg className="w-8 h-8 text-[#647b75]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+      </svg>
+    ),
+    title: "FUB Pixel Install",
+    subtitle: "Track lead activity automatically",
+    description: "Courtesy installation of the Follow Up Boss pixel on your website to track lead behavior and trigger smart automations.",
+    href: "/services/pixel",
+    highlights: ["Activity Tracking", "Behavior Triggers"]
+  },
+  {
+    icon: (
+      <svg className="w-8 h-8 text-[#647b75]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+      </svg>
+    ),
+    title: "Training & Support",
+    subtitle: "Get up to speed, fast",
+    description: "One-on-one implementation, 30-minute follow-up, 90-day group training access, video library, and lifetime monthly support calls.",
+    href: "/services/training",
+    highlights: ["1-on-1 Training", "Ongoing Support"]
+  },
+  {
+    icon: (
+      <svg className="w-8 h-8 text-[#647b75]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+      </svg>
+    ),
+    title: "Trevy Integration",
+    subtitle: "AI-powered personalization (Optional)",
+    description: "Configure your Follow Up Boss to work with Trevy's AI engine—turning cold leads into conversations with deeply personalized messages.",
+    href: "/services/trevy",
+    highlights: ["AI Messaging", "Behavioral Triggers"]
+  }
+];
 
   return (
     <section ref={sectionRef} className="relative py-16 md:py-20 lg:py-24 bg-[#f4f2ed] overflow-hidden">
@@ -81,29 +141,17 @@ export default function ServicesSection() {
         {/* Header */}
         <div className={`text-center mb-16 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
           <p className="text-sm md:text-base font-bold text-[#647b75] tracking-wider uppercase mb-4">
-            What We Do
+            What's Included
           </p>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-gray-900 mb-6"
               style={{fontFamily: 'Inter, ui-sans-serif, system-ui, sans-serif'}}>
-            The complete system your{' '}
-            <span className="relative">
-              <span className="relative z-10 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-                real estate business needs
-              </span>
-              {/* Animated highlight */}
-              <span className={`absolute bottom-1 left-0 w-full h-3 bg-[#FFD580] opacity-70 rounded-full transition-all duration-700 delay-500 ${isVisible ? 'scale-x-100' : 'scale-x-0'}`}
-                    style={{
-                      borderRadius: '30px 20px 25px 15px',
-                      transform: 'rotate(-0.3deg)',
-                      transformOrigin: 'left center'
-                    }}></span>
-            </span>
+            A complete Follow Up Boss system built for automation
           </h2>
           <div className="flex justify-center mb-8">
             <div className={`w-16 h-1 bg-[#FFD580] rounded-full transition-all duration-500 delay-700 ${isVisible ? 'scale-x-100' : 'scale-x-0'}`}></div>
           </div>
           <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">
-            We've helped hundreds of agents and teams turn chaotic lead management into predictable revenue through proven systems and dedicated support.
+            Reduce manual tasks, increase conversion, and run your business more efficiently with proven automation. We handle your entire CRM setup—action plans, smart lists, ponds, workflows, and AI-ready infrastructure.
           </p>
         </div>
 

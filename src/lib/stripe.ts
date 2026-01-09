@@ -11,16 +11,16 @@ export const stripePublishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_K
 
 // Auto-detect base URL based on environment
 export const getBaseUrl = () => {
-  // In production (when deployed)
+  // Always use production URL in production environment
+  if (process.env.NODE_ENV === 'production') {
+    return 'https://www.amplifiedsolutions.com';
+  }
+
+  // For Vercel preview deployments (non-production)
   if (process.env.VERCEL_URL) {
     return `https://${process.env.VERCEL_URL}`;
   }
-  
-  // Custom production URL
-  if (process.env.NODE_ENV === 'production') {
-    return 'https://amplifiedsolutions.com';
-  }
-  
+
   // Development
   return process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
 };

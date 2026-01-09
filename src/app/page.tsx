@@ -8,6 +8,7 @@ import ProblemSection from '@/components/ProblemSection';
 import ServicesSection from '@/components/ServicesSection';
 import SocialProofSection from '@/components/SocialProofSection';
 import HowItWorksSection from '@/components/HowItWorksSection';
+import OtherWaysSection from '@/components/OtherWaysSection';
 import CTASection from '@/components/CTASection';
 import ContactModal from '@/components/ContactModal';
 
@@ -39,7 +40,10 @@ export default function HomePage() {
         
         {/* How It Works Section */}
         <HowItWorksSection />
-        
+
+        {/* Other Ways We Can Help */}
+        <OtherWaysSection onOpenModal={handleOpenModal} />
+
         {/* Call to Action Section */}
         <CTASection onOpenModal={handleOpenModal} />
       </main>

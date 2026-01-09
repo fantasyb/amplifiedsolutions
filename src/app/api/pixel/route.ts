@@ -33,17 +33,21 @@ export async function GET(request: NextRequest) {
 
     console.log('✅ Tracking non-admin user');
     
-    // Create tracking data
-    const trackingData = {
+    // Create tracking data (filter out undefined values for Redis compatibility)
+    const trackingData: Record<string, string> = {
       type,
       id,
       event,
-      section: section || undefined, // Add section for portal tracking
       timestamp: new Date().toISOString(),
       ip,
       userAgent,
       referer,
     };
+
+    // Only add section if it exists (Redis doesn't accept null/undefined values)
+    if (section) {
+      trackingData.section = section;
+    }
 
     console.log('📊 Pixel Tracking Event:', trackingData);
 
