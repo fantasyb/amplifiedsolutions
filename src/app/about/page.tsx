@@ -169,64 +169,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Team Section - Split Layout */}
-      <section className="py-32 bg-gradient-to-br from-[#9fe2bf] to-[#8dd9b1] relative">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            {/* Left - Content */}
-            <div>
-              <h2 className="text-5xl md:text-6xl font-black text-gray-900 mb-8 leading-tight">
-                Meet the Team
-              </h2>
-              <div className="w-24 h-1 bg-[#647b75] mb-8"></div>
-              <p className="text-xl text-gray-700 leading-relaxed mb-12">
-                The leaders driving innovation in real estate lead generation, conversion, and management. We're building the future of how teams scale.
-              </p>
-              
-              <div className="space-y-6">
-                {coreTeam.slice(0, 2).map((member, index) => (
-                  <div key={index} className="bg-white/60 backdrop-blur-sm rounded-2xl p-6 transform hover:scale-105 transition-all duration-300 flex items-center space-x-6">
-                    <div className="flex-shrink-0">
-                      <Image 
-                        src={`/${member.image}`}
-                        alt={member.name}
-                        width={80}
-                        height={80}
-                        className="rounded-xl object-cover"
-                      />
-                    </div>
-                    <div>
-                      <h3 className="text-2xl font-bold text-gray-900 mb-2">{member.name}</h3>
-                      <p className="text-[#647b75] font-semibold text-lg">{member.title}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-            
-            {/* Right - Team Grid */}
-            <div className="space-y-6">
-              {coreTeam.slice(2).map((member, index) => (
-                <div key={index} className="bg-white/60 backdrop-blur-sm rounded-2xl p-6 transform hover:scale-105 transition-all duration-300 flex items-center space-x-6">
-                  <div className="flex-shrink-0">
-                    <Image 
-                      src={`/${member.image}`}
-                      alt={member.name}
-                      width={80}
-                      height={80}
-                      className="rounded-xl object-cover"
-                    />
-                  </div>
-                  <div>
-                    <h3 className="text-2xl font-bold text-gray-900 mb-2">{member.name}</h3>
-                    <p className="text-[#647b75] font-semibold text-lg">{member.title}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Team Section - Hidden for now */}
 
       {/* CTA Section - Bold & Powerful */}
       <section className="py-32 bg-gradient-to-r from-[#647b75] to-[#5a6d66] relative overflow-hidden">

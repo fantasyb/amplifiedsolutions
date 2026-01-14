@@ -36,11 +36,6 @@ export default function Footer({ onOpenModal }: FooterProps) {
                   The AS System
                 </Link>
               </li>
-              <li>
-                <Link href="/services" className="hover:text-white transition-colors duration-200">
-                  FUB Optimization
-                </Link>
-              </li>
             </ul>
           </div>
 
