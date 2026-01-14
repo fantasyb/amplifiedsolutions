@@ -23,7 +23,7 @@ export default function Footer({ onOpenModal }: FooterProps) {
               className="h-12 w-auto filter brightness-0 invert"
             />
             <p className="text-white/70 text-sm leading-relaxed">
-              Complete lead-to-close solutions for real estate. We generate, nurture, and manage your leads so you can focus on selling.
+              Follow Up Boss optimization for real estate teams. We build CRM systems that convert leads into clients.
             </p>
           </div>
 
@@ -32,18 +32,13 @@ export default function Footer({ onOpenModal }: FooterProps) {
             <h4 className="text-lg font-bold text-white tracking-wide uppercase">Services</h4>
             <ul className="space-y-3 text-white/70">
               <li>
-                <Link href="/services/ppc" className="hover:text-white transition-colors duration-200">
-                  Lead Generation
+                <Link href="/#services" className="hover:text-white transition-colors duration-200">
+                  The AS System
                 </Link>
               </li>
               <li>
-                <Link href="/services/lead-conversion" className="hover:text-white transition-colors duration-200">
-                  Lead Conversion
-                </Link>
-              </li>
-              <li>
-                <Link href="/services/lead-management" className="hover:text-white transition-colors duration-200">
-                  Pipeline Management
+                <Link href="/services" className="hover:text-white transition-colors duration-200">
+                  FUB Optimization
                 </Link>
               </li>
             </ul>

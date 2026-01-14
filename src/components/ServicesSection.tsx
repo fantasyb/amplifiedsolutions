@@ -1,5 +1,4 @@
 import Image from 'next/image';
-import Link from 'next/link';
 import { useState, useEffect, useRef } from 'react';
 
 export default function ServicesSection() {
@@ -198,18 +197,6 @@ export default function ServicesSection() {
                 </div>
               </div>
               
-              {/* Learn More Link - Always at bottom */}
-              <div className="mt-auto relative z-10">
-                <Link 
-                  href={service.href}
-                  className="group/link flex items-center text-[#647b75] font-semibold hover:text-[#5a6f69] transition-all duration-200 uppercase text-sm tracking-wider"
-                >
-                  Learn More
-                  <svg className="w-4 h-4 ml-2 transform group-hover/link:translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                  </svg>
-                </Link>
-              </div>
             </div>
           ))}
         </div>

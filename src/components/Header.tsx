@@ -10,14 +10,9 @@ interface HeaderProps {
 
 export default function Header({ onOpenModal }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isServicesOpen, setIsServicesOpen] = useState(false);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
-  };
-
-  const toggleServices = () => {
-    setIsServicesOpen(!isServicesOpen);
   };
 
   return (
@@ -40,55 +35,7 @@ export default function Header({ onOpenModal }: HeaderProps) {
 
             {/* Desktop Navigation - Right next to logo */}
             <div className="hidden lg:flex items-center space-x-8">
-              {/* Services Dropdown */}
-              <div className="relative">
-                <button
-                  onClick={toggleServices}
-                  className="flex items-center text-gray-700 hover:text-[#647b75] font-medium transition-colors duration-200"
-                  onMouseEnter={() => setIsServicesOpen(true)}
-                  onMouseLeave={() => setIsServicesOpen(false)}
-                >
-                  Services
-                  <svg className="ml-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
-                
-                {/* Dropdown Menu */}
-                <div 
-                  className={`absolute top-full left-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 transition-all duration-200 ${
-                    isServicesOpen ? 'opacity-100 visible transform translate-y-0' : 'opacity-0 invisible transform -translate-y-2'
-                  }`}
-                  onMouseEnter={() => setIsServicesOpen(true)}
-                  onMouseLeave={() => setIsServicesOpen(false)}
-                >
-                  <div className="py-2">
-                    <Link 
-                      href="/services/ppc" 
-                      className="block px-4 py-3 text-gray-700 hover:text-[#647b75] hover:bg-gray-50 transition-colors duration-200"
-                    >
-                      <div className="font-medium">Lead Generation</div>
-                      <div className="text-sm text-gray-500">Hyperlocal PPC advertising</div>
-                    </Link>
-                    <Link 
-                      href="/services/lead-conversion" 
-                      className="block px-4 py-3 text-gray-700 hover:text-[#647b75] hover:bg-gray-50 transition-colors duration-200"
-                    >
-                      <div className="font-medium">Lead Conversion</div>
-                      <div className="text-sm text-gray-500">ISA services & systematic follow-up</div>
-                    </Link>
-                    <Link 
-                      href="/services/lead-management" 
-                      className="block px-4 py-3 text-gray-700 hover:text-[#647b75] hover:bg-gray-50 transition-colors duration-200"
-                    >
-                      <div className="font-medium">Pipeline Management</div>
-                      <div className="text-sm text-gray-500">Follow Up Boss optimization</div>
-                    </Link>
-                  </div>
-                </div>
-              </div>
-              
-              <Link 
+              <Link
                 href="/about" 
                 className="text-gray-700 hover:text-[#647b75] font-medium transition-colors duration-200"
               >
@@ -165,44 +112,7 @@ export default function Header({ onOpenModal }: HeaderProps) {
         {/* Mobile Menu */}
         <div className={`lg:hidden transition-all duration-300 ${isMenuOpen ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0 overflow-hidden'}`}>
           <div className="px-2 pt-2 pb-3 space-y-1 bg-white border-t border-gray-200">
-            {/* Mobile Services */}
-            <div className="px-3 py-2">
-              <button
-                onClick={toggleServices}
-                className="flex items-center justify-between w-full text-gray-700 hover:text-[#647b75] font-medium"
-              >
-                Services
-                <svg className={`h-4 w-4 transition-transform ${isServicesOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
-              
-              <div className={`mt-2 space-y-1 transition-all duration-200 ${isServicesOpen ? 'block' : 'hidden'}`}>
-                <Link 
-                  href="/services/ppc" 
-                  className="block pl-4 py-2 text-gray-600 hover:text-[#647b75]"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Lead Generation
-                </Link>
-                <Link 
-                  href="/services/lead-conversion" 
-                  className="block pl-4 py-2 text-gray-600 hover:text-[#647b75]"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Lead Conversion
-                </Link>
-                <Link 
-                  href="/services/lead-management" 
-                  className="block pl-4 py-2 text-gray-600 hover:text-[#647b75]"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Pipeline Management
-                </Link>
-              </div>
-            </div>
-            
-            <Link 
+            <Link
               href="/about" 
               className="block px-3 py-2 text-gray-700 hover:text-[#647b75] font-medium"
               onClick={() => setIsMenuOpen(false)}

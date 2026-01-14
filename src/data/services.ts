@@ -18,54 +18,6 @@ export const availableServices: Record<string, Service> = {
       'Resource website with guides and training materials'
     ]
   },
-  'lead-management': {
-    id: 'lead-management',
-    title: 'Lead Management',
-    description: 'Turn Your Follow Up Boss Into a Lead Machine. Complete lead lifecycle management from first contact to conversion.',
-    features: [
-      'Smart lead routing based on agent availability and expertise',
-      'Agent nudging and accountability for consistent follow-up',
-      'Active lead redistribution when agents aren\'t responding',
-      'Lead reassignment from inactive to active agents',
-      'Proper stage management and pond release systems',
-      'FUB system analysis and bottleneck identification',
-      'Custom configuration and ongoing optimization',
-      'Monthly reporting on lead flow and agent performance'
-    ]
-  },
-  'lead-conversion': {
-    id: 'lead-conversion',
-    title: 'Lead Conversion',
-    description: 'Turn Cold Leads Into Live Transfers. Complete ISA calling system with systematic follow-up and full FUB management.',
-    features: [
-      'Systematic ISA calling with 8-12 touches on every lead',
-      'Smart list calling when leads heat up and engage',
-      'Thorough lead qualification before live transfers',
-      'Qualified live transfers to agents ready to book appointments',
-      'Complete Follow Up Boss system management included',
-      'Agent nudging and lead reassignment when needed',
-      'Proper lead staging and pond release management',
-      'Monthly reporting on calls, conversions, and lead flow'
-    ]
-  },
-  'hyperlocal-leads': {
-    id: 'hyperlocal-leads',
-    title: 'Hyper-local Leads',
-    description: 'Capture ready-to-buy local leads with hyperlocal PPC campaigns that deliver qualified prospects directly to your pipeline, targeting exact neighborhoods and buyer intent in your market.',
-    highlighted: false, // Mark as featured since it's a new premium service
-    features: [
-      'Neighborhood-level targeting focused on your exact zip codes',
-      'High-intent buyer targeting - people actively searching for homes now',
-      'Market analysis to identify high-value neighborhoods in your area',
-      'Complete PPC campaign creation and management',
-      'Continuous optimization for more qualified leads month over month',
-      'Direct Follow Up Boss integration with seamless lead flow',
-      'Real-time lead delivery as they come in',
-      'Monthly performance reporting on lead flow and quality',
-      'Wrong location and low-intent traffic filtering',
-      'Complete tracking from ad click to pipeline'
-    ]
-  },
   'real-scout-integration': {
     id: 'real-scout-integration',
     title: 'Real Scout Integration',
