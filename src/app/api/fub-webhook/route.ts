@@ -76,6 +76,7 @@ export async function POST(request: NextRequest) {
       type: 'General Inquiry',
       message: inquiryMessage,
       description: inquiryDescription,
+      assignedTo: 'joey@amplifiedsolutions.com',
       person: {
         firstName,
         lastName,
@@ -85,7 +86,6 @@ export async function POST(request: NextRequest) {
         ...(company && {
           customFields: [{ name: 'Company', value: company }]
         }),
-        assignedTo: 'joey@amplifiedsolutions.com',
         stage: leadStage
       }
     };
