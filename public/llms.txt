@@ -1,0 +1,28 @@
+# Amplified Solutions
+
+> Amplified Solutions builds Follow Up Boss CRM automation systems for real estate teams. Founded in 2018 by Joey Ahern, we've worked with 250+ teams across North America. Our core offering is "The AS System" — a complete FUB buildout including action plans, smart lists, lead ponds, lead flows, pipeline setup, and training, delivered in 7-10 days.
+
+Amplified Solutions specializes in Follow Up Boss (FUB) optimization for real estate brokerages and teams. We handle the full CRM setup so agents can focus on selling instead of managing systems.
+
+Our services include:
+- **The AS System**: Complete Follow Up Boss automation buildout with action plans, smart lists, lead ponds, lead flows, stages, pipeline setup, FUB pixel install, and training.
+- **RealScout Integration**: Full RealScout + FUB integration with smart lists, automations, and team training.
+- **Platform Training**: Focused training on Follow Up Boss or RealScout — workflows, smart lists, daily ops, and adoption.
+- **Smart List Zero**: Accountability framework that keeps teams at follow-up zero with KPIs, prioritized queues, and coaching.
+- **Trevy AI Setup**: AI-powered personalization that turns cold leads into conversations with deeply personalized messages.
+
+We also publish a blog with FUB tips, real estate operations content, and podcasts including "The Primer," "Getting FUB'd Up with Bridget," and "Powering Real Estate."
+
+## Core Pages
+
+- [Homepage](https://www.amplifiedsolutions.com/): Overview of services, client logos, and how it works
+- [About](https://www.amplifiedsolutions.com/about): Company mission, values, and team background
+- [Services](https://www.amplifiedsolutions.com/services): Detailed breakdown of The AS System and add-ons
+- [Testimonials](https://www.amplifiedsolutions.com/testimonials): Client success stories from teams like Spyglass Realty, Greybeard Realty, Ferguson Realty, and more
+- [Contact](https://www.amplifiedsolutions.com/contact): Schedule a 30-minute strategy call or send a message
+- [Blog](https://blog.amplifiedsolutions.com/): FUB tips, operations content, and podcast episodes
+
+## Optional
+
+- [Privacy Policy](https://www.amplifiedsolutions.com/privacy)
+- [Terms of Service](https://www.amplifiedsolutions.com/terms)
