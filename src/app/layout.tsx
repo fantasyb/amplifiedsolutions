@@ -3,27 +3,34 @@ import { Manrope } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 
-const manrope = Manrope({ 
+const manrope = Manrope({
   subsets: ["latin"],
   display: 'swap',
   variable: '--font-manrope',
 });
 
 export const metadata: Metadata = {
-  title: "Amplified Solutions - Complete Lead-to-Close Solutions for Real Estate",
-  description: "We generate, nurture, and manage your leads so you can focus on selling. Hyperlocal PPC, professional ISA services, and Follow Up Boss optimization for real estate teams.",
-  keywords: "real estate lead generation, hyperlocal PPC, ISA services, follow up boss, lead conversion, pipeline management, real estate marketing, lead management",
+  metadataBase: new URL("https://www.amplifiedsolutions.com"),
+  title: {
+    default: "Amplified Solutions | Follow Up Boss Automation for Real Estate Teams",
+    template: "%s | Amplified Solutions",
+  },
+  description: "We build your Follow Up Boss CRM the right way — proven workflows, intelligent routing, and automated follow-up that converts leads without overwhelming your team.",
+  keywords: "follow up boss automation, follow up boss setup, real estate CRM, FUB optimization, real estate lead conversion, pipeline management, action plans, smart lists",
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
-    title: "Amplified Solutions - Complete Lead-to-Close Solutions for Real Estate",
-    description: "We generate, nurture, and manage your leads so you can focus on selling. Hyperlocal PPC, professional ISA services, and Follow Up Boss optimization for real estate teams.",
-    url: "https://amplifiedsolutions.com",
+    title: "Amplified Solutions | Follow Up Boss Automation for Real Estate Teams",
+    description: "We build your Follow Up Boss CRM the right way — proven workflows, intelligent routing, and automated follow-up that converts leads without overwhelming your team.",
+    url: "https://www.amplifiedsolutions.com",
     siteName: "Amplified Solutions",
     images: [
       {
         url: "/AmplifiedSolutions_Logo-V2_Main.png",
         width: 1200,
         height: 630,
-        alt: "Amplified Solutions - Complete Lead-to-Close Solutions",
+        alt: "Amplified Solutions - Follow Up Boss Automation for Real Estate Teams",
       },
     ],
     locale: "en_US",
@@ -31,9 +38,13 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Amplified Solutions - Complete Lead-to-Close Solutions for Real Estate",
-    description: "We generate, nurture, and manage your leads so you can focus on selling. Hyperlocal PPC, professional ISA services, and Follow Up Boss optimization.",
+    title: "Amplified Solutions | Follow Up Boss Automation for Real Estate Teams",
+    description: "We build your Follow Up Boss CRM the right way — proven workflows, intelligent routing, and automated follow-up that converts leads.",
     images: ["/AmplifiedSolutions_Logo-V2_Main.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
   },
 };
 
@@ -45,6 +56,44 @@ export default function RootLayout({
   return (
     <html lang="en" className={manrope.variable}>
       <head>
+        {/* Organization Schema */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "ProfessionalService",
+              name: "Amplified Solutions",
+              url: "https://www.amplifiedsolutions.com",
+              logo: "https://www.amplifiedsolutions.com/AmplifiedSolutions_Logo-V2_Main.png",
+              description:
+                "Follow Up Boss automation and CRM optimization for real estate teams. We build proven workflows, intelligent routing, and automated follow-up systems.",
+              foundingDate: "2018",
+              founder: {
+                "@type": "Person",
+                name: "Joey Ahern",
+              },
+              sameAs: [
+                "https://www.facebook.com/AmplifiedSolutions/",
+                "https://www.instagram.com/amplifiedsolutions/",
+                "https://www.youtube.com/amplifiedsolutions",
+              ],
+              contactPoint: {
+                "@type": "ContactPoint",
+                contactType: "sales",
+                url: "https://www.amplifiedsolutions.com/contact",
+              },
+              areaServed: "US",
+              serviceType: [
+                "Follow Up Boss CRM Setup",
+                "Real Estate CRM Automation",
+                "Lead Management Optimization",
+                "ISA Services",
+              ],
+            }),
+          }}
+        />
+
         {/* Facebook Pixel */}
         <Script id="facebook-pixel" strategy="afterInteractive">
           {`
@@ -66,22 +115,8 @@ export default function RootLayout({
           />
         </noscript>
 
-        {/* Google Analytics (Universal Analytics) */}
-        <Script 
-          src="https://www.googletagmanager.com/gtag/js?id=UA-122248610-1"
-          strategy="afterInteractive"
-        />
-        <Script id="google-analytics-ua" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'UA-122248610-1');
-          `}
-        </Script>
-
         {/* Google Analytics 4 */}
-        <Script 
+        <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-4BJ51L4Q08"
           strategy="afterInteractive"
         />

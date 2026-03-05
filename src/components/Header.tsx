@@ -58,8 +58,10 @@ export default function Header({ onOpenModal }: HeaderProps) {
                 Blog
               </Link>
               
-              <Link 
-                href="/newsletter" 
+              <Link
+                href="https://joeyahern.com/newsletter"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-gray-700 hover:text-[#647b75] font-medium transition-colors duration-200"
               >
                 Newsletter
@@ -138,8 +140,10 @@ export default function Header({ onOpenModal }: HeaderProps) {
               Blog
             </Link>
             
-            <Link 
-              href="/newsletter" 
+            <Link
+              href="https://joeyahern.com/newsletter"
+              target="_blank"
+              rel="noopener noreferrer"
               className="block px-3 py-2 text-gray-700 hover:text-[#647b75] font-medium"
               onClick={() => setIsMenuOpen(false)}
             >

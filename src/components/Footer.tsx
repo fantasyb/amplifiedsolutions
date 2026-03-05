@@ -59,7 +59,7 @@ export default function Footer({ onOpenModal }: FooterProps) {
                 </Link>
               </li>
               <li>
-                <Link href="/newsletter" className="hover:text-white transition-colors duration-200">
+                <Link href="https://joeyahern.com/newsletter" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors duration-200">
                   Newsletter
                 </Link>
               </li>
@@ -89,8 +89,10 @@ export default function Footer({ onOpenModal }: FooterProps) {
               >
                 Schedule a Call
               </Link>
-              <Link 
-                href="/newsletter"
+              <Link
+                href="https://joeyahern.com/newsletter"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="block text-white/70 hover:text-white transition-colors duration-200"
               >
                 Join Newsletter
@@ -121,7 +123,7 @@ export default function Footer({ onOpenModal }: FooterProps) {
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             {/* Copyright */}
             <div className="text-white/60 text-sm">
-              © 2025 Amplified Solutions Consulting LLC. All rights reserved.
+              © {new Date().getFullYear()} Amplified Solutions Consulting LLC. All rights reserved.
             </div>
 
             {/* Legal Links */}
