@@ -50,9 +50,7 @@ export default function Header({ onOpenModal }: HeaderProps) {
               </Link>
               
               <Link 
-                href="https://blog.amplifiedsolutions.com" 
-                target="_blank"
-                rel="noopener noreferrer"
+                href="/blog" 
                 className="text-gray-700 hover:text-[#647b75] font-medium transition-colors duration-200"
               >
                 Blog
@@ -130,10 +128,8 @@ export default function Header({ onOpenModal }: HeaderProps) {
               Testimonials
             </Link>
             
-            <Link 
-              href="https://blog.amplifiedsolutions.com" 
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link
+              href="/blog"
               className="block px-3 py-2 text-gray-700 hover:text-[#647b75] font-medium"
               onClick={() => setIsMenuOpen(false)}
             >

@@ -54,7 +54,7 @@ export default function Footer({ onOpenModal }: FooterProps) {
                 </Link>
               </li>
               <li>
-                <Link href="https://blog.amplifiedsolutions.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors duration-200">
+                <Link href="/blog" className="hover:text-white transition-colors duration-200">
                   Blog
                 </Link>
               </li>

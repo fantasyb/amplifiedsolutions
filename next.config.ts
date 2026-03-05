@@ -33,6 +33,18 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async rewrites() {
+    return [
+      {
+        source: "/blog",
+        destination: "https://blog.amplifiedsolutions.com/",
+      },
+      {
+        source: "/blog/:path*",
+        destination: "https://blog.amplifiedsolutions.com/:path*",
+      },
+    ];
+  },
 };
 
 export default nextConfig;
