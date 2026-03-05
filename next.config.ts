@@ -33,15 +33,17 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  async rewrites() {
+  async redirects() {
     return [
       {
         source: "/blog",
         destination: "https://blog.amplifiedsolutions.com/",
+        permanent: false,
       },
       {
         source: "/blog/:path*",
         destination: "https://blog.amplifiedsolutions.com/:path*",
+        permanent: false,
       },
     ];
   },
