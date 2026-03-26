@@ -4,8 +4,9 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { availableServices } from '@/data/services';
-import { CheckCircle, DollarSign, Calendar, User, Building, Plus, X, Edit2, Shield, FileText } from 'lucide-react';
+import { CheckCircle, DollarSign, Calendar, User, Building, Plus, X, Edit2, Shield, FileText, Zap } from 'lucide-react';
 import { Service, PricingItem, TermSection } from '@/types/proposal';
+import { proposalTemplates, standardTerms } from '@/data/proposal-templates';
 
 export default function ProposalForm() {
   const router = useRouter();
@@ -53,6 +54,36 @@ export default function ProposalForm() {
     title: '',
     content: '',
   });
+
+  // Template loading
+  const loadTemplate = (templateId: string) => {
+    const template = proposalTemplates.find(t => t.id === templateId);
+    if (!template) return;
+
+    const templateServices = template.services.map(s => ({
+      ...s,
+      id: `custom-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+    }));
+
+    setCustomServices(templateServices);
+    setFormData(prev => ({
+      ...prev,
+      customServices: templateServices,
+      cost: template.cost,
+      isRecurring: template.isRecurring,
+      notes: template.notes || '',
+      pricingBreakdown: template.pricingBreakdown,
+      terms: template.terms,
+      paymentType: 'full',
+    }));
+  };
+
+  const loadStandardTerms = () => {
+    setFormData(prev => ({
+      ...prev,
+      terms: [...standardTerms],
+    }));
+  };
 
   const handleServiceToggle = (serviceId: string) => {
     setFormData(prev => ({
@@ -254,6 +285,33 @@ export default function ProposalForm() {
 
   return (
     <form onSubmit={handleSubmit} className="max-w-4xl mx-auto space-y-8">
+      {/* Template Loader */}
+      <div className="bg-gradient-to-r from-slate-900 to-slate-800 rounded-xl p-8 text-white">
+        <div className="flex items-center gap-3 mb-4">
+          <Zap className="w-6 h-6 text-yellow-400" />
+          <h2 className="text-2xl font-bold">Quick Start with Template</h2>
+        </div>
+        <p className="text-slate-300 text-sm mb-6">Load a pre-built proposal template with services, pricing, and legal terms. You can customize everything after loading.</p>
+        <div className="grid gap-3">
+          {proposalTemplates.map((template) => (
+            <button
+              key={template.id}
+              type="button"
+              onClick={() => loadTemplate(template.id)}
+              className="flex items-center justify-between p-4 bg-white/10 hover:bg-white/20 rounded-lg border border-white/10 transition-all text-left"
+            >
+              <div>
+                <p className="font-semibold text-white">{template.name}</p>
+                <p className="text-sm text-slate-300">{template.description}</p>
+              </div>
+              <div className="text-sm text-slate-400 flex-shrink-0 ml-4">
+                {template.services.length} services &middot; {template.terms.length} terms
+              </div>
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* Client Information */}
       <div className="bg-white rounded-xl border border-slate-200 p-8">
         <div className="flex items-center gap-3 mb-6">
@@ -905,6 +963,17 @@ export default function ProposalForm() {
         )}
 
         {/* Terms list */}
+        {formData.terms.length === 0 && (
+          <button
+            type="button"
+            onClick={loadStandardTerms}
+            className="mb-4 flex items-center gap-2 px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-colors w-full justify-center border border-slate-200"
+          >
+            <Shield className="w-4 h-4" />
+            Load Standard Terms (IP, NDA, License, Termination, Buyout, Liability)
+          </button>
+        )}
+
         {formData.terms.length > 0 ? (
           <div className="space-y-3">
             {formData.terms.map((term, index) => (
