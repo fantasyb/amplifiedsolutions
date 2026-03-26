@@ -13,6 +13,16 @@ export interface ProposalTemplate {
   notes?: string;
 }
 
+// Third-party costs term - used in templates that involve external APIs/tools
+export const thirdPartyCostsTerm: TermSection = {
+  title: 'Third-Party Services & Costs',
+  content: `Client is responsible for all third-party service subscriptions, API access fees, and tool costs required to operate the systems built under this agreement. This includes but is not limited to data providers (e.g., Spokeo, PropStream), phone/dialer platforms, CRM subscriptions, and any other external services integrated into the workflow.
+
+Provider will recommend, configure, and integrate these services on Client's behalf, but all accounts shall be owned by and billed directly to Client. Provider does not mark up, resell, or absorb any third-party costs.
+
+Client is responsible for maintaining active subscriptions to all required third-party services. Lapsed or canceled third-party accounts may result in degraded or non-functional automations, which is not the responsibility of Provider.`,
+};
+
 // Standard service agreement terms - reusable across proposals
 export const standardTerms: TermSection[] = [
   {
@@ -135,6 +145,7 @@ export const proposalTemplates: ProposalTemplate[] = [
     terms: [
       ...standardTerms.slice(0, 4), // IP, License, NDA, Termination
       standardTerms[4], // Buyout
+      thirdPartyCostsTerm, // Third-party services
       {
         title: 'Payment Terms',
         content: `- The base monthly retainer of $2,000 is due on the 1st of each month and will be processed automatically via the accepted payment method
