@@ -5,6 +5,7 @@ import { Proposal } from '@/types/proposal';
 import ProposalHeader from './ProposalHeader';
 import ServiceBreakdown from './ServiceBreakdown';
 import PricingSection from './PricingSection';
+import TermsSection from './TermsSection';
 import TestimonialCards from './TestimonialCards';
 import AcceptButton from './AcceptButton';
 
@@ -13,34 +14,25 @@ interface ProposalContainerProps {
 }
 
 export default function ProposalContainer({ proposal }: ProposalContainerProps) {
-  // Destructure with defaults to handle missing properties
-  const { 
-    isRecurring = false, 
-    paymentType, 
-    downPayment, 
+  const {
+    isRecurring = false,
+    paymentType,
+    downPayment,
     installmentCount
   } = proposal;
 
-  // Ensure cost is a number
   const getCostAsNumber = (): number => {
     const cost = proposal.cost;
     if (typeof cost === 'number') return cost;
-    // Convert to string first to handle any type
     const costString = String(cost);
-    // Remove any formatting like $, commas, etc.
     const cleanedCost = costString.replace(/[^0-9.-]+/g, '');
     return parseFloat(cleanedCost) || 0;
   };
 
   const numericCost = getCostAsNumber();
-
-  // Create a description for the payment
   const paymentDescription = `${proposal.client.name} - Services Agreement`;
 
-  // Determine subscription interval based on isRecurring
   const getSubscriptionInterval = (): 'month' | 'year' => {
-    // You can customize this logic based on your business needs
-    // For now, defaulting to monthly subscriptions
     return 'month';
   };
 
@@ -64,15 +56,21 @@ export default function ProposalContainer({ proposal }: ProposalContainerProps) 
         {/* <TestimonialCards /> */}
 
         {/* Pricing */}
-        <PricingSection 
-          cost={proposal.cost} 
+        <PricingSection
+          cost={proposal.cost}
           notes={proposal.notes}
           isRecurring={isRecurring}
           recurringPeriod="monthly"
+          pricingBreakdown={proposal.pricingBreakdown}
         />
 
-        {/* Accept Button - Updated to use payment links */}
-        <AcceptButton 
+        {/* Terms & Conditions */}
+        {proposal.terms && proposal.terms.length > 0 && (
+          <TermsSection terms={proposal.terms} />
+        )}
+
+        {/* Accept Button */}
+        <AcceptButton
           proposalId={proposal.id}
           amount={numericCost}
           description={paymentDescription}
@@ -83,7 +81,7 @@ export default function ProposalContainer({ proposal }: ProposalContainerProps) 
 
         {/* Footer */}
         <div className="text-center py-8 text-slate-500 text-sm">
-          <p>© 2025 Amplified Solutions. All rights reserved.</p>
+          <p>&copy; 2025 Amplified Solutions. All rights reserved.</p>
           <p className="mt-2">
             This proposal is valid until {proposal.expiresAt?.toLocaleDateString() || 'further notice'}.
           </p>

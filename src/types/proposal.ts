@@ -12,7 +12,8 @@ export interface Service {
   description: string;
   features: string[];
   highlighted?: boolean;
-  price?: number; // Add price field for individual services if needed
+  price?: number;
+  isCustom?: boolean;
 }
 
 export interface Testimonial {
@@ -20,6 +21,17 @@ export interface Testimonial {
   company: string;
   text: string;
   avatar?: string;
+}
+
+export interface PricingItem {
+  label: string;
+  amount: string; // Flexible string: "$2,000/mo", "$100/listing", "1%"
+  description?: string;
+}
+
+export interface TermSection {
+  title: string;
+  content: string;
 }
 
 export interface Proposal {
@@ -31,27 +43,21 @@ export interface Proposal {
   createdAt: Date;
   expiresAt?: Date;
   status: 'pending' | 'accepted' | 'rejected' | 'expired';
-  
+
   // Payment configuration
   isRecurring?: boolean;
-  recurringInterval?: 'month' | 'year'; // Added for subscription interval
+  recurringInterval?: 'month' | 'year';
   paymentType?: 'full' | 'partial' | 'installments';
   downPayment?: number;
   installmentCount?: number;
 
-  
-  
-  // Payment link tracking (instead of stripeCheckoutUrl)
-  paymentLinkId?: string; // Store Stripe payment link ID if you want to track it
-  paymentLinkUrl?: string; // Optionally cache the URL, though you'll generate it on-demand
-}
+  // Structured pricing breakdown (for multi-part deals)
+  pricingBreakdown?: PricingItem[];
 
-export interface Service {
-  id: string;
-  title: string;
-  description: string;
-  features: string[];
-  highlighted?: boolean;
-  price?: number; // Individual service price
-  isCustom?: boolean; // Flag for custom services
+  // Legal terms & conditions
+  terms?: TermSection[];
+
+  // Payment link tracking
+  paymentLinkId?: string;
+  paymentLinkUrl?: string;
 }

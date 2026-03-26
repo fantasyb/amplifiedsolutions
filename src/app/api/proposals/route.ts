@@ -86,6 +86,8 @@ export async function POST(request: NextRequest) {
       paymentType: data.paymentType || 'full',
       downPayment: data.downPayment,
       installmentCount: data.installmentCount,
+      pricingBreakdown: data.pricingBreakdown || undefined,
+      terms: data.terms || undefined,
     };
     
     console.log('💾 API: About to save proposal with ID:', proposalId);

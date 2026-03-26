@@ -4,8 +4,8 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { availableServices } from '@/data/services';
-import { CheckCircle, DollarSign, Calendar, User, Building, Plus, X, Edit2 } from 'lucide-react';
-import { Service } from '@/types/proposal';
+import { CheckCircle, DollarSign, Calendar, User, Building, Plus, X, Edit2, Shield, FileText } from 'lucide-react';
+import { Service, PricingItem, TermSection } from '@/types/proposal';
 
 export default function ProposalForm() {
   const router = useRouter();
@@ -17,16 +17,16 @@ export default function ProposalForm() {
     title: '',
     description: '',
     price: 0,
-    features: [''] // Start with one empty feature
+    features: ['']
   });
-  
+
   const [formData, setFormData] = useState({
     clientName: '',
     clientEmail: '',
     clientCompany: '',
     clientPhone: '',
     selectedServices: [] as string[],
-    customServices: [] as Service[], // Store custom services separately
+    customServices: [] as Service[],
     cost: 1500,
     notes: '',
     expiresIn: 30,
@@ -34,6 +34,24 @@ export default function ProposalForm() {
     downPayment: 500,
     installmentCount: 3,
     isRecurring: false,
+    pricingBreakdown: [] as PricingItem[],
+    terms: [] as TermSection[],
+  });
+
+  // Pricing breakdown state
+  const [showPricingForm, setShowPricingForm] = useState(false);
+  const [pricingItemForm, setPricingItemForm] = useState<PricingItem>({
+    label: '',
+    amount: '',
+    description: '',
+  });
+
+  // Terms state
+  const [showTermsForm, setShowTermsForm] = useState(false);
+  const [editingTermIndex, setEditingTermIndex] = useState<number | null>(null);
+  const [termForm, setTermForm] = useState<TermSection>({
+    title: '',
+    content: '',
   });
 
   const handleServiceToggle = (serviceId: string) => {
@@ -47,16 +65,14 @@ export default function ProposalForm() {
 
   const handleCustomServiceToggle = (customServiceId: string) => {
     const currentlySelected = formData.customServices.find(s => s.id === customServiceId);
-    
+
     if (currentlySelected) {
-      // Remove from selected custom services
       setFormData(prev => ({
         ...prev,
         customServices: prev.customServices.filter(s => s.id !== customServiceId),
         cost: prev.cost - (currentlySelected.price || 0)
       }));
     } else {
-      // Add to selected custom services
       const serviceToAdd = customServices.find(s => s.id === customServiceId);
       if (serviceToAdd) {
         setFormData(prev => ({
@@ -96,7 +112,7 @@ export default function ProposalForm() {
     }
 
     const validFeatures = customServiceForm.features.filter(f => f.trim() !== '');
-    
+
     const newService: Service = {
       id: `custom-${Date.now()}`,
       title: customServiceForm.title,
@@ -107,19 +123,16 @@ export default function ProposalForm() {
     };
 
     if (editingCustomIndex !== null) {
-      // Update existing custom service
-      setCustomServices(prev => 
-        prev.map((service, index) => 
+      setCustomServices(prev =>
+        prev.map((service, index) =>
           index === editingCustomIndex ? newService : service
         )
       );
       setEditingCustomIndex(null);
     } else {
-      // Add new custom service
       setCustomServices(prev => [...prev, newService]);
     }
 
-    // Reset form
     setCustomServiceForm({
       title: '',
       description: '',
@@ -143,17 +156,69 @@ export default function ProposalForm() {
 
   const deleteCustomService = (index: number) => {
     const serviceToDelete = customServices[index];
-    
-    // Remove from custom services list
     setCustomServices(prev => prev.filter((_, i) => i !== index));
-    
-    // Also remove from selected services if it was selected
     setFormData(prev => ({
       ...prev,
       customServices: prev.customServices.filter(s => s.id !== serviceToDelete.id),
-      cost: prev.customServices.find(s => s.id === serviceToDelete.id) 
+      cost: prev.customServices.find(s => s.id === serviceToDelete.id)
         ? prev.cost - (serviceToDelete.price || 0)
         : prev.cost
+    }));
+  };
+
+  // Pricing breakdown handlers
+  const savePricingItem = () => {
+    if (!pricingItemForm.label || !pricingItemForm.amount) {
+      alert('Please provide a label and amount');
+      return;
+    }
+    setFormData(prev => ({
+      ...prev,
+      pricingBreakdown: [...prev.pricingBreakdown, { ...pricingItemForm }],
+    }));
+    setPricingItemForm({ label: '', amount: '', description: '' });
+    setShowPricingForm(false);
+  };
+
+  const removePricingItem = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      pricingBreakdown: prev.pricingBreakdown.filter((_, i) => i !== index),
+    }));
+  };
+
+  // Terms handlers
+  const saveTerm = () => {
+    if (!termForm.title || !termForm.content) {
+      alert('Please provide a title and content');
+      return;
+    }
+    if (editingTermIndex !== null) {
+      setFormData(prev => ({
+        ...prev,
+        terms: prev.terms.map((t, i) => i === editingTermIndex ? { ...termForm } : t),
+      }));
+      setEditingTermIndex(null);
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        terms: [...prev.terms, { ...termForm }],
+      }));
+    }
+    setTermForm({ title: '', content: '' });
+    setShowTermsForm(false);
+  };
+
+  const editTerm = (index: number) => {
+    setTermForm({ ...formData.terms[index] });
+    setEditingTermIndex(index);
+    setShowTermsForm(true);
+  };
+
+  const removeTerm = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      terms: prev.terms.filter((_, i) => i !== index),
     }));
   };
 
@@ -162,16 +227,12 @@ export default function ProposalForm() {
     setIsSubmitting(true);
 
     try {
-      // Combine predefined and custom services for submission
-      const allSelectedServices = [
-        ...formData.selectedServices,
-        ...formData.customServices.map(s => s.id)
-      ];
-
       const requestData = {
         ...formData,
         selectedServices: formData.selectedServices,
-        customServices: formData.customServices, // Send custom services separately
+        customServices: formData.customServices,
+        pricingBreakdown: formData.pricingBreakdown.length > 0 ? formData.pricingBreakdown : undefined,
+        terms: formData.terms.length > 0 ? formData.terms : undefined,
       };
 
       const response = await fetch('/api/proposals', {
@@ -199,7 +260,7 @@ export default function ProposalForm() {
           <User className="w-6 h-6 text-blue-600" />
           <h2 className="text-2xl font-bold text-slate-900">Client Information</h2>
         </div>
-        
+
         <div className="grid md:grid-cols-2 gap-6">
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-2">
@@ -214,7 +275,7 @@ export default function ProposalForm() {
               placeholder="John Doe"
             />
           </div>
-          
+
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-2">
               Email Address *
@@ -228,7 +289,7 @@ export default function ProposalForm() {
               placeholder="john@example.com"
             />
           </div>
-          
+
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-2">
               Company
@@ -241,7 +302,7 @@ export default function ProposalForm() {
               placeholder="ABC Real Estate"
             />
           </div>
-          
+
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-2">
               Phone Number
@@ -273,7 +334,7 @@ export default function ProposalForm() {
             Add Custom Service
           </button>
         </div>
-        
+
         {/* Custom Service Form */}
         {showCustomServiceForm && (
           <div className="mb-6 p-6 bg-blue-50 rounded-lg border-2 border-blue-200">
@@ -286,25 +347,18 @@ export default function ProposalForm() {
                 onClick={() => {
                   setShowCustomServiceForm(false);
                   setEditingCustomIndex(null);
-                  setCustomServiceForm({
-                    title: '',
-                    description: '',
-                    price: 0,
-                    features: ['']
-                  });
+                  setCustomServiceForm({ title: '', description: '', price: 0, features: [''] });
                 }}
                 className="text-slate-500 hover:text-slate-700"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
-            
+
             <div className="space-y-4">
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
-                    Service Name *
-                  </label>
+                  <label className="block text-sm font-medium text-slate-700 mb-2">Service Name *</label>
                   <input
                     type="text"
                     value={customServiceForm.title}
@@ -313,11 +367,8 @@ export default function ProposalForm() {
                     placeholder="e.g., Custom Integration"
                   />
                 </div>
-                
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
-                    Price ($) *
-                  </label>
+                  <label className="block text-sm font-medium text-slate-700 mb-2">Price ($) *</label>
                   <input
                     type="number"
                     value={customServiceForm.price}
@@ -329,11 +380,9 @@ export default function ProposalForm() {
                   />
                 </div>
               </div>
-              
+
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">
-                  Description
-                </label>
+                <label className="block text-sm font-medium text-slate-700 mb-2">Description</label>
                 <textarea
                   value={customServiceForm.description}
                   onChange={(e) => setCustomServiceForm(prev => ({ ...prev, description: e.target.value }))}
@@ -342,11 +391,9 @@ export default function ProposalForm() {
                   placeholder="Brief description of the service..."
                 />
               </div>
-              
+
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">
-                  Features
-                </label>
+                <label className="block text-sm font-medium text-slate-700 mb-2">Features</label>
                 <div className="space-y-2">
                   {customServiceForm.features.map((feature, index) => (
                     <div key={index} className="flex gap-2">
@@ -358,56 +405,39 @@ export default function ProposalForm() {
                         placeholder="Feature description"
                       />
                       {customServiceForm.features.length > 1 && (
-                        <button
-                          type="button"
-                          onClick={() => removeCustomServiceFeature(index)}
-                          className="px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                        >
+                        <button type="button" onClick={() => removeCustomServiceFeature(index)} className="px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors">
                           <X className="w-4 h-4" />
                         </button>
                       )}
                     </div>
                   ))}
-                  <button
-                    type="button"
-                    onClick={addCustomServiceFeature}
-                    className="flex items-center gap-2 px-4 py-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                  >
+                  <button type="button" onClick={addCustomServiceFeature} className="flex items-center gap-2 px-4 py-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
                     <Plus className="w-4 h-4" />
                     Add Feature
                   </button>
                 </div>
               </div>
-              
+
               <div className="flex justify-end gap-3">
                 <button
                   type="button"
                   onClick={() => {
                     setShowCustomServiceForm(false);
                     setEditingCustomIndex(null);
-                    setCustomServiceForm({
-                      title: '',
-                      description: '',
-                      price: 0,
-                      features: ['']
-                    });
+                    setCustomServiceForm({ title: '', description: '', price: 0, features: [''] });
                   }}
                   className="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
                 >
                   Cancel
                 </button>
-                <button
-                  type="button"
-                  onClick={saveCustomService}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                >
+                <button type="button" onClick={saveCustomService} className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
                   {editingCustomIndex !== null ? 'Update' : 'Add'} Service
                 </button>
               </div>
             </div>
           </div>
         )}
-        
+
         {/* Custom Services List */}
         {customServices.length > 0 && (
           <div className="mb-6">
@@ -435,48 +465,28 @@ export default function ProposalForm() {
                         <CheckCircle className="w-4 h-4 text-white" />
                       )}
                     </div>
-                    
+
                     <div className="flex-1" onClick={() => handleCustomServiceToggle(service.id)}>
                       <div className="flex items-start justify-between">
                         <div>
                           <h3 className="text-lg font-semibold text-slate-900 mb-1">
                             {service.title}
-                            <span className="ml-2 px-2 py-1 bg-green-600 text-white text-xs rounded-full">
-                              Custom
-                            </span>
+                            <span className="ml-2 px-2 py-1 bg-green-600 text-white text-xs rounded-full">Custom</span>
                           </h3>
                           <p className="text-slate-600 mb-2">{service.description}</p>
                           {service.features.length > 0 && (
-                            <div className="text-sm text-slate-500">
-                              {service.features.length} features included
-                            </div>
+                            <div className="text-sm text-slate-500">{service.features.length} features included</div>
                           )}
                         </div>
-                        <div className="text-lg font-bold text-blue-600">
-                          ${service.price}
-                        </div>
+                        <div className="text-lg font-bold text-blue-600">${service.price}</div>
                       </div>
                     </div>
-                    
+
                     <div className="flex gap-2">
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          editCustomService(index);
-                        }}
-                        className="p-2 text-slate-500 hover:bg-slate-100 rounded-lg transition-colors"
-                      >
+                      <button type="button" onClick={(e) => { e.stopPropagation(); editCustomService(index); }} className="p-2 text-slate-500 hover:bg-slate-100 rounded-lg transition-colors">
                         <Edit2 className="w-4 h-4" />
                       </button>
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          deleteCustomService(index);
-                        }}
-                        className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                      >
+                      <button type="button" onClick={(e) => { e.stopPropagation(); deleteCustomService(index); }} className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors">
                         <X className="w-4 h-4" />
                       </button>
                     </div>
@@ -486,7 +496,7 @@ export default function ProposalForm() {
             </div>
           </div>
         )}
-        
+
         {/* Predefined Services */}
         <div className="grid gap-4">
           <h3 className="text-sm font-semibold text-slate-700">Standard Services</h3>
@@ -510,25 +520,118 @@ export default function ProposalForm() {
                     <CheckCircle className="w-4 h-4 text-white" />
                   )}
                 </div>
-                
+
                 <div className="flex-1">
                   <h3 className="text-lg font-semibold text-slate-900 mb-2">
                     {service.title}
                     {service.highlighted && (
-                      <span className="ml-2 px-2 py-1 bg-blue-600 text-white text-xs rounded-full">
-                        Featured
-                      </span>
+                      <span className="ml-2 px-2 py-1 bg-blue-600 text-white text-xs rounded-full">Featured</span>
                     )}
                   </h3>
                   <p className="text-slate-600 mb-3">{service.description}</p>
-                  <div className="text-sm text-slate-500">
-                    {service.features.length} features included
-                  </div>
+                  <div className="text-sm text-slate-500">{service.features.length} features included</div>
                 </div>
               </div>
             </div>
           ))}
         </div>
+      </div>
+
+      {/* Pricing Breakdown */}
+      <div className="bg-white rounded-xl border border-slate-200 p-8">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3">
+            <FileText className="w-6 h-6 text-blue-600" />
+            <div>
+              <h2 className="text-2xl font-bold text-slate-900">Pricing Breakdown</h2>
+              <p className="text-sm text-slate-500 mt-1">For multi-part deals (e.g., base fee + per-unit + commission). Leave empty for standard single-price display.</p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() => setShowPricingForm(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            <Plus className="w-4 h-4" />
+            Add Line Item
+          </button>
+        </div>
+
+        {/* Pricing item form */}
+        {showPricingForm && (
+          <div className="mb-6 p-6 bg-blue-50 rounded-lg border-2 border-blue-200">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-slate-900">Add Pricing Line Item</h3>
+              <button type="button" onClick={() => { setShowPricingForm(false); setPricingItemForm({ label: '', amount: '', description: '' }); }} className="text-slate-500 hover:text-slate-700">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="space-y-4">
+              <div className="grid md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-2">Label *</label>
+                  <input
+                    type="text"
+                    value={pricingItemForm.label}
+                    onChange={(e) => setPricingItemForm(prev => ({ ...prev, label: e.target.value }))}
+                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    placeholder="e.g., Monthly Base Retainer"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-2">Amount *</label>
+                  <input
+                    type="text"
+                    value={pricingItemForm.amount}
+                    onChange={(e) => setPricingItemForm(prev => ({ ...prev, amount: e.target.value }))}
+                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    placeholder="e.g., $2,000/mo or 1%"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">Description (optional)</label>
+                <input
+                  type="text"
+                  value={pricingItemForm.description || ''}
+                  onChange={(e) => setPricingItemForm(prev => ({ ...prev, description: e.target.value }))}
+                  className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  placeholder="e.g., Billed on the 1st of each month"
+                />
+              </div>
+              <div className="flex justify-end gap-3">
+                <button type="button" onClick={() => { setShowPricingForm(false); setPricingItemForm({ label: '', amount: '', description: '' }); }} className="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">
+                  Cancel
+                </button>
+                <button type="button" onClick={savePricingItem} className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                  Add Item
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Pricing items list */}
+        {formData.pricingBreakdown.length > 0 ? (
+          <div className="space-y-3">
+            {formData.pricingBreakdown.map((item, index) => (
+              <div key={index} className="flex items-center justify-between p-4 bg-slate-50 rounded-lg border border-slate-200">
+                <div>
+                  <p className="font-medium text-slate-900">{item.label}</p>
+                  {item.description && <p className="text-sm text-slate-500">{item.description}</p>}
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="font-bold text-blue-600 text-lg">{item.amount}</span>
+                  <button type="button" onClick={() => removePricingItem(index)} className="p-1 text-red-500 hover:bg-red-50 rounded transition-colors">
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-slate-400 text-sm italic">No pricing breakdown added. The standard single-price display will be used.</p>
+        )}
       </div>
 
       {/* Pricing & Details */}
@@ -537,11 +640,11 @@ export default function ProposalForm() {
           <DollarSign className="w-6 h-6 text-blue-600" />
           <h2 className="text-2xl font-bold text-slate-900">Pricing & Details</h2>
         </div>
-        
+
         <div className="grid md:grid-cols-2 gap-6">
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-2">
-              Total Cost ($)
+              Total Cost ($) {formData.pricingBreakdown.length > 0 && <span className="text-slate-400 font-normal">- used for Stripe payment</span>}
             </label>
             <input
               type="number"
@@ -557,11 +660,9 @@ export default function ProposalForm() {
               </p>
             )}
           </div>
-          
+
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">
-              Expires In (days)
-            </label>
+            <label className="block text-sm font-medium text-slate-700 mb-2">Expires In (days)</label>
             <select
               value={formData.expiresIn}
               onChange={(e) => setFormData(prev => ({ ...prev, expiresIn: Number(e.target.value) }))}
@@ -575,11 +676,9 @@ export default function ProposalForm() {
             </select>
           </div>
         </div>
-        
+
         <div className="mt-6">
-          <label className="block text-sm font-medium text-slate-700 mb-2">
-            Additional Notes
-          </label>
+          <label className="block text-sm font-medium text-slate-700 mb-2">Additional Notes</label>
           <textarea
             value={formData.notes}
             onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
@@ -596,31 +695,18 @@ export default function ProposalForm() {
           <DollarSign className="w-6 h-6 text-blue-600" />
           <h2 className="text-2xl font-bold text-slate-900">Payment Options</h2>
         </div>
-        
+
         <div className="space-y-6">
-          {/* Payment Type Selection */}
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-4">
-              Payment Structure
-            </label>
+            <label className="block text-sm font-medium text-slate-700 mb-4">Payment Structure</label>
             <div className="grid md:grid-cols-3 gap-4">
               <div
-                className={`border-2 rounded-lg p-4 cursor-pointer transition-all ${
-                  formData.paymentType === 'full'
-                    ? 'border-blue-500 bg-blue-50'
-                    : 'border-slate-200 hover:border-slate-300'
-                }`}
+                className={`border-2 rounded-lg p-4 cursor-pointer transition-all ${formData.paymentType === 'full' ? 'border-blue-500 bg-blue-50' : 'border-slate-200 hover:border-slate-300'}`}
                 onClick={() => setFormData(prev => ({ ...prev, paymentType: 'full' }))}
               >
                 <div className="flex items-center gap-3">
-                  <div className={`w-4 h-4 rounded-full border-2 ${
-                    formData.paymentType === 'full'
-                      ? 'border-blue-500 bg-blue-500'
-                      : 'border-slate-300'
-                  }`}>
-                    {formData.paymentType === 'full' && (
-                      <div className="w-2 h-2 bg-white rounded-full mx-auto mt-0.5" />
-                    )}
+                  <div className={`w-4 h-4 rounded-full border-2 ${formData.paymentType === 'full' ? 'border-blue-500 bg-blue-500' : 'border-slate-300'}`}>
+                    {formData.paymentType === 'full' && <div className="w-2 h-2 bg-white rounded-full mx-auto mt-0.5" />}
                   </div>
                   <div>
                     <h4 className="font-semibold text-slate-900">Full Payment</h4>
@@ -630,22 +716,12 @@ export default function ProposalForm() {
               </div>
 
               <div
-                className={`border-2 rounded-lg p-4 cursor-pointer transition-all ${
-                  formData.paymentType === 'partial'
-                    ? 'border-blue-500 bg-blue-50'
-                    : 'border-slate-200 hover:border-slate-300'
-                }`}
+                className={`border-2 rounded-lg p-4 cursor-pointer transition-all ${formData.paymentType === 'partial' ? 'border-blue-500 bg-blue-50' : 'border-slate-200 hover:border-slate-300'}`}
                 onClick={() => setFormData(prev => ({ ...prev, paymentType: 'partial' }))}
               >
                 <div className="flex items-center gap-3">
-                  <div className={`w-4 h-4 rounded-full border-2 ${
-                    formData.paymentType === 'partial'
-                      ? 'border-blue-500 bg-blue-500'
-                      : 'border-slate-300'
-                  }`}>
-                    {formData.paymentType === 'partial' && (
-                      <div className="w-2 h-2 bg-white rounded-full mx-auto mt-0.5" />
-                    )}
+                  <div className={`w-4 h-4 rounded-full border-2 ${formData.paymentType === 'partial' ? 'border-blue-500 bg-blue-500' : 'border-slate-300'}`}>
+                    {formData.paymentType === 'partial' && <div className="w-2 h-2 bg-white rounded-full mx-auto mt-0.5" />}
                   </div>
                   <div>
                     <h4 className="font-semibold text-slate-900">Down Payment</h4>
@@ -655,22 +731,12 @@ export default function ProposalForm() {
               </div>
 
               <div
-                className={`border-2 rounded-lg p-4 cursor-pointer transition-all ${
-                  formData.paymentType === 'installments'
-                    ? 'border-blue-500 bg-blue-50'
-                    : 'border-slate-200 hover:border-slate-300'
-                }`}
+                className={`border-2 rounded-lg p-4 cursor-pointer transition-all ${formData.paymentType === 'installments' ? 'border-blue-500 bg-blue-50' : 'border-slate-200 hover:border-slate-300'}`}
                 onClick={() => setFormData(prev => ({ ...prev, paymentType: 'installments' }))}
               >
                 <div className="flex items-center gap-3">
-                  <div className={`w-4 h-4 rounded-full border-2 ${
-                    formData.paymentType === 'installments'
-                      ? 'border-blue-500 bg-blue-500'
-                      : 'border-slate-300'
-                  }`}>
-                    {formData.paymentType === 'installments' && (
-                      <div className="w-2 h-2 bg-white rounded-full mx-auto mt-0.5" />
-                    )}
+                  <div className={`w-4 h-4 rounded-full border-2 ${formData.paymentType === 'installments' ? 'border-blue-500 bg-blue-500' : 'border-slate-300'}`}>
+                    {formData.paymentType === 'installments' && <div className="w-2 h-2 bg-white rounded-full mx-auto mt-0.5" />}
                   </div>
                   <div>
                     <h4 className="font-semibold text-slate-900">Installments</h4>
@@ -681,7 +747,6 @@ export default function ProposalForm() {
             </div>
           </div>
 
-          {/* Conditional Payment Details */}
           {formData.paymentType === 'full' && (
             <div className="p-4 bg-blue-50 rounded-lg">
               <div className="flex items-center gap-3">
@@ -707,9 +772,7 @@ export default function ProposalForm() {
           {formData.paymentType === 'partial' && (
             <div className="grid md:grid-cols-2 gap-6 p-4 bg-blue-50 rounded-lg">
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">
-                  Down Payment Amount ($)
-                </label>
+                <label className="block text-sm font-medium text-slate-700 mb-2">Down Payment Amount ($)</label>
                 <input
                   type="number"
                   value={formData.downPayment}
@@ -733,9 +796,7 @@ export default function ProposalForm() {
             <div className="space-y-4 p-4 bg-blue-50 rounded-lg">
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
-                    Number of Installments
-                  </label>
+                  <label className="block text-sm font-medium text-slate-700 mb-2">Number of Installments</label>
                   <select
                     value={formData.installmentCount}
                     onChange={(e) => setFormData(prev => ({ ...prev, installmentCount: Number(e.target.value) }))}
@@ -754,8 +815,7 @@ export default function ProposalForm() {
                   </div>
                 </div>
               </div>
-              
-              {/* Recurring Toggle */}
+
               <div className="border-t border-blue-200 pt-4">
                 <div className="flex items-center gap-3">
                   <input
@@ -778,6 +838,100 @@ export default function ProposalForm() {
             </div>
           )}
         </div>
+      </div>
+
+      {/* Terms & Conditions */}
+      <div className="bg-white rounded-xl border border-slate-200 p-8">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3">
+            <Shield className="w-6 h-6 text-blue-600" />
+            <div>
+              <h2 className="text-2xl font-bold text-slate-900">Terms & Conditions</h2>
+              <p className="text-sm text-slate-500 mt-1">Add legal terms, NDA, IP ownership, and other clauses</p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() => setShowTermsForm(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            <Plus className="w-4 h-4" />
+            Add Section
+          </button>
+        </div>
+
+        {/* Term form */}
+        {showTermsForm && (
+          <div className="mb-6 p-6 bg-blue-50 rounded-lg border-2 border-blue-200">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-slate-900">
+                {editingTermIndex !== null ? 'Edit' : 'Add'} Term Section
+              </h3>
+              <button type="button" onClick={() => { setShowTermsForm(false); setEditingTermIndex(null); setTermForm({ title: '', content: '' }); }} className="text-slate-500 hover:text-slate-700">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">Section Title *</label>
+                <input
+                  type="text"
+                  value={termForm.title}
+                  onChange={(e) => setTermForm(prev => ({ ...prev, title: e.target.value }))}
+                  className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  placeholder="e.g., Intellectual Property & Ownership"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">Content *</label>
+                <textarea
+                  value={termForm.content}
+                  onChange={(e) => setTermForm(prev => ({ ...prev, content: e.target.value }))}
+                  className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  rows={6}
+                  placeholder="Full text of this term section..."
+                />
+              </div>
+              <div className="flex justify-end gap-3">
+                <button type="button" onClick={() => { setShowTermsForm(false); setEditingTermIndex(null); setTermForm({ title: '', content: '' }); }} className="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">
+                  Cancel
+                </button>
+                <button type="button" onClick={saveTerm} className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                  {editingTermIndex !== null ? 'Update' : 'Add'} Section
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Terms list */}
+        {formData.terms.length > 0 ? (
+          <div className="space-y-3">
+            {formData.terms.map((term, index) => (
+              <div key={index} className="p-4 bg-slate-50 rounded-lg border border-slate-200">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="flex-shrink-0 w-6 h-6 bg-slate-200 rounded-full flex items-center justify-center text-xs font-bold text-slate-600">{index + 1}</span>
+                      <p className="font-semibold text-slate-900">{term.title}</p>
+                    </div>
+                    <p className="text-sm text-slate-500 line-clamp-2 ml-8">{term.content}</p>
+                  </div>
+                  <div className="flex gap-2 ml-3">
+                    <button type="button" onClick={() => editTerm(index)} className="p-1 text-slate-500 hover:bg-slate-100 rounded transition-colors">
+                      <Edit2 className="w-4 h-4" />
+                    </button>
+                    <button type="button" onClick={() => removeTerm(index)} className="p-1 text-red-500 hover:bg-red-50 rounded transition-colors">
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-slate-400 text-sm italic">No terms added. Proposal will display without a terms section.</p>
+        )}
       </div>
 
       {/* Submit Button */}
