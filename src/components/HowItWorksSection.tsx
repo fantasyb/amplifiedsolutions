@@ -22,11 +22,11 @@ export default function HowItWorksSection() {
     return () => observer.disconnect();
   }, []);
 
-  // Auto-advance through steps - UPDATED TO 6
+  // Auto-advance through steps
   useEffect(() => {
     if (isVisible) {
       const interval = setInterval(() => {
-        setActiveStep((prev) => (prev + 1) % 6);
+        setActiveStep((prev) => (prev + 1) % 3);
       }, 4000);
       return () => clearInterval(interval);
     }
@@ -35,78 +35,40 @@ export default function HowItWorksSection() {
   const steps = [
     {
       number: "01",
-      label: "Discovery",
-      title: "Complete your intake form",
-      description: "Tell us about your business, lead sources, team structure, and current pain points. We gather what we need to implement our proven system.",
-      metric: "15-minute questionnaire",
+      label: "Discover",
+      title: "We look under the hood",
+      description: "We get into your systems, your workflows, your day-to-day. Most teams don't know what should be automated — they just know things take too long. We find it for them.",
+      metric: "One conversation",
       icon: (
         <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
         </svg>
       )
     },
     {
       number: "02",
-      label: "Strategy",
-      title: "Review the roadmap",
-      description: "We present our proven implementation plan—showing exactly what we'll build in your Follow Up Boss using action plans, smart lists, and workflows that convert.",
-      metric: "Proven blueprint",
-      icon: (
-        <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-        </svg>
-      )
-    },
-    {
-      number: "03",
       label: "Build",
-      title: "We build your automation system",
-      description: "Our team implements our setup in your Follow Up Boss account—action plans, smart lists, lead flows, stages, and all automation workflows.",
-      metric: "7-10 day buildout",
-      icon: (
-        <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-        </svg>
-      )
-    },
-    {
-      number: "04",
-      label: "Review",
-      title: "Walkthrough of your new system",
-      description: "We give you a comprehensive overview of everything we built—showing you how each automation works, when it triggers, and how it all connects together.",
-      metric: "Complete system tour",
-      icon: (
-        <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-        </svg>
-      )
-    },
-    {
-      number: "05",
-      label: "Documentation",
-      title: "Best practice training materials",
-      description: "You get our complete training library, cheat sheets, and quick-reference guides that show your team exactly how to use every feature of your new system.",
-      metric: "Video library & guides",
-      icon: (
-        <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-        </svg>
-      )
-    },
-    {
-      number: "06",
-      label: "Launch",
-      title: "Live training and support",
-      description: "Live training to get you adopted to the system, followed by 30-day support.",
-      metric: "Live training",
+      title: "We fix the biggest pain point first",
+      description: "Whatever hurts most, we automate it first. Reporting, TC workflow, CRM cleanup — you see results before you've even gotten used to having us around.",
+      metric: "Quick win",
       icon: (
         <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
         </svg>
       )
-    }
+    },
+    {
+      number: "03",
+      label: "Compound",
+      title: "Then we keep going",
+      description: "We don't leave after one project. We stay embedded, find the next thing, build the next system. Every month your operations get tighter.",
+      metric: "Ongoing partnership",
+      icon: (
+        <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+        </svg>
+      )
+    },
   ];
 
   return (
@@ -135,13 +97,13 @@ export default function HowItWorksSection() {
         <div className={`text-center mb-12 sm:mb-16 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
           <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-gray-900 mb-4 sm:mb-6"
               style={{fontFamily: 'Inter, ui-sans-serif, system-ui, sans-serif'}}>
-            How it works
+            Now picture all of that running without you.
           </h2>
           <div className="flex justify-center mb-6 sm:mb-8">
             <div className={`w-12 sm:w-16 h-1 bg-[#FFD580] rounded-full transition-all duration-500 delay-500 ${isVisible ? 'scale-x-100' : 'scale-x-0'}`}></div>
           </div>
           <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-3xl mx-auto px-2">
-            From chaos to automated revenue in 6 simple steps
+            Three steps to get there.
           </p>
         </div>
 
@@ -194,7 +156,7 @@ export default function HowItWorksSection() {
           </div>
 
           {/* Desktop: Grid layout - 2 rows of 3 */}
-          <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+          <div className="hidden md:grid md:grid-cols-3 gap-6 lg:gap-8">
             {steps.map((step, index) => (
               <div key={index} className={`flex flex-col h-full transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
                    style={{ transitionDelay: `${600 + index * 200}ms` }}>

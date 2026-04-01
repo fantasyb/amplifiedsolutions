@@ -41,9 +41,6 @@ export default function HomePage() {
         {/* How It Works Section */}
         <HowItWorksSection />
 
-        {/* Other Ways We Can Help */}
-        <OtherWaysSection onOpenModal={handleOpenModal} />
-
         {/* Call to Action Section */}
         <CTASection onOpenModal={handleOpenModal} />
       </main>

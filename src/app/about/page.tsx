@@ -1,14 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ContactModal from '@/components/ContactModal';
 
 export default function AboutPage() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [isCalendlyOpen, setIsCalendlyOpen] = useState<boolean>(false);
 
   const openModal = (): void => {
     setIsModalOpen(true);
@@ -18,41 +16,10 @@ export default function AboutPage() {
     setIsModalOpen(false);
   };
 
-  const openCalendly = (): void => {
-    setIsCalendlyOpen(true);
-  };
-
-  const closeCalendly = (): void => {
-    setIsCalendlyOpen(false);
-  };
-
-  const coreTeam = [
-    {
-      name: "Joey Ahern", 
-      title: "Co-Founder and Chief Executive Officer",
-      image: "Headshot_Joey_C250.png"
-    },
-    {
-      name: "Lee Adkins",
-      title: "Co-Founder and Head of Product",
-      image: "Headshot_Lee_C250.png"
-    },
-    {
-      name: "Rosario Torres",
-      title: "Director of Client Success",
-      image: "Headshot_Rosario_C250.png"
-    },
-    {
-      name: "Cynthia Howe",
-      title: "Director of Project Management",
-      image: "Headshot_HoweCynthia_C250.png"
-    }
-  ];
-
   const values = [
     {
       title: "Hard Work Pays Off",
-      description: "If it was easy, everyone would do it. When times get hard, we lean into knowing that the hard work we're putting in will pay off.",
+      description: "If it was easy, everyone would do it. When it gets hard, we lean in.",
       icon: (
         <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
@@ -60,8 +27,8 @@ export default function AboutPage() {
       )
     },
     {
-      title: "Growth Mindset", 
-      description: "Having a growth mindset means we can always get better. We will continue to look in the future & get better at everything we do.",
+      title: "Growth Mindset",
+      description: "We can always get better. Every system we build is better than the last one.",
       icon: (
         <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
@@ -70,7 +37,7 @@ export default function AboutPage() {
     },
     {
       title: "Extreme Ownership",
-      description: "We take complete responsibility for our results and our clients' success. We own our mistakes, learn from them, and always deliver on our commitments.",
+      description: "Your operations are our operations. We own the outcome, not just the deliverable.",
       icon: (
         <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
@@ -79,7 +46,7 @@ export default function AboutPage() {
     },
     {
       title: "Have Fun",
-      description: "We have fun! Work is better with friends, and a fun culture that works hard is our key to success.",
+      description: "Work is better when you like the people you're working with. We keep it real.",
       icon: (
         <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1.01M15 10h1.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -91,76 +58,70 @@ export default function AboutPage() {
   return (
     <>
       <Header onOpenModal={openModal} />
-      
-      {/* Hero Section - Full Screen */}
-      <section className="min-h-screen bg-gradient-to-br from-[#647b75] via-[#5a6d66] to-[#4a5954] relative overflow-hidden flex items-center">
-        {/* Animated Background Elements */}
+
+      {/* Hero Section */}
+      <section className="min-h-[60vh] bg-gradient-to-br from-[#647b75] via-[#5a6d66] to-[#4a5954] relative overflow-hidden flex items-center">
         <div className="absolute inset-0">
           <div className="absolute top-20 left-10 w-72 h-72 bg-[#9fe2bf]/10 rounded-full blur-3xl animate-pulse"></div>
           <div className="absolute bottom-20 right-10 w-96 h-96 bg-[#FFD580]/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-white/5 rounded-full blur-3xl"></div>
         </div>
-        
-        <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-8 text-center">
-          <h1 className="text-6xl md:text-7xl lg:text-8xl font-black text-white mb-8 leading-tight"
+
+        <div className="relative z-10 max-w-4xl mx-auto px-6 lg:px-8 text-center">
+          <h1 className="text-5xl md:text-6xl lg:text-7xl font-black text-white mb-8 leading-tight"
               style={{fontFamily: 'Inter, ui-sans-serif, system-ui, sans-serif'}}>
-            About <span className="text-[#FFD580]">Amplified</span>
+            We got tired of watching teams do everything by hand.
           </h1>
-          <div className="w-32 h-2 bg-[#FFD580] mx-auto mb-12 rounded-full"></div>
-          <p className="text-2xl md:text-3xl text-white/90 max-w-4xl mx-auto leading-relaxed font-light">
-            Your complete partner in real estate growth
-          </p>
+          <div className="w-24 h-1 bg-[#FFD580] mx-auto rounded-full"></div>
         </div>
       </section>
 
-      {/* Mission Section - Clean & Powerful */}
-      <section className="py-32 bg-white relative">
-        <div className="max-w-6xl mx-auto px-6 lg:px-8 text-center">
-          <div className="max-w-4xl mx-auto">
-            <h2 className="text-5xl md:text-6xl font-black text-gray-900 mb-12 leading-tight">
-              Our Mission
-            </h2>
-            <p className="text-2xl md:text-3xl text-gray-700 leading-relaxed mb-8 font-light">
-              To deliver complete lead-to-close solutions that transform how real estate teams scale their business.
+      {/* Story Section */}
+      <section className="py-24 bg-white relative">
+        <div className="max-w-3xl mx-auto px-6 lg:px-8">
+          <div className="space-y-6 text-xl text-gray-700 leading-relaxed">
+            <p>
+              I spent 8 years inside 500+ real estate teams. Every single one had the same problem — people doing work that should have been automated years ago. Pulling reports by hand. Copy-pasting contract details. Chasing follow-ups that nobody remembered to send.
             </p>
-            <p className="text-xl text-gray-600 leading-relaxed mb-16">
-              We generate high-intent local leads through targeted PPC, convert them with professional ISA services, and optimize your entire pipeline through Follow Up Boss management. From first click to closed deal, we handle the systems so you can focus on selling.
+            <p>
+              The tools existed. The teams just didn't have anyone who knew how to wire it all together. They had agents, admins, TCs, VAs — but no one whose job was to look at the whole operation and say "this should run itself."
             </p>
-            
+            <p>
+              That's what Amplified Solutions does. We embed with your team as a fractional technology partner. We find what's manual, we automate it, and we keep going until there's nothing left to do by hand.
+            </p>
+          </div>
+
+          <div className="mt-16 text-center">
             <button
               onClick={openModal}
-              className="bg-[#FFD580] hover:bg-[#ffcf66] text-gray-900 font-black px-12 py-6 rounded-2xl transition-all duration-300 transform hover:-translate-y-2 hover:shadow-2xl text-xl"
+              className="bg-[#FFD580] hover:bg-[#ffcf66] text-gray-900 font-bold px-10 py-5 rounded-xl transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl text-lg"
             >
-              Start Growing Today
+              Talk to Us
             </button>
           </div>
         </div>
       </section>
 
-      {/* Values Section - Full Width Dark */}
-      <section className="py-32 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 relative overflow-hidden">
+      {/* Values Section */}
+      <section className="py-24 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('/AmplifiedSolutions_Logo-V2_Icon-01.png')] opacity-5 bg-repeat"
              style={{backgroundSize: '300px 300px'}}></div>
-        
+
         <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="text-center mb-20">
-            <h2 className="text-5xl md:text-6xl font-black text-white mb-6">Our Values</h2>
-            <div className="w-24 h-1 bg-[#FFD580] mx-auto mb-8"></div>
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-              The principles that drive our relentless pursuit of excellence
-            </p>
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-black text-white mb-4">How we work</h2>
+            <div className="w-20 h-1 bg-[#FFD580] mx-auto"></div>
           </div>
-          
+
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {values.map((value, index) => (
               <div key={index} className="group">
-                <div className="bg-white/10 backdrop-blur-md rounded-3xl p-8 h-full hover:bg-white/20 transition-all duration-500 transform hover:-translate-y-4 hover:shadow-2xl border border-white/20">
+                <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 h-full hover:bg-white/20 transition-all duration-500 transform hover:-translate-y-2 border border-white/20">
                   <div className="text-center">
                     <div className="w-16 h-16 bg-[#FFD580] rounded-2xl flex items-center justify-center mx-auto mb-6 text-gray-900 group-hover:scale-110 transition-transform duration-300">
                       {value.icon}
                     </div>
-                    <h3 className="text-2xl font-bold text-white mb-6">{value.title}</h3>
-                    <p className="text-gray-300 leading-relaxed">{value.description}</p>
+                    <h3 className="text-xl font-bold text-white mb-4">{value.title}</h3>
+                    <p className="text-gray-300 leading-relaxed text-sm">{value.description}</p>
                   </div>
                 </div>
               </div>
@@ -169,71 +130,31 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Team Section - Hidden for now */}
-
-      {/* CTA Section - Bold & Powerful */}
-      <section className="py-32 bg-gradient-to-r from-[#647b75] to-[#5a6d66] relative overflow-hidden">
-        <div className="absolute inset-0">
-          <div className="absolute top-10 right-10 w-80 h-80 bg-[#FFD580]/20 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-10 left-10 w-96 h-96 bg-[#9fe2bf]/20 rounded-full blur-3xl animate-pulse delay-500"></div>
-        </div>
-        
-        <div className="relative z-10 max-w-5xl mx-auto px-6 lg:px-8 text-center">
-          <h3 className="text-5xl md:text-6xl font-black text-white mb-8 leading-tight">
-            Ready to Scale Your 
-            <span className="text-[#FFD580]"> Real Estate Business?</span>
-          </h3>
-          <p className="text-2xl text-white/90 mb-12 max-w-3xl mx-auto leading-relaxed">
-            Join hundreds of teams who trust us to generate, nurture, and manage their leads while they focus on what they do best - selling homes.
-          </p>
-          
-          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+      {/* CTA Section */}
+      <section className="py-20 bg-gradient-to-r from-[#FFD580] to-[#ffcf66]">
+        <div className="max-w-6xl mx-auto px-6 lg:px-8">
+          <div className="text-center">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-gray-900 mb-8"
+                style={{fontFamily: 'Inter, ui-sans-serif, system-ui, sans-serif'}}>
+              Tell us what's taking too long.
+            </h2>
             <button
               onClick={openModal}
-              className="bg-[#FFD580] hover:bg-[#ffcf66] text-gray-900 font-black px-12 py-6 rounded-2xl transition-all duration-300 transform hover:-translate-y-2 hover:shadow-2xl text-xl"
+              className="group inline-flex items-center justify-center px-8 py-4 text-lg font-bold text-white bg-gray-900 rounded-lg transition-all duration-200 hover:bg-gray-800 hover:shadow-xl transform hover:-translate-y-1"
             >
-              Get Started Today
-            </button>
-            <button
-              onClick={openCalendly}
-              className="border-2 border-white text-white hover:bg-white hover:text-gray-900 font-bold px-12 py-6 rounded-2xl transition-all duration-300 transform hover:-translate-y-2 text-xl"
-            >
-              Schedule a Call
+              Get in touch
+              <svg className="ml-2 w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
             </button>
           </div>
         </div>
       </section>
-      
+
       <Footer onOpenModal={openModal} />
-      
+
       {/* Contact Modal */}
       <ContactModal isOpen={isModalOpen} onClose={closeModal} />
-      
-      {/* Calendly Modal */}
-      {isCalendlyOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm" onClick={closeCalendly}></div>
-          <div className="relative bg-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
-            <div className="p-6 bg-gradient-to-r from-[#9fe2bf] to-[#8dd9b1] flex justify-between items-center">
-              <h3 className="text-2xl font-bold text-gray-800">Schedule Your Strategy Call</h3>
-              <button
-                onClick={closeCalendly}
-                className="text-gray-600 hover:text-gray-800 text-2xl font-bold w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/20 transition-all duration-200"
-              >
-                ×
-              </button>
-            </div>
-            <iframe
-              src="https://calendly.com/joeyahern/meet-with-joey?embed_domain=yoursite.com&embed_type=Inline"
-              width="100%"
-              height="700"
-              frameBorder="0"
-              title="Schedule a meeting with Joey"
-              className="w-full"
-            ></iframe>
-          </div>
-        </div>
-      )}
     </>
   );
 }

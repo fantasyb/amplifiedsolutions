@@ -1,28 +1,46 @@
 # Amplified Solutions
 
-> Amplified Solutions builds Follow Up Boss CRM automation systems for real estate teams. Founded in 2018 by Joey Ahern, we've worked with 250+ teams across North America. Our core offering is "The AS System" — a complete FUB buildout including action plans, smart lists, lead ponds, lead flows, pipeline setup, and training, delivered in 7-10 days.
+> Amplified Solutions automates real estate operations for less than a VA costs. Founded in 2018 by Joey Ahern, we've worked with 500+ teams across North America. We embed with teams as a fractional technology partner — finding what's manual and building systems that run automatically. Reporting, follow-up, transaction coordination, CRM setup, content, data cleanup — if someone on the team is doing it by hand, we automate it.
 
-Amplified Solutions specializes in Follow Up Boss (FUB) optimization for real estate brokerages and teams. We handle the full CRM setup so agents can focus on selling instead of managing systems.
+## What we do
 
-Our services include:
-- **The AS System**: Complete Follow Up Boss automation buildout with action plans, smart lists, lead ponds, lead flows, stages, pipeline setup, FUB pixel install, and training.
-- **RealScout Integration**: Full RealScout + FUB integration with smart lists, automations, and team training.
-- **Platform Training**: Focused training on Follow Up Boss or RealScout — workflows, smart lists, daily ops, and adoption.
-- **Smart List Zero**: Accountability framework that keeps teams at follow-up zero with KPIs, prioritized queues, and coaching.
-- **Trevy AI Setup**: AI-powered personalization that turns cold leads into conversations with deeply personalized messages.
+Amplified Solutions is a fractional CTO and automation partner for real estate teams. We don't do one project and leave. We stay embedded, continuously identifying and automating manual workflows. Our clients pay a monthly fee — less than a VA costs — and get an ongoing technology partner who keeps building until there's nothing left to do by hand.
 
-We also publish a blog with FUB tips, real estate operations content, and podcasts including "The Primer," "Getting FUB'd Up with Bridget," and "Powering Real Estate."
+Common automations we build:
+- **Automated reporting and dashboards**: Agent scorecards, leadership dashboards, activity reports that update themselves.
+- **Transaction coordination workflows**: Contract auto-fill, forms that push into deals and CRM, automated notifications.
+- **Follow-up and nurture systems**: Automated sequences, database reactivation, personalized outreach based on pipeline stage.
+- **CRM setup and optimization**: Follow Up Boss buildouts with smart lists, action plans, lead flows, stages, and workflows.
+- **Content and SEO systems**: Blog posts, neighborhood guides, and market updates structured for Google and AI citations.
+- **Custom automations**: Any manual process that should be a system.
 
-## Core Pages
+## Who we serve
 
-- [Homepage](https://www.amplifiedsolutions.com/): Overview of services, client logos, and how it works
-- [About](https://www.amplifiedsolutions.com/about): Company mission, values, and team background
-- [Services](https://www.amplifiedsolutions.com/services): Detailed breakdown of The AS System and add-ons
-- [Testimonials](https://www.amplifiedsolutions.com/testimonials): Client success stories from teams like Spyglass Realty, Greybeard Realty, Ferguson Realty, and more
-- [Contact](https://www.amplifiedsolutions.com/contact): Schedule a 30-minute strategy call or send a message
-- [Blog](https://blog.amplifiedsolutions.com/): FUB tips, operations content, and podcast episodes
+Real estate teams, brokerages, and team leaders who are paying people to do work that should be automated. Our clients typically have 5-50+ agents and are using Follow Up Boss as their CRM.
 
-## Optional
+## About the founder
+
+Joey Ahern spent 8 years working inside 500+ real estate teams. Every team had the same problem — manual operations that should have been automated. That's why he built Amplified Solutions.
+
+## Related products
+
+- **Trevy AI** (https://trevy.io): An AI agent that integrates with Follow Up Boss for automated lead nurture, market data, and CRM operations.
+
+## Core pages
+
+- [Homepage](https://www.amplifiedsolutions.com/): Overview of automation services and how we work
+- [About](https://www.amplifiedsolutions.com/about): Joey's story and how Amplified Solutions started
+- [Testimonials](https://www.amplifiedsolutions.com/testimonials): Client success stories
+- [Blog](https://blog.amplifiedsolutions.com/): Real estate operations and automation content
+- [Newsletter](https://joeyahern.com/newsletter): The Drip — weekly newsletter on AI and automation in real estate
+
+## Contact
+
+- Website: https://www.amplifiedsolutions.com
+- Book a call: https://calendly.com/joeyahern/meet-with-joey
+- Email: joey@amplifiedsolutions.com
+
+## Legal
 
 - [Privacy Policy](https://www.amplifiedsolutions.com/privacy)
 - [Terms of Service](https://www.amplifiedsolutions.com/terms)

@@ -18,77 +18,59 @@ export default function Header({ onOpenModal }: HeaderProps) {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200 transition-all duration-300">
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center h-20">
-          {/* Left side - Logo and Navigation */}
-          <div className="flex items-center">
-            {/* Logo */}
-            <Link href="/" className="flex items-center mr-8">
-              <Image 
-                src="/AmplifiedSolutions_Logo-V2_Main.png" 
-                alt="Amplified Solutions Logo" 
-                width={180} 
-                height={60}
-                className="h-12 w-auto"
-                priority
-              />
+        <div className="flex items-center justify-between h-20">
+          {/* Logo */}
+          <Link href="/" className="flex items-center">
+            <Image
+              src="/AmplifiedSolutions_Logo-V2_Main.png"
+              alt="Amplified Solutions Logo"
+              width={180}
+              height={60}
+              className="h-12 w-auto"
+              priority
+            />
+          </Link>
+
+          {/* Desktop Navigation - Centered */}
+          <div className="hidden lg:flex items-center space-x-8">
+            <Link
+              href="/about"
+              className="text-gray-700 hover:text-[#647b75] font-medium transition-colors duration-200"
+            >
+              About
             </Link>
 
-            {/* Desktop Navigation - Right next to logo */}
-            <div className="hidden lg:flex items-center space-x-8">
-              <Link
-                href="/about" 
-                className="text-gray-700 hover:text-[#647b75] font-medium transition-colors duration-200"
-              >
-                About
-              </Link>
-              
-              <Link 
-                href="/testimonials" 
-                className="text-gray-700 hover:text-[#647b75] font-medium transition-colors duration-200"
-              >
-                Testimonials
-              </Link>
-              
-              <Link 
-                href="/blog" 
-                className="text-gray-700 hover:text-[#647b75] font-medium transition-colors duration-200"
-              >
-                Blog
-              </Link>
-              
-              <Link
-                href="https://joeyahern.com/newsletter"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-700 hover:text-[#647b75] font-medium transition-colors duration-200"
-              >
-                Newsletter
-              </Link>
-              
-              <Link 
-                href="/contact" 
-                className="text-gray-700 hover:text-[#647b75] font-medium transition-colors duration-200"
-              >
-                Contact Us
-              </Link>
-            </div>
-          </div>
+            <Link
+              href="/testimonials"
+              className="text-gray-700 hover:text-[#647b75] font-medium transition-colors duration-200"
+            >
+              Testimonials
+            </Link>
 
-          {/* Right side - CTA Buttons */}
-          <div className="hidden lg:flex items-center space-x-4 ml-auto">
-            <Link 
-              href="https://university.amplifiedsolutions.com/"
+            <Link
+              href="/blog"
+              className="text-gray-700 hover:text-[#647b75] font-medium transition-colors duration-200"
+            >
+              Blog
+            </Link>
+
+            <Link
+              href="https://joeyahern.com/newsletter"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[#647b75] hover:text-white font-medium border border-[#647b75] hover:bg-[#647b75] px-4 py-2 rounded-lg transition-all duration-200"
+              className="text-gray-700 hover:text-[#647b75] font-medium transition-colors duration-200"
             >
-              University Login
+              Newsletter
             </Link>
+          </div>
+
+          {/* Right side - CTA Button */}
+          <div className="hidden lg:flex items-center">
             <button
               onClick={onOpenModal}
               className="bg-[#FFD580] hover:bg-[#ffcf66] text-gray-800 font-bold px-6 py-3 rounded-lg transition-all duration-200 transform hover:-translate-y-0.5 hover:shadow-lg"
             >
-              Hire Us
+              Talk to Us
             </button>
           </div>
 
@@ -146,25 +128,8 @@ export default function Header({ onOpenModal }: HeaderProps) {
               Newsletter
             </Link>
             
-            <Link 
-              href="/contact" 
-              className="block px-3 py-2 text-gray-700 hover:text-[#647b75] font-medium"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Contact Us
-            </Link>
-            
-            {/* Mobile CTA Buttons */}
-            <div className="px-3 pt-4 space-y-2 border-t border-gray-200">
-              <Link 
-                href="https://university.amplifiedsolutions.com/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block w-full text-center border border-[#647b75] text-[#647b75] px-4 py-2 rounded-lg font-medium"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                University Login
-              </Link>
+            {/* Mobile CTA Button */}
+            <div className="px-3 pt-4 border-t border-gray-200">
               <button
                 onClick={() => {
                   onOpenModal();
@@ -172,7 +137,7 @@ export default function Header({ onOpenModal }: HeaderProps) {
                 }}
                 className="block w-full text-center bg-[#FFD580] text-gray-800 font-bold px-4 py-3 rounded-lg"
               >
-                Hire Us
+                Talk to Us
               </button>
             </div>
           </div>

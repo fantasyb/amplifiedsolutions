@@ -32,7 +32,7 @@ export default function PrivacyPolicyPage() {
               <div className="w-20 h-1 bg-[#FFD580] rounded-full"></div>
             </div>
             <p className="text-lg text-gray-600">
-              Effective Date: January 1, 2025
+              Effective Date: April 1, 2026
             </p>
           </div>
 
@@ -43,8 +43,8 @@ export default function PrivacyPolicyPage() {
               
               <section>
                 <p className="text-gray-700 leading-relaxed mb-6">
-                  Amplified Solutions Consulting LLC ("us", "we", or "our") operates the https://www.amplifiedsolutions.com website (the "Service"). 
-                  We specialize in lead management and conversion services for real estate professionals.
+                  Amplified Solutions Consulting LLC ("us", "we", or "our") operates the https://www.amplifiedsolutions.com website (the "Service").
+                  We provide automation and technology services for real estate businesses.
                 </p>
                 
                 <p className="text-gray-700 leading-relaxed">
@@ -83,7 +83,7 @@ export default function PrivacyPolicyPage() {
               <section>
                 <h2 className="text-2xl font-bold text-gray-900 mb-4">Information Collection and Use</h2>
                 <p className="text-gray-700 mb-4">
-                  We collect several different types of information for various purposes to provide and improve our lead management and conversion services to you.
+                  We collect several different types of information for various purposes to provide and improve our automation and technology services to you.
                 </p>
                 
                 <h3 className="text-lg font-semibold text-gray-900 mb-3">Types of Data Collected</h3>
@@ -131,7 +131,7 @@ export default function PrivacyPolicyPage() {
                   Amplified Solutions Consulting LLC uses the collected data for various purposes:
                 </p>
                 <ul className="list-disc pl-6 space-y-1 text-gray-700">
-                  <li>To provide and maintain our lead management and conversion services</li>
+                  <li>To provide and maintain our automation and technology services</li>
                   <li>To notify you about changes to our Service</li>
                   <li>To allow you to participate in interactive features of our Service when you choose to do so</li>
                   <li>To provide customer support</li>

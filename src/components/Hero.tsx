@@ -44,16 +44,18 @@ export default function Hero({ onOpenModal }: HeroProps) {
           <div className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
 
             {/* Heading */}
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black leading-tight text-gray-900 mb-6" 
+            <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-medium text-gray-500 mb-4"
                 style={{fontFamily: 'Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif'}}>
-              <span className="inline">
-                Follow Up Boss automation that actually works
-              </span>
+              Think of everything in your business you do manually.
+            </p>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black leading-tight text-gray-900 mb-6"
+                style={{fontFamily: 'Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif'}}>
+              We automate it all for less than a VA costs.
             </h1>
 
             {/* Description */}
             <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-600 leading-relaxed max-w-3xl mx-auto mb-10">
-              We build your CRM the right way—with proven workflows, intelligent routing, and automated follow-up that converts leads without overwhelming you.
+              Reporting, follow-up, transaction coordination, CRM cleanup, content — if someone on your team is doing it by hand, it should be an automated system. We've built them for over 500 real estate teams.
             </p>
 
             {/* CTA Button */}
@@ -62,7 +64,7 @@ export default function Hero({ onOpenModal }: HeroProps) {
                 onClick={onOpenModal}
                 className="group inline-flex items-center justify-center px-8 sm:px-10 py-4 sm:py-5 text-base sm:text-lg font-bold text-gray-800 bg-[#FFD580] rounded-lg transition-all duration-200 hover:bg-[#ffcf66] hover:shadow-xl transform hover:-translate-y-1 hover:scale-105 uppercase tracking-wider"
               >
-                Get Started Today
+                Tell Us What You're Doing Manually
                 <svg className="ml-2 w-4 h-4 sm:w-5 sm:h-5 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                 </svg>

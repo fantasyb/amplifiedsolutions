@@ -12,17 +12,17 @@ const manrope = Manrope({
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.amplifiedsolutions.com"),
   title: {
-    default: "Amplified Solutions | Follow Up Boss Automation for Real Estate Teams",
+    default: "Amplified Solutions | Automation for Real Estate Teams",
     template: "%s | Amplified Solutions",
   },
-  description: "We build your Follow Up Boss CRM the right way — proven workflows, intelligent routing, and automated follow-up that converts leads without overwhelming your team.",
-  keywords: "follow up boss automation, follow up boss setup, real estate CRM, FUB optimization, real estate lead conversion, pipeline management, action plans, smart lists",
+  description: "We automate your real estate operations for less than a VA costs. Reporting, follow-up, transaction coordination, CRM, content — if your team is doing it by hand, we build a system that does it automatically.",
+  keywords: "real estate automation, real estate operations, CRM automation, real estate reporting automation, transaction coordination automation, fractional CTO real estate, Follow Up Boss automation, real estate AI automation, real estate business automation",
   alternates: {
     canonical: "/",
   },
   openGraph: {
-    title: "Amplified Solutions | Follow Up Boss Automation for Real Estate Teams",
-    description: "We build your Follow Up Boss CRM the right way — proven workflows, intelligent routing, and automated follow-up that converts leads without overwhelming your team.",
+    title: "Amplified Solutions | Automation for Real Estate Teams",
+    description: "Think of everything in your business you do manually. We automate it all for less than a VA costs.",
     url: "https://www.amplifiedsolutions.com",
     siteName: "Amplified Solutions",
     images: [
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
         url: "/AmplifiedSolutions_Logo-V2_Main.png",
         width: 1200,
         height: 630,
-        alt: "Amplified Solutions - Follow Up Boss Automation for Real Estate Teams",
+        alt: "Amplified Solutions - Automation for Real Estate Teams",
       },
     ],
     locale: "en_US",
@@ -38,8 +38,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Amplified Solutions | Follow Up Boss Automation for Real Estate Teams",
-    description: "We build your Follow Up Boss CRM the right way — proven workflows, intelligent routing, and automated follow-up that converts leads.",
+    title: "Amplified Solutions | Automation for Real Estate Teams",
+    description: "Think of everything in your business you do manually. We automate it all for less than a VA costs.",
     images: ["/AmplifiedSolutions_Logo-V2_Main.png"],
   },
   robots: {
@@ -67,28 +67,34 @@ export default function RootLayout({
               url: "https://www.amplifiedsolutions.com",
               logo: "https://www.amplifiedsolutions.com/AmplifiedSolutions_Logo-V2_Main.png",
               description:
-                "Follow Up Boss automation and CRM optimization for real estate teams. We build proven workflows, intelligent routing, and automated follow-up systems.",
+                "We automate real estate operations for less than a VA costs. Reporting, follow-up, transaction coordination, CRM, content — we embed with your team and build systems that run themselves.",
               foundingDate: "2018",
               founder: {
                 "@type": "Person",
                 name: "Joey Ahern",
+                jobTitle: "Founder",
+                knowsAbout: ["Real Estate Technology", "Business Automation", "CRM Systems", "Follow Up Boss"],
               },
               sameAs: [
                 "https://www.facebook.com/AmplifiedSolutions/",
                 "https://www.instagram.com/amplifiedsolutions/",
                 "https://www.youtube.com/amplifiedsolutions",
+                "https://joeyahern.com",
               ],
               contactPoint: {
                 "@type": "ContactPoint",
                 contactType: "sales",
-                url: "https://www.amplifiedsolutions.com/contact",
+                url: "https://www.amplifiedsolutions.com",
               },
               areaServed: "US",
               serviceType: [
-                "Follow Up Boss CRM Setup",
-                "Real Estate CRM Automation",
-                "Lead Management Optimization",
-                "ISA Services",
+                "Real Estate Business Automation",
+                "Fractional CTO Services",
+                "CRM Setup and Optimization",
+                "Automated Reporting and Dashboards",
+                "Transaction Coordination Automation",
+                "Follow-up and Nurture Systems",
+                "Content and SEO Automation",
               ],
             }),
           }}
